@@ -1,28 +1,23 @@
-# npc.py - NPCAgent v0.1.0 - bare-bone: OpenAI-compatible chat over a persisted history + in-place history-rewrite memory test
+# npc.py - NPCAgent v0.2.0 - more reliable: per-agent system prompt + multi-agent create_agent + turn-based two-way conv()
 import requests
 import json
 
 base_url = "http://127.0.0.1:5000/v1"
 api_key = "your_api_key"
 
-# Initialize history outside the function to persist across calls
-history = []
+def create_agent(name):
+    return {
+        "name": name,
+        "history": [{"role": "system", "content": f"""You are {name}, an AI assistant.
+Always introduce yourself as {name} when you first speak in a conversation.
+Only use the names provided in the conversation. Do not hallucinate new names.
+Always pay attention to who is speaking.
+Remember information shared in the conversation and use it to provide relevant responses.
+Do not respond as "User:". Respond as {name}:.
+"""}],
+    }
 
-def send_message(prompt,
-                 model="gpt-4",
-                 max_tokens=100,
-                 temperature=0.7,
-                 top_p=0.9,
-                 stop=None,
-                 presence_penalty=0,
-                 frequency_penalty=0,
-                 context="Bot Name is Bob.",
-                 user_bio=None,
-                 instruction_template=None,
-                 mode='chat-instruct',
-                 character=None,
-                 return_history=False):
-
+def send_message(prompt, speaking_agent, listening_agent_history):
     endpoint = '/chat/completions'
     url = f"{base_url}{endpoint}"
     headers = {
@@ -30,78 +25,86 @@ def send_message(prompt,
         'Authorization': f'Bearer {api_key}'
     }
 
-    # Add context as system message if it's not already in history
-    if not history or history[0]['role'] != 'system':
-        history.insert(0, {"role": "system", "content": context})
+    # Direct history modification (NO copy.deepcopy)
+    conversation_history = listening_agent_history
 
-    # Add user message to history
-    history.append({"role": "user", "content": prompt})
+    user_message = {"role": "user", "content": f"{speaking_agent['name']}: {prompt}"}
+    conversation_history.append(user_message)
+
+    # **Key Change:** Get the listening agent's name directly from the dictionary
+    listening_agent_name = speaking_agent['name']  # Assuming speaking_agent is sending the message to the listening agent
+
+    print(f"\n----- Sending message to {listening_agent_name} -----")
+    print(f"History being sent:\n{json.dumps(conversation_history, indent=2)}")
 
     data = {
-        'model': model,
-        'messages': history,
-        'max_tokens': max_tokens,
-        'temperature': temperature,
-        'top_p': top_p,
-        'stop': stop,
-        'presence_penalty': presence_penalty,
-        'frequency_penalty': frequency_penalty,
-        'mode': mode # instruct, chat, chat-instruct
+        'model': 'codestral-22B-v0.1-abliterated-v3-exl2',
+        'messages': conversation_history,
+        'max_tokens': 150,
+        'temperature': 0.7,
+        'top_p': 0.9,
     }
-
-    if character is not None:
-        data["character"] = character
-    if instruction_template is not None:
-        data["instruction_template"] = instruction_template
 
     try:
         response = requests.post(url, headers=headers, json=data)
         response.raise_for_status()
 
         response_json = response.json()
-        print("Raw API Response:", response_json)
+        print(f"Raw API Response for {listening_agent_name}:\n{json.dumps(response_json, indent=2)}")
 
         assistant_message = response_json['choices'][0]['message']['content'].strip()
-        history.append({"role": "assistant", "content": assistant_message})
 
-        if return_history:
-            return history
-        else:
-            return assistant_message
+        # Check for redundant introductions
+        if not assistant_message.startswith(f"{speaking_agent['name']}: "):
+            listening_agent_history.append({"role": "assistant", "content": assistant_message})
+
+        return assistant_message
     except requests.exceptions.RequestException as e:
         print(f"An error occurred during the request: {e}")
-        return "" if not return_history else []
+        return ""
     except (json.JSONDecodeError, KeyError) as e:
         print(f"Error parsing JSON response: {e}")
         print("Response Text:", response.text)
-        return "" if not return_history else []
+        return ""
 
-# Clear history before starting
-history.clear()
+def conv(agent1, agent2, initial_prompt):
+    print(f"\n----- Starting conversation between {agent1['name']} and {agent2['name']} -----")
+    print_agent_state(agent1)
+    print_agent_state(agent2)
 
-# Initial question
-response = send_message("What is my name?")
-print("Response:", response)
+    response = send_message(initial_prompt, agent1, agent2["history"])
+    print(f"{agent2['name']}: {response}")
 
-# Say the name is Alex
-response = send_message("My name is Alex!")
-print("Response:", response)
+    response = send_message(response, agent2, agent1["history"])
+    print(f"{agent1['name']}: {response}")
 
-# Modify the history (replace "Alex" with "Noxy")
-for i, message in enumerate(history):
-    if message["role"] == "user" and "My name is Alex" in message["content"]:
-        history[i]["content"] = "My name is Noxy!"
-        break
+    print(f"\n----- Conversation ended -----")
+    print_agent_state(agent1)
+    print_agent_state(agent2)
 
-print("\nModified History:")
-for message in history:
-    print(f"{message['role']}: {message['content']}")
+    return response
 
-# Test if the modified name is remembered
-response = send_message("What is my name again?")
-print("Response:", response)
+def print_agent_state(agent):
+    print(f"\n----- {agent['name']}'s current state -----")
+    print(f"History:\n{json.dumps(agent['history'], indent=2)}")
 
+# Create agents
+Bob = create_agent("Bob")
+Alice = create_agent("Alice")
+Chloe = create_agent("Chloe")
 
-# Test if the modified name is remembered
-response = send_message("What your name?")
-print("Response:", response)
+# Conversation between Bob and Alice
+prompt = "Hello Alice, my name is Bob, and my favorite color is dark red. What's your favorite season?"
+conv(Bob, Alice, prompt)
+
+# Conversation between Chloe and Alice
+prompt = "Hi Alice, I'm Chloe. Can you tell me something interesting about Bob?"
+conv(Chloe, Alice, prompt)
+
+# Conversation between Bob and Chloe
+prompt = "Hello Chloe, it's Bob. Did Alice tell you anything about me?"
+conv(Bob, Chloe, prompt)
+
+print("\n----- Final Agent States -----")
+for agent in [Bob, Alice, Chloe]:
+    print_agent_state(agent)
