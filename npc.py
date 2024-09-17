@@ -1,4 +1,4 @@
-# npc.py - NPCAgent v0.3.1 - fix duplicated speaker-name prefix (prepend only if absent) + per-agent first_utterance flag
+# npc.py - NPCAgent v0.3.2 - strip speaker-name label from a reply before relaying to the next agent
 import requests
 import json
 
@@ -83,7 +83,14 @@ def conv(agent1, agent2, initial_prompt):
         agent2["first_utterance"] = False
 
     # Agent2 responds to Agent1's message
-    response = send_message(response, agent2, agent1["history"])
+    # Extract the message content, handling cases where the colon might be missing
+    response_parts = response.split(":", 1)
+    if len(response_parts) > 1:
+        response_content = response_parts[1].strip()
+    else:
+        response_content = response_parts[0].strip()
+
+    response = send_message(response_content, agent2, agent1["history"])
 
     # Only add the name prefix if it's the agent's FIRST utterance in this conversation
     if agent1["first_utterance"]:
