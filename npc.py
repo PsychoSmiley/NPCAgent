@@ -1,4 +1,4 @@
-# npc.py - NPCAgent v0.4.6 - open-world sim (time, locations, autonomous turns, Game-System prompts) + robust JSON extraction; v0.4.6-style reconstruction
+# npc.py - NPCAgent v0.5.1 - refactor: unify send_message (talk + Game-System), single .format() system prompt, history trim; v0.5.1(refactor)
 import requests
 import json
 import re
@@ -8,60 +8,46 @@ import time
 VERBOSE_LOGGING = True
 BASE_URL = "http://127.0.0.1:5000/v1"
 API_KEY = "your_api_key"
-MODEL_NAME = 'llama-2-13b' # This will be overridden by the model you choose to run
+MODEL_NAME = 'llama-2-13b'
+MAX_HISTORY_MESSAGES = 20
+MAX_RESPONSE_TOKENS = 100
 
-# Time
+# --- World State ---
 current_time = {"hour": 8, "minute": 0}
-def format_time(): return f"{current_time['hour']:02d}:{current_time['minute']:02d}"
-def advance_time(minutes=30):
-    if VERBOSE_LOGGING: print(f"--- Advancing time by {minutes} minutes ---")
-    current_time["minute"] += minutes
-    while current_time["minute"] >= 60:
-        current_time["minute"] -= 60
-        current_time["hour"] += 1
-        if current_time["hour"] >= 24:
-            current_time["hour"] = 0
-
-# Locations
 LOCATIONS = {
     "Park": {"context": "at the park", "actions": ["wait", "goHome", "goCafe"]},
     "Home": {"context": "at home", "actions": ["rest", "sleep", "goPark", "goCafe"]},
     "Cafe": {"context": "at the cafe", "actions": ["order", "goHome", "goPark"]}
 }
 
-# SYSTEM PROMPT (v0.4.6-style, with pure JSON agent response examples)
-BASE_SYSTEM_PROMPT = """Context: You're in a game and Player to interact with NPC naturally. NPC answer and use action keywords below to trigger actions in json:
----
-CRITICAL MEMORY RULE: When an incoming message (from '[Agent Name] says:' OR 'Game System:') provides a JSON object, and that JSON's "input" field contains a personal fact (e.g., "I like coffe"), you MUST remember their EXACT words to use or share later. If later asked about that person or fact, you MUST quote what they said from their "input" field. Do NOT invent details or add new. If you don't know, say "I don't know" in your response.
----
-SINGLE-LINE JSON FORMAT ANSWER:
-- Message format you receive (from '[Agent Name] says:' OR 'Game System:' prefix): {"input": "[what someone says, or a situation description]", "context": "[current location]", "possibleAction": "[action1, action2, ... ]"}
-- Your response format (as the character you are playing): {"response": "[your reply, or quoting remembered facts if relevant]", "action": "[always ONE action from possibleAction list, or 'none' by default]"}
+# --- UNIFIED SYSTEM PROMPT from v0.5.1.py ---
+BASE_SYSTEM_PROMPT = """You are {name}, an NPC character in an interactive game-simulated world. You think and respond only as {name}.
+
+Your task is to respond to all situations by generating a single JSON object. In the "response" field, generate a natural, internal monologue that shows your reasoning based on your memories and goals, which then flows into any words you say out loud. Your entire output MUST be a single-line, valid JSON object with no other text or prefixes.
+
+The "action" keyword you choose MUST be one of the choices from the "possibleAction" list provided in the last incoming message. To share a memory, you MUST quote the fact exactly as you learned it. If you do not know a fact, your reasoning should reflect that, and you should respond with "I don't know". Do not invent details.
+
 ---
 EXAMPLES:
 <START>
 <START>
-UserX says: {"input": "Hello, my name is UserX, and I often chill at the park.", "context": "located at the park", "possibleAction": "none, leaveConversation"}
-{"response": "Nice to meet you UserX! I'll remember you often come over here.", "action": "none"}
+Placeholder-UserX says: {{"input": "Hello, my name is Placeholder-UserX, and I often chill at the park.", "context": "located at the park", "possibleAction": "none, leaveConversation"}}
+{{"response": "A new person, Placeholder-UserX. They're being friendly. It's useful to remember they like this park. I'll be welcoming. Nice to meet you Placeholder-UserX! I'll remember you're often here.", "action": "none"}}
 <START>
 <START>
-UserY says: {"input": "Do you know what UserX enjoys and what their favorite color is?", "context": "located at the park", "possibleAction": "none, leaveConversation"}
-{"response": "UserX told me they like to chill at the park. I don't know which color and would need to ask them, but I have things planned. Goodbye!", "action": "leaveConversation"}
+Placeholder-UserY says: {{"input": "Do you know what Placeholder-UserX enjoys and what their favorite color is?", "context": "located at the park", "possibleAction": "none, leaveConversation"}}
+{{"response": "Okay, a question about Placeholder-UserX. I'll check my memory. I know they said they 'often chill at the park'. I don't know their color, so I must not invent a fact. I'll state what I know and what I don't. Placeholder-UserX told me they like to chill at the park. As for their favorite color, I'm afraid I don't know.", "action": "leaveConversation"}}
 <START>
 <START>
-Game System: {"input": "What should you do?", "context": "located at the park", "possibleAction": "none, goHome, goCafe"}
-{"response": "I want to explore the city; I've never explored the cafe yet! Maybe I'll meet someone.", "action": "goCafe"}
+Game System: {{"input": "You just tried to go to the Cafe, but you realized you did the same thing yesterday and it was closed. What now?", "context": "at the park", "possibleAction": "none, goHome, goCafe"}}
+{{"response": "Right, I keep trying to go to the Cafe at this time and it's always closed. That's a waste of time. I need a new plan to achieve my goal of being social. The park usually has people. I'll wait here instead.", "action": "wait"}}
 <START>
-<START>"""
+<START>
+"""
 
+# --- Core Agent & World Functions ---
 def create_agent(name, location="Park"):
-    personalized_system_content = BASE_SYSTEM_PROMPT + \
-                                  f"\n\n--- IMPORTANT INSTRUCTIONS FOR YOU, '{name}' ---\n" + \
-                                  f"1. You ARE the character named '{name}'. All your thoughts and words are from '{name}'s perspective.\n" + \
-                                  f"2. Your ENTIRE output for each turn MUST be a single, valid JSON object following the 'Your response format' shown above.\n" + \
-                                  f"3. Do NOT include any prefixes like '{name} says:', 'Char:', or your name before the opening '{{' of your JSON response.\n" + \
-                                  f"4. Do NOT add any text, dialogue, notes, '###' markers, or '<think>' tags before or after your single JSON object response.\n" + \
-                                  f"5. When responding to 'Game System:', you are still '{name}' and must follow all these rules."
+    personalized_system_content = BASE_SYSTEM_PROMPT.format(name=name)
     return {
         "name": name,
         "location": location,
@@ -70,285 +56,210 @@ def create_agent(name, location="Park"):
         "conversation_partner": None
     }
 
+def clear_history(agent):
+    personalized_system_content = BASE_SYSTEM_PROMPT.format(name=agent['name'])
+    agent["history"] = [{"role": "system", "content": personalized_system_content}]
+    print(f"\n[Memory (history) cleared for {agent['name']}]")
+
 def print_agent_state(agent):
     if VERBOSE_LOGGING:
         print(f"\n----- {agent['name']}'s current state ({agent['location']}) -----")
-        print(f"In Conversation: {agent['in_conversation']} (with {agent.get('conversation_partner', 'None')})")
         print(f"History (length {len(agent['history'])}):")
         for i, item in enumerate(agent['history']):
-            if item['role'] == 'system' and len(item['content']) > 300 and i == 0:
-                 print(f"  {i}: {{'role': '{item['role']}', 'content': '[System Prompt - Truncated for brevity]'}}")
+            if i == 0:
+                print(f"  0: {{'role': 'system', 'content': '[System Prompt...]'}}")
             else:
-                content_to_print = item.get('content', '')
-                try:
-                    escaped_content = json.dumps(content_to_print)
-                    print(f"  {i}: {{'role': '{item['role']}', 'content': {escaped_content}}}")
-                except TypeError:
-                     print(f"  {i}: {{'role': '{item['role']}', 'content': '[Unserializable Content]'}}")
+                content_to_print = item.get('content', '[No Content]')
+                # Truncate long content for readability in logs
+                if len(content_to_print) > 200:
+                    content_display = content_to_print[:200] + '...'
+                else:
+                    content_display = content_to_print
+                print(f"  {i}: {{'role': '{item['role']}', 'content': '{content_display}'}}")
         print(f"----- End {agent['name']}'s state -----")
 
-def extract_clean_json_for_history(raw_text, agent_name_for_debug="Agent"):
+def get_available_actions_for_agent(agent, all_agents_list):
+    actions = LOCATIONS[agent["location"]]["actions"].copy()
+    for other_agent in all_agents_list:
+        if other_agent["name"] != agent["name"] and other_agent["location"] == agent["location"]:
+            if not other_agent.get("in_conversation"):
+                actions.append(f"talkTo{other_agent['name']}")
+    return list(set(actions))
+
+def format_time(): return f"{current_time['hour']:02d}:{current_time['minute']:02d}"
+
+def advance_time(minutes=30):
+    global current_time
+    if VERBOSE_LOGGING: print(f"\n--- Advancing time by {minutes} minutes ---")
+    current_time["minute"] += minutes
+    current_time["hour"] += current_time["minute"] // 60
+    current_time["minute"] %= 60
+    current_time["hour"] %= 24
+
+# --- Unified Communication & Parsing ---
+def extract_clean_json(raw_text, agent_name_for_debug="Agent"):
+    """
+    A hybrid JSON extractor that combines the best of v0.4.6 and v0.5.1.
+    It processes line-by-line to handle models that add extra text,
+    and includes robust fallback for missing keys.
+    """
+    # 1. Clean the text by removing <think> tags. (From v0.5.1)
     cleaned_text = re.sub(r'<think>.*?</think>', '', raw_text, flags=re.DOTALL | re.IGNORECASE)
-    cleaned_text = re.sub(r'</?think[^>]*>', '', cleaned_text, flags=re.IGNORECASE)
+
+    # --- v0.4.6 Logic: Split the output into lines to handle model contamination ---
     lines = cleaned_text.split('\n')
-    potential_json_lines = []
-    for line_content in lines:
-        line = line_content.strip()
-        possible_prefixes = [f"{agent_name_for_debug} says:", f"{agent_name_for_debug}:", "Char:", "Alice:", "Bob:", "Chloe:"]
-        stripped_line = line
-        for prefix in possible_prefixes:
-            if stripped_line.startswith(prefix):
-                stripped_line = stripped_line[len(prefix):].strip()
-                break
-        if not stripped_line or stripped_line.startswith('###') or stripped_line.startswith("```"):
+
+    for line in lines:
+        # Strip leading/trailing whitespace from the current line
+        current_line = line.strip()
+
+        # 2. Use a generic regex to find and strip a prefix. (From v0.5.1, applied per-line)
+        prefix_match = re.search(r'^\s*.*?\:\s*(?=\{)', current_line)
+        if prefix_match:
+            current_line = current_line[prefix_match.end():]
+
+        # Ignore empty lines or lines that are clearly not JSON
+        if not current_line or not current_line.startswith('{'):
             continue
-        if stripped_line.startswith('{') and stripped_line.endswith('}'):
-            potential_json_lines.append(stripped_line)
-        elif '{' in stripped_line and '}' in stripped_line:
-            potential_json_lines.append(stripped_line)
-    for json_str_candidate in potential_json_lines:
+
+        # 3. Attempt to parse the current line as a JSON object.
         try:
-            start = json_str_candidate.find('{')
-            end = json_str_candidate.rfind('}') + 1
-            if start != -1 and end > start:
-                json_str = json_str_candidate[start:end]
+            # Find the first '{' and the last '}' just on this line
+            start_index = current_line.find('{')
+            end_index = current_line.rfind('}')
+
+            if start_index != -1 and end_index != -1 and end_index > start_index:
+                json_str = current_line[start_index : end_index + 1]
                 parsed = json.loads(json_str)
-                if "response" in parsed and "action" in parsed:
+
+                # --- v0.5.1 Logic: Robust key handling ---
+                # 4. Check for at least a "response".
+                if "response" in parsed:
+                    # 5. If "action" is missing, add the safe default "none".
+                    if "action" not in parsed:
+                        if VERBOSE_LOGGING:
+                            print(f"INFO EXTRACTOR ({agent_name_for_debug}): Found 'response' but 'action' is missing. Defaulting to 'none'.")
+                        parsed["action"] = "none"
+
+                    # 6. Success! Return the perfect JSON string and exit the function.
                     return json.dumps(parsed)
-        except (json.JSONDecodeError, TypeError):
-            if VERBOSE_LOGGING: print(f"DEBUG EXTRACTOR ({agent_name_for_debug}): JSONDecodeError on candidate: '{json_str_candidate}'")
+
+        except json.JSONDecodeError:
+            # This line was not a valid JSON, so we just move to the next one.
+            if VERBOSE_LOGGING:
+                print(f"DEBUG EXTRACTOR ({agent_name_for_debug}): Failed to parse line, trying next: '{current_line}'")
             continue
-    try:
-        json_match = re.search(r'\{\s*"response":\s*".*?",\s*"action":\s*".*?"\s*\}', cleaned_text, flags=re.DOTALL)
-        if json_match:
-            json_str = json_match.group(0)
-            json.loads(json_str)
-            return json_str
-    except json.JSONDecodeError:
-        pass
-    if VERBOSE_LOGGING: print(f"WARNING EXTRACTOR ({agent_name_for_debug}): Could not extract clean JSON from raw: <<<{raw_text}>>>")
+
+    # If the loop finishes and we haven't found anything, fail gracefully.
+    if VERBOSE_LOGGING:
+        print(f"WARNING EXTRACTOR ({agent_name_for_debug}): Could not extract clean JSON from raw: <<<{raw_text}>>>")
     return None
 
-def parse_response_from_clean_json(clean_json_string, agent_name_for_debug="Agent"):
-    try:
-        parsed = json.loads(clean_json_string)
-        return parsed.get("response", ""), parsed.get("action", "none")
-    except Exception as e:
-        if VERBOSE_LOGGING: print(f"ERROR PARSING CLEAN JSON ({agent_name_for_debug}): {e} on string: <<<{clean_json_string}>>>")
-        return f"Error parsing internal JSON for {agent_name_for_debug}", "none"
+def send_message(prompt_text, source, target_agent, possible_actions):
+    """Handles all API communications, ensuring correct history management."""
+    url, headers = f"{BASE_URL}/chat/completions", {'Content-Type': 'application/json', 'Authorization': f'Bearer {API_KEY}'}
+    source_name = source if isinstance(source, str) else source["name"]
 
-def send_message(prompt_text, speaking_agent, listening_agent, possible_actions):
-    url = f"{BASE_URL}/chat/completions"
-    headers = {'Content-Type': 'application/json', 'Authorization': f'Bearer {API_KEY}'}
-    context_str = f"located {LOCATIONS[listening_agent['location']]['context']}"
-    actions_str = ", ".join(possible_actions)
-    message_payload_obj = {"input": prompt_text, "context": context_str, "possibleAction": actions_str}
-    message_payload_str = json.dumps(message_payload_obj)
-    user_content_for_llm = f"{speaking_agent['name']} says: {message_payload_str}"
-    user_message_to_append = {"role": "user", "content": user_content_for_llm}
-    listening_agent["history"].append(user_message_to_append)
-    print(f"\n[TO {listening_agent['name']} ({listening_agent['location']})]: {user_content_for_llm}")
-    if VERBOSE_LOGGING:
-        print(f"--- History for {listening_agent['name']} now length {len(listening_agent['history'])} (Full dump in print_agent_state) ---")
-    data = {
-        'model': MODEL_NAME, 'messages': listening_agent["history"],
-        'max_tokens': 4000, 'temperature': 0.5
-    }
+    payload_obj = {"input": prompt_text, "context": f"{LOCATIONS[target_agent['location']]['context']}", "possibleAction": ", ".join(possible_actions)}
+    user_content = f"{source_name} says: {json.dumps(payload_obj)}"
+
+    target_agent["history"].append({"role": "user", "content": user_content})
+    print(f"\n[TO {target_agent['name']} from {source_name}]: {user_content}")
+
+    if len(target_agent["history"]) > MAX_HISTORY_MESSAGES:
+        target_agent["history"] = [target_agent["history"][0]] + target_agent["history"][-MAX_HISTORY_MESSAGES:]
+
+    data = {'model': MODEL_NAME, 'messages': target_agent["history"], 'max_tokens': MAX_RESPONSE_TOKENS, 'temperature': 0.5}
+
     try:
-        response = requests.post(url, headers=headers, json=data)
+        response = requests.post(url, headers=headers, json=data, timeout=120)
         response.raise_for_status()
-        response_json = response.json()
-        raw_assistant_message = response_json['choices'][0]['message']['content'].strip()
-        print(f"[RAW FROM {listening_agent['name']}]: {raw_assistant_message}")
-        clean_json_for_history = extract_clean_json_for_history(raw_assistant_message, listening_agent['name'])
-        if clean_json_for_history:
-            listening_agent["history"].append({"role": "assistant", "content": clean_json_for_history})
-            return parse_response_from_clean_json(clean_json_for_history, listening_agent['name'])
+        raw_message = response.json()['choices'][0]['message']['content'].strip()
+        print(f"[RAW FROM {target_agent['name']}]: {raw_message}")
+
+        clean_json_str = extract_clean_json(raw_message, target_agent['name'])
+        if clean_json_str:
+            target_agent["history"].append({"role": "assistant", "content": clean_json_str})
+            parsed = json.loads(clean_json_str)
+            return parsed.get("response", ""), parsed.get("action", "none")
         else:
-            error_response = f"[{listening_agent['name']} output unparseable: {raw_assistant_message[:50]}...]"
-            fallback_json_content = json.dumps({"response": error_response, "action": "none"})
-            listening_agent["history"].append({"role": "assistant", "content": fallback_json_content})
-            print(f"WARNING ({listening_agent['name']}): Storing fallback due to parsing failure of raw output.")
-            return error_response, "none"
-    except requests.exceptions.RequestException as e:
-        print(f"[NETWORK ERROR sending to {listening_agent['name']}]: {e}")
-        return "Network error occurred", "none"
-    except (KeyError, IndexError) as e:
-        print(f"[API RESPONSE ERROR for {listening_agent['name']}]: {e}. Response: {response.text if 'response' in locals() else 'No response object'}")
-        return "API response format error", "none"
+            raise ValueError(f"Robust parser failed to extract JSON.")
+
     except Exception as e:
-        print(f"[UNEXPECTED ERROR sending to {listening_agent['name']}]: {e}")
-        return "Unexpected error", "none"
+        print(f"[ERROR] for {target_agent['name']}: {e}")
+        fallback_json = json.dumps({"response": f"An error occurred, defaulting to 'wait'.", "action": "wait"})
+        target_agent["history"].append({"role": "assistant", "content": fallback_json})
+        return "An error occurred, defaulting to 'wait'.", "wait"
 
-def system_interaction(prompt_text, agent, current_world_actions):
-    url = f"{BASE_URL}/chat/completions"
-    headers = {'Content-Type': 'application/json', 'Authorization': f'Bearer {API_KEY}'}
-    context_str = f"located {LOCATIONS[agent['location']]['context']}"
-    actions_str = ", ".join(current_world_actions)
-    message_payload_obj = {"input": prompt_text, "context": context_str, "possibleAction": actions_str}
-    message_payload_str = json.dumps(message_payload_obj)
-    user_content_for_llm = f"Game System: {message_payload_str}"
-    user_message_to_append = {"role": "user", "content": user_content_for_llm}
-    agent["history"].append(user_message_to_append)
-    print(f"\n[GAME SYSTEM INTERACTION FOR {agent['name']} ({agent['location']})]: {user_content_for_llm}")
-    if VERBOSE_LOGGING:
-        print(f"--- History for {agent['name']} (System Interaction) now length {len(agent['history'])} ---")
-    data = {
-        'model': MODEL_NAME, 'messages': agent["history"],
-        'max_tokens': 4000, 'temperature': 0.5
-    }
-    try:
-        response = requests.post(url, headers=headers, json=data)
-        response.raise_for_status()
-        response_json = response.json()
-        raw_assistant_message = response_json['choices'][0]['message']['content'].strip()
-        print(f"[RAW FROM {agent['name']} (Game System Interaction)]: {raw_assistant_message}")
-        clean_json_for_history = extract_clean_json_for_history(raw_assistant_message, agent['name'])
-        if clean_json_for_history:
-            agent["history"].append({"role": "assistant", "content": clean_json_for_history})
-            return parse_response_from_clean_json(clean_json_for_history, agent['name'])
-        else:
-            error_response = f"[{agent['name']} output unparseable: {raw_assistant_message[:50]}...]"
-            fallback_json_content = json.dumps({"response": error_response, "action": "none"})
-            agent["history"].append({"role": "assistant", "content": fallback_json_content})
-            print(f"WARNING ({agent['name']}): Storing fallback due to parsing failure for system interaction.")
-            return error_response, "none"
-    except Exception as e:
-        print(f"[ERROR in system_interaction for {agent['name']}]: {e}")
-        return "Error in system interaction", "none"
-
-def conv(agent1, agent2, initial_prompt_text):
-    print(f"\n===== {agent1['name']} talks to {agent2['name']} =====")
-    if VERBOSE_LOGGING: print_agent_state(agent1); print_agent_state(agent2)
-
-    agent1["in_conversation"] = True; agent1["conversation_partner"] = agent2["name"]
-    agent2["in_conversation"] = True; agent2["conversation_partner"] = agent1["name"]
-
-    conversation_actions = ["none", "leaveConversation"]
-
-    response_agent2, action_agent2 = send_message(initial_prompt_text, agent1, agent2, conversation_actions)
-    print(f"{agent2['name']} (to {agent1['name']}): {response_agent2} (Action: {action_agent2})")
-    if VERBOSE_LOGGING: print_agent_state(agent2)
-
-    if action_agent2 != "leaveConversation":
-        response_agent1, action_agent1 = send_message(response_agent2, agent2, agent1, conversation_actions)
-        print(f"{agent1['name']} (to {agent2['name']}): {response_agent1} (Action: {action_agent1})")
-        if VERBOSE_LOGGING: print_agent_state(agent1)
-
-        if action_agent1 == "leaveConversation":
-            print(f"→ {agent1['name']} chose to leave the conversation.")
-    else:
-        print(f"→ {agent2['name']} chose to leave the conversation.")
-        final_message_payload = {"input": response_agent2, "context": f"at {LOCATIONS[agent1['location']]['context']}", "possibleAction": "none"}
-        user_message_to_append = {"role": "user", "content": f"{agent2['name']} says: {json.dumps(final_message_payload)}"}
-        agent1["history"].append(user_message_to_append)
-        print(f"[INFO] {agent1['name']}'s history updated with {agent2['name']}'s final words.")
-
-    agent1["in_conversation"] = False; agent1["conversation_partner"] = None
-    agent2["in_conversation"] = False; agent2["conversation_partner"] = None
-
-    print(f"----- Conversation between {agent1['name']} and {agent2['name']} ended -----")
-    if VERBOSE_LOGGING: print_agent_state(agent1); print_agent_state(agent2)
-
-# --- FIX IS HERE: The `clear_history` function typo is corrected ---
-def clear_history(agent):
-    if agent["history"]:
-        personalized_system_content = BASE_SYSTEM_PROMPT + \
-                                  f"\n\n--- IMPORTANT INSTRUCTIONS FOR YOU, '{agent['name']}' ---\n" + \
-                                  f"1. You ARE the character named '{agent['name']}'. All your thoughts and words are from '{agent['name']}'s perspective.\n" + \
-                                  f"2. Your ENTIRE output for each turn MUST be a single, valid JSON object following the 'Your response format' shown above.\n" + \
-                                  f"3. Do NOT include any prefixes like '{agent['name']} says:', 'Char:', or your name before the opening '{{' of your JSON response.\n" + \
-                                  f"4. Do NOT add any text, dialogue, notes, or '###' markers before or after your single JSON object response.\n" + \
-                                  f"5. When responding to 'Game System:', you are still '{agent['name']}' and must follow all these rules."
-        agent["history"] = [{"role": "system", "content": personalized_system_content}]
-    print(f"\n[Memory (history) cleared for {agent['name']}]")
-    if VERBOSE_LOGGING: print_agent_state(agent)
-# --- END OF FIX ---
-
-def perform_action(agent, action_keyword, all_agents_list):
+# --- Main Simulation Logic (Unified and Clean) ---
+def perform_action(agent, action_keyword, all_agents, justification_text=""):
+    """Handles all agent actions, including initiating conversations in the open world."""
     print(f"→ {agent['name']} attempts action: {action_keyword}")
-    if action_keyword.startswith("go"):
-        if agent["in_conversation"]:
-            print(f"→ {agent['name']} cannot move while in conversation.")
-            return False
+
+    if action_keyword.startswith("talkTo"):
+        target_name = action_keyword.replace("talkTo", "")
+        target_agent = next((a for a in all_agents if a["name"] == target_name), None)
+
+        if target_agent and target_agent["location"] == agent["location"] and not agent.get("in_conversation"):
+            opening_line = justification_text if justification_text.strip() else f"Hello {target_name}."
+            conv_logic(agent, target_agent, opening_line)
+        else:
+            print(f"→ Action failed: {target_name} is not here or one of you is busy.")
+
+    elif action_keyword.startswith("go"):
         destination = action_keyword.replace("go", "")
         if destination in LOCATIONS:
             agent["location"] = destination
             print(f"→ {agent['name']} moved to {destination}.")
-            return True
         else:
-            print(f"→ {agent['name']} tried to go to invalid location: {destination}")
-            return False
-    elif action_keyword == "leaveConversation":
-        # The logic to set in_conversation to False is now handled robustly inside conv()
-        if agent["in_conversation"]:
-            print(f"→ {agent['name']} indicates leaving conversation.")
-        else:
-             print(f"→ {agent['name']} chose leaveConversation but was not in one.")
-        return True
-    elif action_keyword in ["rest", "sleep", "wait", "order", "none"]:
-        if action_keyword != "none": print(f"→ {agent['name']} performs: {action_keyword}")
-        return True
+            print(f"→ Action failed: Cannot go to {destination}.")
     else:
-        print(f"→ {agent['name']} chose unknown or unhandled action: {action_keyword}")
-        return False
+        print(f"→ {agent['name']} performs action: {action_keyword}")
 
-def get_available_actions_for_agent(current_agent, all_agents_list):
-    if current_agent["in_conversation"]:
-        return ["none", "leaveConversation"]
-    else:
-        actions = LOCATIONS[current_agent["location"]]["actions"].copy()
-        for other_agent in all_agents_list:
-            if other_agent["name"] != current_agent["name"] and \
-               other_agent["location"] == current_agent["location"] and \
-               not other_agent["in_conversation"]:
-                actions.append(f"talkTo{other_agent['name']}")
-        return list(set(actions))
+def conv_logic(agent1, agent2, initial_prompt_text):
+    """Handles a controlled, two-turn conversation."""
+    print(f"\n===== Conversation Start: {agent1['name']} -> {agent2['name']} =====")
+    agent1["in_conversation"], agent2["in_conversation"] = True, True
+    agent1["conversation_partner"], agent2["conversation_partner"] = agent2["name"], agent1["name"]
+
+    conversation_actions = ["none", "leaveConversation"]
+
+    response_agent2, action_agent2 = send_message(initial_prompt_text, agent1, agent2, conversation_actions)
+    print(f"{agent2['name']} replies: \"{response_agent2}\" (Action: {action_agent2})")
+
+    if action_agent2 != "leaveConversation":
+        response_agent1, action_agent1 = send_message(response_agent2, agent2, agent1, conversation_actions)
+        print(f"{agent1['name']} replies: \"{response_agent1}\" (Action: {action_agent1})")
+
+    agent1["in_conversation"], agent2["in_conversation"] = False, False
+    agent1["conversation_partner"], agent2["conversation_partner"] = None, None
+    print(f"--- Conversation End ---")
 
 def run_simulation(num_steps=3):
-    script_name = __file__ if '__file__' in globals() else 'v0.4.6_clean_history.py'
-    print(f"=== {script_name} FREE OPEN-WORLD SIMULATION ===\n")
-    Bob = create_agent("Bob", "Park")
-    Alice = create_agent("Alice", "Park")
-    Chloe = create_agent("Chloe", "Cafe")
-    all_agents = [Bob, Alice, Chloe]
+    """The main open-world simulation loop."""
+    print(f"\n\n=== FREE OPEN-WORLD SIMULATION ===\n")
+    all_agents = [create_agent("Bob", "Park"), create_agent("Alice", "Park"), create_agent("Chloe", "Cafe")]
 
-    print("--- Seeding initial memory: Bob tells Alice about 'dark red' ---")
-    conv(Bob, Alice, "Hello Alice, my name is Bob, and my favorite color is dark red. What's your favorite season?")
-    if VERBOSE_LOGGING: print_agent_state(Alice)
+    print("--- Seeding initial memory for open world... ---")
+    conv_logic(all_agents[0], all_agents[1], "Hello Alice, my name is Bob, and my favorite color is dark red.")
+    print("--- End of initial memory seeding ---\n")
     advance_time(5)
-    print("--- End of initial memory seeding ---")
 
     for step in range(num_steps):
-        current_time_str = format_time()
-        print(f"\n\n\n--- World Step {step + 1}/{num_steps} | Time: {current_time_str} ---")
+        print(f"\n\n--- World Step {step + 1}/{num_steps} | Time: {format_time()} ---")
         for agent in all_agents:
             if agent["in_conversation"]:
-                if VERBOSE_LOGGING: print(f"Skipping {agent['name']}'s independent world turn; in conversation with {agent.get('conversation_partner', 'unknown')}.")
                 continue
+
             print(f"\n-- {agent['name']}'s Independent Turn ({agent['location']}) --")
-            if VERBOSE_LOGGING: print_agent_state(agent)
             available_actions = get_available_actions_for_agent(agent, all_agents)
-            situation_prompt = f"It is {current_time_str}. You are {agent['name']} currently at {LOCATIONS[agent['location']]['context']}. "
-            people_here = [p['name'] for p in all_agents if p['location'] == agent['location'] and p['name'] != agent['name'] and not p['in_conversation']]
-            if people_here: situation_prompt += "You see " + ", ".join(people_here) + " here. "
-            else: situation_prompt += "You don't see anyone else around right now. "
-            situation_prompt += "What do you want to do?"
-            response_text, chosen_action = system_interaction(situation_prompt, agent, available_actions)
-            print(f"{agent['name']} (thinking): \"{response_text}\" (Chosen Action: {chosen_action})")
-            if chosen_action.startswith("talkTo"):
-                target_name = chosen_action.replace("talkTo", "")
-                target_agent = next((a for a in all_agents if a["name"] == target_name), None)
-                if target_agent and target_agent["location"] == agent["location"] and \
-                   not target_agent["in_conversation"] and not agent["in_conversation"]:
-                    opening_line = response_text if response_text.strip() and not response_text.startswith("[") else f"Hello {target_name}, it's {agent['name']}. How are you doing?"
-                    conv(agent, target_agent, opening_line)
-                else:
-                    print(f"→ {agent['name']} tried to talk to {target_name}, but they are not available/here. Defaulting to 'wait'.")
-                    perform_action(agent, "wait", all_agents)
-            else:
-                perform_action(agent, chosen_action, all_agents)
-            if VERBOSE_LOGGING: print_agent_state(agent)
+            people_here = [a['name'] for a in all_agents if a['location'] == agent['location'] and a != agent]
+            situation_prompt = f"You are at {agent['location']}. You see: {', '.join(people_here) if people_here else 'no one'}. What do you want to do?"
+
+            response_text, chosen_action = send_message(situation_prompt, "Game System", agent, available_actions)
+            print(f"{agent['name']} decides: \"{response_text}\" (Action: {chosen_action})")
+            perform_action(agent, chosen_action, all_agents, response_text)
+
         advance_time(15)
 
     print("\n\n----- FINAL AGENT STATES AFTER SIMULATION -----")
@@ -356,24 +267,22 @@ def run_simulation(num_steps=3):
         print_agent_state(agent_obj)
     print("\n=== SIMULATION COMPLETE ===")
 
+# --- Main Execution ---
 if __name__ == "__main__":
-    Bob_s = create_agent("Bob", "Park")
-    Alice_s = create_agent("Alice", "Park")
-    Chloe_s = create_agent("Chloe", "Park")
+    # --- Test 1: Scripted Information Flow ---
+    print(f"\n=== SCRIPTED INFORMATION FLOW TEST ===\n")
+    bob_s = create_agent("Bob", "Park")
+    alice_s = create_agent("Alice", "Park")
+    chloe_s = create_agent("Chloe", "Park")
 
-    print(f"=== {__file__} SCRIPTED INFORMATION FLOW TEST ===\n")
-    # Set the global model name for this specific test if needed, or modify send_message to accept it.
-    # For now, we assume MODEL_NAME is set to the desired model for the test.
-
-    conv(Bob_s, Alice_s, "Hello Alice, my name is Bob, and my favorite color is dark red. What's your favorite season?")
+    conv_logic(bob_s, alice_s, "Hello Alice, my name is Bob, and my favorite color is dark red.")
     advance_time()
-    conv(Chloe_s, Alice_s, "Hi Alice, I'm Chloe. Can you tell me something interesting about Bob?")
+    conv_logic(chloe_s, alice_s, "Hi Alice, can you tell me anything about Bob?")
     advance_time()
-    clear_history(Alice_s)
+    clear_history(alice_s)
     advance_time()
-    conv(Bob_s, Chloe_s, "Hello Chloe, it's Bob. Did Alice tell you anything about me?")
+    conv_logic(bob_s, chloe_s, "Hello Chloe, did Alice tell you anything about me?")
     print("\n--- End of SCRIPTED INFORMATION FLOW TEST ---\n")
 
-    # The open-world simulation can be run separately if desired
-    print("\n--- Starting OPEN-WORLD SIMULATION ---\n")
+    # --- Test 2: Open-World Simulation ---
     run_simulation(num_steps=3)
