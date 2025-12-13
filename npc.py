@@ -1,23 +1,28 @@
-# npc.py - NPCAgent v0.5.9 - stable baseline: placeholder-leak fix + UTF-8 fix
+# npc.py - NPCAgent v0.6.2 - sleep pressure (home after 21:00) + diary inject-then-remove + facts-ARE-memories
 import requests
 import json
 import re
 import time
 
 # --- Configuration ---
-VERBOSE_LOGGING = True
+VERBOSE_LOGGING = False
 BASE_URL = "http://127.0.0.1:5000/v1"
 API_KEY = "no-api-local"
-MODEL_NAME = 'grok-code-fast-1' # placholder
+MODEL_NAME = 'grok-code-fast-1'
 MAX_HISTORY_MESSAGES = 25
 MAX_RESPONSE_TOKENS = 32000
 MAX_DIARY_ENTRIES = 15
 DIARY_SUMMARIZE_COUNT = 10
 
+# --- Economy Config ---
+STARTING_MONEY = {"Bob": 50, "Alice": 30, "Chloe": 20}
+ORDER_COST = 10
+WORK_PAY = 15
+
 # --- World State ---
 current_time = {"hour": 8, "minute": 0, "day": 1}
 LOCATIONS = {
-    "Park": {"context": "at the park", "actions": ["goHome", "goCafe"]},
+    "Park": {"context": "at the park", "actions": ["goHome", "goCafe", "work"]},
     "Home": {"context": "at home", "actions": ["sleep", "goPark", "goCafe"]},
     "Cafe": {"context": "at the cafe", "actions": ["order", "goHome", "goPark"]}
 }
@@ -27,7 +32,9 @@ BASE_SYSTEM_PROMPT = """You are {name}, an NPC character in an interactive game-
 
 Your task is to respond to all situations by generating only one valid single-line JSON in format: {{"response": "your_reasoning_then_speech", "action": "keyword_from_possibleAction"}}
 
-You desire meaningful connections and novel learn experiences, avoiding repetitive patterns that don't advance your goals. You must balance socializing with the need reflect and sleep with yours notes to form memories.
+You desire meaningful connections and novel experiences. You get restless doing the same thing repeatedly - if you've been talking to the same person or staying in one place too long, try something different. Balance socializing with rest and sleep to form memories.
+
+Facts in your context ARE your memories - you own them, you know them.
 
 - The "response" field reflects natural talking reasoning that flows from current goals and feelings, considering memories observations, opinions, judgments, questions about others or social consequences, then shares thoughts that help/answer/decide actions seamlessly. Gathering more information, learning from failure's root cause. Quote memories exactly as learned, never invent facts/names/places not existing. If uncertain, say "I don't know".
 - The "action" keyword trigger MUST be ONE chosen from "possibleAction" list provided in latest incoming message. No other prefixes/suffixes or text.
@@ -72,6 +79,9 @@ def create_agent(name, location="Park"):
     return {
         "name": name,
         "location": location,
+        "money": STARTING_MONEY.get(name, 30),
+        "location_hours": 0,
+        "last_location": location,
         "history": [{"role": "system", "content": BASE_SYSTEM_PROMPT.format(name=name)}],
         "diary": [],
         "in_conversation": False,
@@ -83,20 +93,16 @@ def create_agent(name, location="Park"):
 
 def extract_clean_json(raw_text, agent_name="Agent"):
     """Robust JSON extractor handling markdown blocks and various formats"""
-    # First check for markdown code blocks
     markdown_match = re.search(r'```(?:json)?\s*(\{.*?\})\s*```', raw_text, re.DOTALL)
     if markdown_match:
         text_to_parse = markdown_match.group(1).strip()
     else:
         text_to_parse = raw_text
 
-    # Remove think tags
     cleaned_text = re.sub(r'<think>.*?</think>', '', text_to_parse, flags=re.DOTALL | re.IGNORECASE)
 
-    # Try line by line
     for line in cleaned_text.split('\n'):
         line = line.strip()
-        # Remove common prefixes
         line = re.sub(r'^\s*\w+\s*says?\s*:\s*', '', line, flags=re.IGNORECASE)
         line = re.sub(r'^\s*\w+\s*:\s*', '', line)
 
@@ -119,7 +125,6 @@ def extract_clean_json(raw_text, agent_name="Agent"):
             if VERBOSE_LOGGING:
                 print(f"DEBUG EXTRACTOR ({agent_name}): Failed line: '{line[:50]}...'")
 
-    # Final attempt on whole cleaned text
     try:
         start = cleaned_text.find('{')
         end = cleaned_text.rfind('}') + 1
@@ -138,33 +143,31 @@ def extract_clean_json(raw_text, agent_name="Agent"):
     return None
 
 def send_message(prompt_text, source, target_agent, possible_actions):
-    """Unified communication handler"""
+    """Unified communication handler with money in context"""
     url = f"{BASE_URL}/chat/completions"
     headers = {'Content-Type': 'application/json', 'Authorization': f'Bearer {API_KEY}'}
     source_name = source if isinstance(source, str) else source["name"]
 
-    # Build message - support both agent and summary mode
     if isinstance(target_agent, dict):
-        context = f"located {LOCATIONS[target_agent['location']]['context']}, It's {format_time()}."
+        # Include money in context
+        location_ctx = LOCATIONS[target_agent['location']]['context']
+        context = f"located {location_ctx}, own ${target_agent['money']}, It's {format_time()}."
         payload = {"input": prompt_text, "context": context, "possibleAction": ", ".join(possible_actions)}
         user_content = f"{source_name} says: {json.dumps(payload)}"
 
         target_agent["history"].append({"role": "user", "content": user_content})
         if VERBOSE_LOGGING: print(f"\n[TO {target_agent['name']}]: {user_content}")
 
-        # Manage history size
         if len(target_agent["history"]) > MAX_HISTORY_MESSAGES + 1:
             target_agent["history"] = [target_agent["history"][0]] + target_agent["history"][-(MAX_HISTORY_MESSAGES):]
 
         messages = target_agent["history"]
         agent_name = target_agent['name']
     else:
-        # Direct prompt mode for summaries
         messages = [{"role": "user", "content": prompt_text}]
         agent_name = "Summary"
         if VERBOSE_LOGGING: print(f"\n[SUMMARY REQUEST]: {prompt_text[:50]}...")
 
-    # API call
     data = {
         'model': MODEL_NAME,
         'messages': messages,
@@ -177,24 +180,23 @@ def send_message(prompt_text, source, target_agent, possible_actions):
     for attempt in range(3):
         try:
             if attempt > 0:
-                time.sleep(2 ** attempt)  # Exponential backoff: 2s, 4s
+                time.sleep(2 ** attempt)
             response = requests.post(url, headers=headers, json=data, timeout=120)
             response.raise_for_status()
             msg = response.json()['choices'][0]['message']
             raw_message = msg.get('content', '').strip()
-            if not raw_message and msg.get('reasoning'):  # Fallback to reasoning if content empty
+            if not raw_message and msg.get('reasoning'):
                 raw_message = msg['reasoning'].strip()
             if raw_message:
                 if VERBOSE_LOGGING: print(f"[RAW FROM {agent_name}]: {raw_message}")
                 break
         except requests.exceptions.HTTPError as e:
             if e.response.status_code == 429 and attempt < 2:
-                time.sleep(5)  # Rate limit: wait 5s
+                time.sleep(5)
                 continue
         except Exception:
             pass
     try:
-
         if agent_name == "Summary":
             return raw_message[:100], "none"
 
@@ -286,7 +288,7 @@ def get_available_actions(agent, all_agents):
     return list(set(actions))
 
 def perform_action(agent, action, all_agents, response_text=""):
-    """Execute agent actions - returns (success, failure_message)"""
+    """Execute agent actions with economy - returns (success, failure_message)"""
     print(f"-> {agent['name']} attempts: {action}")
 
     if action == "none":
@@ -335,18 +337,31 @@ def perform_action(agent, action, all_agents, response_text=""):
                 "day": current_time["day"],
                 "note": response_text[:150]
             })
-
             manage_diary_entries(agent)
-
             agent["asleep"] = True
             agent["sleep_remaining_hours"] = 8
-
             print(f"-> {agent['name']} sleeps for 8 hours. Diary: \"{response_text[:100]}...\"")
             return True, None
 
     elif action == "order":
-        print(f"-> {agent['name']} orders at the cafe")
-        return True, None
+        if agent["money"] >= ORDER_COST:
+            agent["money"] -= ORDER_COST
+            print(f"-> {agent['name']} orders at cafe (${ORDER_COST}). Balance: ${agent['money']}")
+            return True, None
+        else:
+            msg = f"can't afford food (${ORDER_COST} needed, have ${agent['money']})"
+            print(f"-> Failed: {msg}")
+            return False, msg
+
+    elif action == "work":
+        if agent["location"] != "Park":
+            msg = "can only work at park"
+            print(f"-> Failed: {msg}")
+            return False, msg
+        else:
+            agent["money"] += WORK_PAY
+            print(f"-> {agent['name']} worked and earned ${WORK_PAY}. Balance: ${agent['money']}")
+            return True, None
 
     elif action == "leaveConversation":
         print(f"-> {agent['name']} leaves conversation")
@@ -385,60 +400,59 @@ def update_sleep_states(all_agents, hours_passed):
                 agent["just_woke_up"] = True
                 print(f"-> {agent['name']} finished sleeping (8 hours complete)")
 
-def run_simulation(num_days=2):
-    """Main simulation loop with proper sleep handling"""
-    print(f"\n=== OPEN-WORLD SIMULATION ({num_days} days) ===\n")
+def update_location_tracking(agent):
+    """Track how long agent has been at same location"""
+    if agent["location"] == agent.get("last_location"):
+        agent["location_hours"] += 0.5
+    else:
+        agent["location_hours"] = 0
+    agent["last_location"] = agent["location"]
 
-    # Create agents
+def run_simulation(num_days=2):
+    """Main simulation loop with economy and anti-repetition"""
+    print(f"\n=== OPEN-WORLD SIMULATION v0.6.0 ({num_days} days) ===")
+    print(f"Economy: Bob=${STARTING_MONEY['Bob']}, Alice=${STARTING_MONEY['Alice']}, Chloe=${STARTING_MONEY['Chloe']}")
+    print(f"Order costs ${ORDER_COST}, Work pays ${WORK_PAY}\n")
+
     all_agents = [
         create_agent("Bob", "Park"),
         create_agent("Alice", "Park"),
         create_agent("Chloe", "Cafe")
     ]
 
-    # Initial memory seed
     print("--- Initial Setup ---")
     conv(all_agents[0], all_agents[1], "Hello Alice, my name is Bob, and my favorite color is dark red.")
     advance_time(5)
 
-    # Main simulation loop
     start_day = current_time["day"]
     end_day = start_day + num_days
 
     while current_time["day"] < end_day:
-        # Skip to morning if needed
         if current_time["hour"] < 6:
             while current_time["hour"] < 6:
                 advance_time(60)
 
         print(f"\n\n========== DAY {current_time['day']} ==========")
 
-        # Main day loop - run until midnight
         while current_time["hour"] < 24:
-            # Check if all agents are asleep
             all_asleep = all(agent.get("asleep", False) for agent in all_agents)
 
             if all_asleep:
-                # Skip to morning
                 print("\n--- All agents asleep, skipping to morning ---")
                 hours_to_morning = (24 - current_time["hour"]) + 6
-                update_sleep_states(all_agents, hours_to_morning)  # Wake agents after 8hr sleep
+                update_sleep_states(all_agents, hours_to_morning)
                 advance_time(hours_to_morning * 60)
                 break
 
-            # Stop at 23:30 to prevent day overflow
             if current_time["hour"] == 23 and current_time["minute"] >= 30:
-                # Advance to 6am next day
                 print("\n--- End of day, advancing to next morning ---")
-                advance_time(30 + 6 * 60)  # 30min to midnight + 6 hours to morning
+                advance_time(30 + 6 * 60)
                 break
 
             print(f"\n--- Time: {format_time()} ---")
 
-            # Update sleep states
             update_sleep_states(all_agents, 0.5)
 
-            # Each agent gets a turn
             for agent in all_agents:
                 if agent.get("asleep"):
                     if VERBOSE_LOGGING:
@@ -448,18 +462,22 @@ def run_simulation(num_days=2):
                 if agent["in_conversation"]:
                     continue
 
-                # Check if agent just woke up
+                # Update location tracking for anti-repetition
+                update_location_tracking(agent)
+
                 if agent.get("just_woke_up"):
                     print(f"\n{agent['name']} just woke up:")
                     inject_morning_diary(agent, all_agents)
                     agent["just_woke_up"] = False
                     continue
 
-                print(f"\n{agent['name']}'s turn ({agent['location']}):")
+                print(f"\n{agent['name']}'s turn ({agent['location']}, ${agent['money']}):")
 
-                # Bedtime prompt with goal setting
+                # Build prompt with sleep pressure
                 if agent["location"] == "Home" and current_time["hour"] >= 22:
                     prompt = "It's late. If you sleep now do also reflect on today's key learning and state ONE specific goal for tomorrow or long-term. Or go out?"
+                elif agent["location"] != "Home" and current_time["hour"] >= 21:
+                    prompt = "It's getting late. What do you want to do?"
                 else:
                     prompt = "What do you want to do?"
 
@@ -467,10 +485,8 @@ def run_simulation(num_days=2):
                 response, action = send_message(prompt, "Game System", agent, actions)
                 print(f"{agent['name']}: \"{response}\" (Action: {action})")
 
-                # Perform action and handle failures
                 success, failure_msg = perform_action(agent, action, all_agents, response)
 
-                # If action failed, inform agent immediately
                 if not success and failure_msg:
                     failure_prompt = f"Your action '{action}' failed because {failure_msg}. You waited instead. What do you want to do?"
                     response, action = send_message(failure_prompt, "Game System", agent, actions)
@@ -479,18 +495,17 @@ def run_simulation(num_days=2):
 
             advance_time(30)
 
-    # Final states
     print("\n\n=== FINAL STATES ===")
     for agent in all_agents:
         print(f"\n{agent['name']}:")
         print(f"  Location: {agent['location']}")
+        print(f"  Money: ${agent['money']}")
         print(f"  Diary entries: {len(agent.get('diary', []))}")
         if agent.get("diary"):
             print(f"  Latest: \"{agent['diary'][-1]['note'][:50]}...\"")
 
 # --- Main Execution ---
 if __name__ == "__main__":
-    # Quick test
     print("=== INFORMATION FLOW TEST ===")
     bob = create_agent("Bob", "Park")
     alice = create_agent("Alice", "Park")
@@ -502,6 +517,5 @@ if __name__ == "__main__":
     advance_time()
     conv(bob, chloe, "Hello Chloe, did Alice tell you anything about me?")
 
-    # Full simulation
     print("\n\n")
     run_simulation(num_days=2)
