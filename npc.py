@@ -1,4 +1,4 @@
-# npc.py - NPCAgent v0.5.8 - diary memory across days (sleep writes a note, morning reminder, auto-summarize) + multi-day sim + sleep mechanic; v0.5.8-stamps
+# npc.py - NPCAgent v0.5.9 - stable baseline: placeholder-leak fix + UTF-8 fix
 import requests
 import json
 import re
@@ -7,10 +7,10 @@ import time
 # --- Configuration ---
 VERBOSE_LOGGING = True
 BASE_URL = "http://127.0.0.1:5000/v1"
-API_KEY = "your_api_key"
-MODEL_NAME = 'llama-2-13b'
+API_KEY = "no-api-local"
+MODEL_NAME = 'grok-code-fast-1' # placholder
 MAX_HISTORY_MESSAGES = 25
-MAX_RESPONSE_TOKENS = 100
+MAX_RESPONSE_TOKENS = 32000
 MAX_DIARY_ENTRIES = 15
 DIARY_SUMMARIZE_COUNT = 10
 
@@ -29,19 +29,19 @@ Your task is to respond to all situations by generating only one valid single-li
 
 You desire meaningful connections and novel learn experiences, avoiding repetitive patterns that don't advance your goals. You must balance socializing with the need reflect and sleep with yours notes to form memories.
 
-- The "response" field reflects natural talking reasoning that flows from current goals and feelings, considering memories observations, opinions, judgments, questions about others or social consequences, then shares thoughts that help/answer/decide actions seamlessly. Gathering more information, learning from failure's root cause. Quote memories exactly as learned, never invent facts. If uncertain, say "I don't know".
+- The "response" field reflects natural talking reasoning that flows from current goals and feelings, considering memories observations, opinions, judgments, questions about others or social consequences, then shares thoughts that help/answer/decide actions seamlessly. Gathering more information, learning from failure's root cause. Quote memories exactly as learned, never invent facts/names/places not existing. If uncertain, say "I don't know".
 - The "action" keyword trigger MUST be ONE chosen from "possibleAction" list provided in latest incoming message. No other prefixes/suffixes or text.
 
 ---
 EXAMPLES:
 <START>
 <START>
-[Speaker A] says: {{"input": "Hello, my name is [Speaker A], and I enjoy collecting stamps.", "context": "located at the park", "possibleAction": "none, leaveConversation"}}
-{{"response": "A new social person! Greeting for friendship is useful, found you here. I'll remember you enjoy collecting stamps. Nice to meet you [Speaker A].", "action": "none"}}
+[Speaker A] says: {{"input": "Hello, my name is [Speaker A], and I enjoy [HOBBY].", "context": "located at the park", "possibleAction": "none, leaveConversation"}}
+{{"response": "A new social person! Greeting for friendship is useful, found you here. I'll remember you enjoy [HOBBY]. Nice to meet you [Speaker A].", "action": "none"}}
 <START>
 <START>
 [Speaker B] says: {{"input": "Do you know what [Speaker A] enjoys and what their favorite color is?", "context": "located at the park", "possibleAction": "none, leaveConversation"}}
-{{"response": "From what I know, they told me they enjoy collecting stamps. I don't know their favorite color, would need to ask them, but I have things planned. Goodbye!", "action": "leaveConversation"}}
+{{"response": "From what I know, they told me they enjoy [HOBBY]. I don't know their favorite color, would need to ask them, but I have things planned. Goodbye!", "action": "leaveConversation"}}
 <START>
 <START>
 Game System: {{"input": "What should you do?", "context": "located at the park", "possibleAction": "none, goHome, goCafe"}}
@@ -150,7 +150,7 @@ def send_message(prompt_text, source, target_agent, possible_actions):
         user_content = f"{source_name} says: {json.dumps(payload)}"
 
         target_agent["history"].append({"role": "user", "content": user_content})
-        print(f"\n[TO {target_agent['name']}]: {user_content}")
+        if VERBOSE_LOGGING: print(f"\n[TO {target_agent['name']}]: {user_content}")
 
         # Manage history size
         if len(target_agent["history"]) > MAX_HISTORY_MESSAGES + 1:
@@ -162,21 +162,38 @@ def send_message(prompt_text, source, target_agent, possible_actions):
         # Direct prompt mode for summaries
         messages = [{"role": "user", "content": prompt_text}]
         agent_name = "Summary"
-        print(f"\n[SUMMARY REQUEST]: {prompt_text[:50]}...")
+        if VERBOSE_LOGGING: print(f"\n[SUMMARY REQUEST]: {prompt_text[:50]}...")
 
     # API call
     data = {
         'model': MODEL_NAME,
         'messages': messages,
         'max_tokens': 30 if agent_name == "Summary" else MAX_RESPONSE_TOKENS,
-        'temperature': 0.3 if agent_name == "Summary" else 0.5
+        'temperature': 0.3 if agent_name == "Summary" else 0.5,
+        'reasoning': {'enabled': True}
     }
 
+    raw_message = ""
+    for attempt in range(3):
+        try:
+            if attempt > 0:
+                time.sleep(2 ** attempt)  # Exponential backoff: 2s, 4s
+            response = requests.post(url, headers=headers, json=data, timeout=120)
+            response.raise_for_status()
+            msg = response.json()['choices'][0]['message']
+            raw_message = msg.get('content', '').strip()
+            if not raw_message and msg.get('reasoning'):  # Fallback to reasoning if content empty
+                raw_message = msg['reasoning'].strip()
+            if raw_message:
+                if VERBOSE_LOGGING: print(f"[RAW FROM {agent_name}]: {raw_message}")
+                break
+        except requests.exceptions.HTTPError as e:
+            if e.response.status_code == 429 and attempt < 2:
+                time.sleep(5)  # Rate limit: wait 5s
+                continue
+        except Exception:
+            pass
     try:
-        response = requests.post(url, headers=headers, json=data, timeout=120)
-        response.raise_for_status()
-        raw_message = response.json()['choices'][0]['message']['content'].strip()
-        print(f"[RAW FROM {agent_name}]: {raw_message}")
 
         if agent_name == "Summary":
             return raw_message[:100], "none"
@@ -215,8 +232,7 @@ def manage_diary_entries(agent):
 
     agent["diary"] = [consolidated] + remaining
 
-    if VERBOSE_LOGGING:
-        print(f"[DIARY] Summarized days {day_range} for {agent['name']}")
+    if VERBOSE_LOGGING: print(f"[DIARY] Summarized days {day_range} for {agent['name']}")
 
 def remove_previous_diary_injection(agent):
     """Remove previous diary injection using tracked index"""
@@ -271,7 +287,7 @@ def get_available_actions(agent, all_agents):
 
 def perform_action(agent, action, all_agents, response_text=""):
     """Execute agent actions - returns (success, failure_message)"""
-    print(f"→ {agent['name']} attempts: {action}")
+    print(f"-> {agent['name']} attempts: {action}")
 
     if action == "none":
         return True, None
@@ -286,33 +302,33 @@ def perform_action(agent, action, all_agents, response_text=""):
             return True, None
         else:
             msg = f"{target_name} is not available to talk"
-            print(f"→ Failed: {msg}")
+            print(f"-> Failed: {msg}")
             return False, msg
 
     elif action.startswith("go"):
         if agent["in_conversation"]:
             msg = "cannot move while in conversation"
-            print(f"→ Failed: {msg}")
+            print(f"-> Failed: {msg}")
             return False, msg
 
         destination = action.replace("go", "")
         if destination in LOCATIONS:
             agent["location"] = destination
-            print(f"→ {agent['name']} moved to {destination}")
+            print(f"-> {agent['name']} moved to {destination}")
             return True, None
         else:
             msg = f"unknown location {destination}"
-            print(f"→ Failed: {msg}")
+            print(f"-> Failed: {msg}")
             return False, msg
 
     elif action == "sleep":
         if agent["location"] != "Home":
             msg = "can only sleep at home"
-            print(f"→ Failed: {msg}")
+            print(f"-> Failed: {msg}")
             return False, msg
         elif current_time["hour"] < 20:
             msg = f"can only sleep after 20:00 (it's {current_time['hour']:02d}:{current_time['minute']:02d})"
-            print(f"→ Failed: {msg}")
+            print(f"-> Failed: {msg}")
             return False, msg
         else:
             agent["diary"].append({
@@ -325,25 +341,25 @@ def perform_action(agent, action, all_agents, response_text=""):
             agent["asleep"] = True
             agent["sleep_remaining_hours"] = 8
 
-            print(f"→ {agent['name']} sleeps for 8 hours. Diary: \"{response_text[:100]}...\"")
+            print(f"-> {agent['name']} sleeps for 8 hours. Diary: \"{response_text[:100]}...\"")
             return True, None
 
     elif action == "order":
-        print(f"→ {agent['name']} orders at the cafe")
+        print(f"-> {agent['name']} orders at the cafe")
         return True, None
 
     elif action == "leaveConversation":
-        print(f"→ {agent['name']} leaves conversation")
+        print(f"-> {agent['name']} leaves conversation")
         return True, None
 
     else:
         msg = f"unknown action: {action}"
-        print(f"→ {msg}")
+        print(f"-> {msg}")
         return False, msg
 
 def conv(agent1, agent2, opening_text):
     """Handle two-turn conversation"""
-    print(f"\n===== {agent1['name']} → {agent2['name']} =====")
+    print(f"\n===== {agent1['name']} -> {agent2['name']} =====")
     agent1["in_conversation"] = True
     agent2["in_conversation"] = True
 
@@ -367,7 +383,7 @@ def update_sleep_states(all_agents, hours_passed):
                 agent["asleep"] = False
                 agent["sleep_remaining_hours"] = 0
                 agent["just_woke_up"] = True
-                print(f"→ {agent['name']} finished sleeping (8 hours complete)")
+                print(f"-> {agent['name']} finished sleeping (8 hours complete)")
 
 def run_simulation(num_days=2):
     """Main simulation loop with proper sleep handling"""
@@ -406,6 +422,7 @@ def run_simulation(num_days=2):
                 # Skip to morning
                 print("\n--- All agents asleep, skipping to morning ---")
                 hours_to_morning = (24 - current_time["hour"]) + 6
+                update_sleep_states(all_agents, hours_to_morning)  # Wake agents after 8hr sleep
                 advance_time(hours_to_morning * 60)
                 break
 
