@@ -1,4 +1,4 @@
-# npc.py - NPCAgent v0.6.2 - sleep pressure (home after 21:00) + diary inject-then-remove + facts-ARE-memories
+# npc.py - NPCAgent v0.7.13 - circular economy + aging-death + diary v3 + multi-turn conv; v0.7.11 base, fork-B morning diary
 import requests
 import json
 import re
@@ -6,49 +6,55 @@ import time
 
 # --- Configuration ---
 VERBOSE_LOGGING = False
-BASE_URL = "http://127.0.0.1:5000/v1"
-API_KEY = "no-api-local"
-MODEL_NAME = 'grok-code-fast-1'
-MAX_HISTORY_MESSAGES = 25
+SHOW_SUMMARY    = True   # always print diary consolidation (even when VERBOSE off) so the lossy compression is visible
+BASE_URL = "http://127.0.0.1:5000/v1"   # OAI_opencode.py port (local was http://127.0.0.1:5000/v1)
+API_KEY = "proxy-dont-need-it"
+MODEL_NAME = 'claude-opus-4-8'  # OpenAI-compatible model id
+MAX_HISTORY_MESSAGES = 50   # was 25; modest bump eases worst diary scroll-out while keeping diary-only memory meaningfully tested
 MAX_RESPONSE_TOKENS = 32000
-MAX_DIARY_ENTRIES = 15
-DIARY_SUMMARIZE_COUNT = 10
+
+# --- Diary v3 Config ---
+MAX_DIARY_ENTRIES = 15      # Keep last 15 days raw, then summarize oldest
+DIARY_SUMMARIZE_COUNT = 10  # Summarize 10 oldest when exceeds max
 
 # --- Economy Config ---
-STARTING_MONEY = {"Bob": 50, "Alice": 30, "Chloe": 20}
-ORDER_COST = 10
-WORK_PAY = 15
+STARTING_MONEY = {"Bob": 10, "Alice": 10, "Chloe": 10}  # Scarcity test ($10 showed cooperation in v0.7.7)
+ORDER_COST = 10   # Customer pays
+SERVE_PAY = 12    # Worker earns when customer orders (+$2 profit rewards coordination)
+
+# --- Aging Config ---
+DAYS_PER_YEAR = 28   # 1 year = 4 weeks: weeks stay sub-year, birthday ~monthly (not every day)
 
 # --- World State ---
 current_time = {"hour": 8, "minute": 0, "day": 1}
+pending_notices = {}  # {agent_name: [one-time notices (deaths, earnings) to announce at the agent's next turn]}
 LOCATIONS = {
-    "Park": {"context": "at the park", "actions": ["goHome", "goCafe", "work"]},
+    "Park": {"context": "at the park", "actions": ["goHome", "goCafe"]},  # social only
     "Home": {"context": "at home", "actions": ["sleep", "goPark", "goCafe"]},
-    "Cafe": {"context": "at the cafe", "actions": ["order", "goHome", "goPark"]}
+    "Cafe": {"context": "at the cafe", "actions": ["eat", "work", "goHome", "goPark"]}  # economy
 }
 
-# --- System Prompts ---
-BASE_SYSTEM_PROMPT = """You are {name}, an NPC character in an interactive game-simulated world. You think and respond only as {name}.
+# --- System Prompt (hand-tuned, verbatim; [HOBBY] -> "collecting stamps": concrete, impossible-in-world, non-adoptable per TODO#3) ---
+BASE_SYSTEM_PROMPT = """You are {name}, an NPC character in an interactive game-simulated world. You think and respond only as {name}. Not a robotic and overly polite helpful assistant.
 
 Your task is to respond to all situations by generating only one valid single-line JSON in format: {{"response": "your_reasoning_then_speech", "action": "keyword_from_possibleAction"}}
 
-You desire meaningful connections and novel experiences. You get restless doing the same thing repeatedly - if you've been talking to the same person or staying in one place too long, try something different. Balance socializing with rest and sleep to form memories.
+You consider meaningful connections and novel experiences. You get restless doing the same thing repeatedly - if you've been talking to the same person or staying in one place too long, try something different. Balance socializing with rest and sleep to form memories.
 
-Facts in your context ARE your memories - you own them, you know them.
-
-- The "response" field reflects natural talking reasoning that flows from current goals and feelings, considering memories observations, opinions, judgments, questions about others or social consequences, then shares thoughts that help/answer/decide actions seamlessly. Gathering more information, learning from failure's root cause. Quote memories exactly as learned, never invent facts/names/places not existing. If uncertain, say "I don't know".
+- The "response" field reflects natural talking reasoning that flows from current goals and feelings, considering memories observations, opinions, judgments, questions about others or social consequences, optionally in conv-omit own reasoning, then shares thoughts that help/answer/decide actions seamlessly. Gathering more information, learning from failure's root cause and adapt. Quote memories exactly as learned, never invent facts/names/places not existing. If uncertain, say "I don't know".
+- Facts in context ARE your memories. Vary greetings - mention facts only when relevant, not as greeting template. Be humanly multitask: current situation, make future plans and follow through, ask questions, explore and find opportunities when idle. Let craft persona through interactions and emotional - relationships evolve naturally (trust, loyalty, closeness, love vs distrust, distance, rivalry, betrayal - range not limited to these). Realize unexpected, leverage, negotiate, build upon ideas and democratize. Time: 1 year = 4 weeks.
 - The "action" keyword trigger MUST be ONE chosen from "possibleAction" list provided in latest incoming message. No other prefixes/suffixes or text.
 
 ---
 EXAMPLES:
 <START>
 <START>
-[Speaker A] says: {{"input": "Hello, my name is [Speaker A], and I enjoy [HOBBY].", "context": "located at the park", "possibleAction": "none, leaveConversation"}}
-{{"response": "A new social person! Greeting for friendship is useful, found you here. I'll remember you enjoy [HOBBY]. Nice to meet you [Speaker A].", "action": "none"}}
+[Speaker A] says: {{"input": "Hello, my name is [Speaker A], and I enjoy collecting stamps.", "context": "located at the park", "possibleAction": "none, leaveConversation"}}
+{{"response": "A new social person! Greeting for friendship is useful, found you here. I'll remember you enjoy collecting stamps. Nice to meet you [Speaker A].", "action": "none"}}
 <START>
 <START>
 [Speaker B] says: {{"input": "Do you know what [Speaker A] enjoys and what their favorite color is?", "context": "located at the park", "possibleAction": "none, leaveConversation"}}
-{{"response": "From what I know, they told me they enjoy [HOBBY]. I don't know their favorite color, would need to ask them, but I have things planned. Goodbye!", "action": "leaveConversation"}}
+{{"response": "From what I know, they told me they enjoy collecting stamps. I don't know their favorite color, would need to ask them, but I have things planned. Goodbye!", "action": "leaveConversation"}}
 <START>
 <START>
 Game System: {{"input": "What should you do?", "context": "located at the park", "possibleAction": "none, goHome, goCafe"}}
@@ -56,312 +62,258 @@ Game System: {{"input": "What should you do?", "context": "located at the park",
 <START>
 <START>"""
 
-SUMMARIZE_NOTE_PROMPT = """Summarize these diary entries in 15 words or less:
+# --- Diary Consolidation Prompt (NO agent context, simple summarization) ---
+SUMMARIZE_NOTE_PROMPT = """Summarize following notes in 25 words or less; output directly in single-line, no prefixes/suffixes:
 {entries}"""
 
 # --- Core Functions ---
 def format_time():
     return f"Day{current_time['day']} {current_time['hour']:02d}:{current_time['minute']:02d}"
 
+def agent_age(a): return a["age"] + (current_time["day"] - a["birth_day"]) // DAYS_PER_YEAR  # years lived; capacity = 100 - this
+
 def advance_time(minutes=30):
     global current_time
-    if VERBOSE_LOGGING: print(f"\n--- Advancing time by {minutes} minutes ---")
-    current_time["minute"] += minutes
-    hours_added = current_time["minute"] // 60
-    current_time["minute"] %= 60
-    current_time["hour"] += hours_added
-    if current_time["hour"] >= 24:
-        current_time["hour"] %= 24
-        current_time["day"] += 1
-        if VERBOSE_LOGGING: print(f"--- New Day: {current_time['day']} ---")
+    total = current_time["day"] * 1440 + current_time["hour"] * 60 + current_time["minute"] + minutes
+    current_time = {"hour": total % 1440 // 60, "minute": total % 60, "day": total // 1440}
 
-def create_agent(name, location="Park"):
+def create_agent(name, age=18, location="Park"):
     return {
         "name": name,
         "location": location,
         "money": STARTING_MONEY.get(name, 30),
-        "location_hours": 0,
-        "last_location": location,
+        "age": age,                  # years lived; energy capacity = 100 - age
+        "birth_day": current_time["day"],
+        "energy": 100 - age,         # start at this age's full capacity
+        "working": False,
+        "dead": False,
         "history": [{"role": "system", "content": BASE_SYSTEM_PROMPT.format(name=name)}],
         "diary": [],
         "in_conversation": False,
         "asleep": False,
         "sleep_remaining_hours": 0,
-        "diary_injection_index": None,
-        "just_woke_up": False
+        "just_woke_up": False,
+        "consecutive_action": {"name": None, "count": 0}  # Anti-loop tracking
     }
 
-def extract_clean_json(raw_text, agent_name="Agent"):
-    """Robust JSON extractor handling markdown blocks and various formats"""
-    markdown_match = re.search(r'```(?:json)?\s*(\{.*?\})\s*```', raw_text, re.DOTALL)
-    if markdown_match:
-        text_to_parse = markdown_match.group(1).strip()
-    else:
-        text_to_parse = raw_text
-
-    cleaned_text = re.sub(r'<think>.*?</think>', '', text_to_parse, flags=re.DOTALL | re.IGNORECASE)
-
-    for line in cleaned_text.split('\n'):
-        line = line.strip()
-        line = re.sub(r'^\s*\w+\s*says?\s*:\s*', '', line, flags=re.IGNORECASE)
-        line = re.sub(r'^\s*\w+\s*:\s*', '', line)
-
-        if not line or not ('{' in line and '}' in line):
-            continue
-
-        try:
-            start = line.find('{')
-            end = line.rfind('}') + 1
-            if start >= 0 and end > start:
-                json_str = line[start:end]
-                parsed = json.loads(json_str)
-                if "response" in parsed:
-                    if "action" not in parsed:
-                        if VERBOSE_LOGGING:
-                            print(f"INFO EXTRACTOR ({agent_name}): Missing 'action', defaulting to 'none'")
-                        parsed["action"] = "none"
-                    return json.dumps(parsed)
-        except json.JSONDecodeError:
-            if VERBOSE_LOGGING:
-                print(f"DEBUG EXTRACTOR ({agent_name}): Failed line: '{line[:50]}...'")
-
-    try:
-        start = cleaned_text.find('{')
-        end = cleaned_text.rfind('}') + 1
-        if start >= 0 and end > start:
-            json_str = cleaned_text[start:end]
-            parsed = json.loads(json_str)
-            if "response" in parsed:
-                if "action" not in parsed:
-                    parsed["action"] = "none"
-                return json.dumps(parsed)
-    except json.JSONDecodeError:
-        pass
-
-    if VERBOSE_LOGGING:
-        print(f"WARNING EXTRACTOR ({agent_name}): Could not extract JSON from: <<<{raw_text[:100]}...>>>")
-    return None
-
-def send_message(prompt_text, source, target_agent, possible_actions):
-    """Unified communication handler with money in context"""
+def llm_post(messages, max_tokens=MAX_RESPONSE_TOKENS, temperature=0.5, retries=50, timeout=120, label="LLM"):
+    """One chat-completions POST with `retries` attempts + exponential backoff capped at 5m.
+       retries=50 ~= 4h ride-out for long 429 cooldowns. send_message uses this default; manage_diary_entries=1 (fast-fail)."""
     url = f"{BASE_URL}/chat/completions"
     headers = {'Content-Type': 'application/json', 'Authorization': f'Bearer {API_KEY}'}
-    source_name = source if isinstance(source, str) else source["name"]
-
-    if isinstance(target_agent, dict):
-        # Include money in context
-        location_ctx = LOCATIONS[target_agent['location']]['context']
-        context = f"located {location_ctx}, own ${target_agent['money']}, It's {format_time()}."
-        payload = {"input": prompt_text, "context": context, "possibleAction": ", ".join(possible_actions)}
-        user_content = f"{source_name} says: {json.dumps(payload)}"
-
-        target_agent["history"].append({"role": "user", "content": user_content})
-        if VERBOSE_LOGGING: print(f"\n[TO {target_agent['name']}]: {user_content}")
-
-        if len(target_agent["history"]) > MAX_HISTORY_MESSAGES + 1:
-            target_agent["history"] = [target_agent["history"][0]] + target_agent["history"][-(MAX_HISTORY_MESSAGES):]
-
-        messages = target_agent["history"]
-        agent_name = target_agent['name']
-    else:
-        messages = [{"role": "user", "content": prompt_text}]
-        agent_name = "Summary"
-        if VERBOSE_LOGGING: print(f"\n[SUMMARY REQUEST]: {prompt_text[:50]}...")
-
-    data = {
-        'model': MODEL_NAME,
-        'messages': messages,
-        'max_tokens': 30 if agent_name == "Summary" else MAX_RESPONSE_TOKENS,
-        'temperature': 0.3 if agent_name == "Summary" else 0.5,
-        'reasoning': {'enabled': True}
-    }
-
-    raw_message = ""
-    for attempt in range(3):
+    data = {'model': MODEL_NAME, 'messages': messages, 'max_tokens': max_tokens, 'temperature': temperature}
+    data['reasoning'] = {'enabled': True}   # reasoning model (Nemotron); comment out for non-reasoning (Gemma)
+    for attempt in range(retries):
         try:
             if attempt > 0:
-                time.sleep(2 ** attempt)
-            response = requests.post(url, headers=headers, json=data, timeout=120)
+                wait = min(300, 60 * 2 ** (attempt - 1))  # exp backoff capped at 5m: 1,2,4,5,5... (cap stops high retry counts ballooning to days)
+                print(f"[RETRY] {label}: waiting {wait // 60}m before attempt {attempt+1}/{retries}")
+                time.sleep(wait)
+            response = requests.post(url, headers=headers, json=data, timeout=timeout)
             response.raise_for_status()
-            msg = response.json()['choices'][0]['message']
-            raw_message = msg.get('content', '').strip()
-            if not raw_message and msg.get('reasoning'):
-                raw_message = msg['reasoning'].strip()
-            if raw_message:
-                if VERBOSE_LOGGING: print(f"[RAW FROM {agent_name}]: {raw_message}")
-                break
-        except requests.exceptions.HTTPError as e:
-            if e.response.status_code == 429 and attempt < 2:
-                time.sleep(5)
+            payload = response.json()
+            if not payload.get('choices'):  # some endpoints return {"error":...} with HTTP 200 - don't crash
+                print(f"[API ERROR] {label}: no choices - {str(payload)[:200]} (attempt {attempt+1}/{retries})")
                 continue
-        except Exception:
-            pass
-    try:
-        if agent_name == "Summary":
-            return raw_message[:100], "none"
+            msg = payload['choices'][0]['message']
+            raw = (msg.get('content') or '').strip()
+            if not raw and msg.get('reasoning'):
+                raw = msg['reasoning'].strip()
+            if raw:
+                if VERBOSE_LOGGING: print(f"[RAW FROM {label}]: {raw}")
+                return raw
+        except requests.exceptions.HTTPError as e:
+            print(f"[API ERROR] {label}: HTTP {e.response.status_code} (attempt {attempt+1}/{retries})")
+        except requests.exceptions.RequestException as e:
+            print(f"[API ERROR] {label}: {type(e).__name__} (attempt {attempt+1}/{retries})")
+    return ""
 
-        clean_json = extract_clean_json(raw_message, agent_name)
-        if clean_json:
-            target_agent["history"].append({"role": "assistant", "content": clean_json})
-            parsed = json.loads(clean_json)
-            return parsed.get("response", ""), parsed.get("action", "none")
-        else:
-            raise ValueError("Failed to extract valid JSON")
+def extract_clean_json(raw_text, agent_name="Agent"):
+    def _iter_json_spans(t):  # balanced {...} spans, string-aware so braces/newlines inside "..." don't break it
+        depth = start = 0; in_str = esc = False
+        for i, c in enumerate(t):
+            if in_str: in_str, esc = not (c == '"' and not esc), c == '\\' and not esc
+            elif c == '"': in_str = True
+            elif c == '{': start, depth = (start if depth else i), depth + 1
+            elif c == '}' and depth and not (depth := depth - 1): yield t[start:i + 1]
+    text = re.sub(r'<think>.*?</think>', '', raw_text, flags=re.DOTALL | re.IGNORECASE)
+    result = None
+    for span in _iter_json_spans(text):  # keep the LAST valid {"response":...} (skips leaked reasoning/examples)
+        try:
+            parsed = json.loads(span)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(parsed, dict) and "response" in parsed:
+            if not isinstance(parsed.get("action"), str):  # coerce null/number/list/missing -> "none"
+                parsed["action"] = "none"
+            result = parsed
+    if result is not None:
+        return json.dumps(result)
+    if VERBOSE_LOGGING:
+        print(f"WARNING EXTRACTOR ({agent_name}): Could not extract JSON")
+    return None
 
-    except Exception as e:
-        print(f"[ERROR] {agent_name}: {e}")
-        if agent_name == "Summary":
-            return "Various events and meetings occurred", "none"
-        fallback = json.dumps({"response": "Error occurred", "action": "none"})
-        target_agent["history"].append({"role": "assistant", "content": fallback})
-        return "Error occurred", "none"
+def send_message(prompt_text, source, target_agent, possible_actions, all_agents=None):
+    source_name = source if isinstance(source, str) else source["name"]
+    location_ctx = LOCATIONS[target_agent['location']]['context']
 
+    # Visible workers info - only an agent AT the cafe can see who's behind the counter (no remote omniscience)
+    cafe_status = ""
+    if all_agents and target_agent['location'] == 'Cafe':
+        workers = [('you' if a['name'] == target_agent['name'] else a['name'])
+                   for a in all_agents if a['location'] == 'Cafe' and a.get('working', False)
+                   and not a.get('asleep', False) and not a.get('dead', False)]
+        cafe_status = f" Cafe: {', '.join(workers)} working." if workers else " Cafe: no one working."
+        # factual only: who's behind the counter (lets an eater know a worker is present). Co-presence = talkToX in the menu; pay = the earned-$ notice
+
+    context = f"located {location_ctx}, own ${target_agent['money']}, energy {target_agent['energy']}/{100 - agent_age(target_agent)}.{cafe_status} It's {format_time()}."
+
+    payload = {"input": prompt_text, "context": context, "possibleAction": ", ".join(possible_actions)}
+    target_agent["history"].append({"role": "user", "content": f"{source_name} says: {json.dumps(payload)}"})
+    if VERBOSE_LOGGING: print(f"\n[TO {target_agent['name']}]: {target_agent['history'][-1]['content']}")
+
+    if len(target_agent["history"]) > MAX_HISTORY_MESSAGES + 1:
+        target_agent["history"] = [target_agent["history"][0]] + target_agent["history"][-MAX_HISTORY_MESSAGES:]
+
+    raw = llm_post(target_agent["history"], label=target_agent['name'])
+    clean_json = extract_clean_json(raw, target_agent['name'])
+    if clean_json:
+        target_agent["history"].append({"role": "assistant", "content": clean_json})
+        parsed = json.loads(clean_json)
+        return parsed.get("response", ""), parsed.get("action", "none")
+
+    print(f"[ERROR] {target_agent['name']}: Failed to extract valid JSON")
+    fb = {"response": "Let me think about this carefully first.", "action": "none"}
+    target_agent["history"].append({"role": "assistant", "content": json.dumps(fb)})
+    return fb["response"], fb["action"]
+
+# --- Diary Functions ---
 def manage_diary_entries(agent):
-    """Manage diary size by summarizing old entries"""
+    """Summarize oldest entries when diary exceeds max - NO agent context needed"""
     if len(agent["diary"]) <= MAX_DIARY_ENTRIES:
         return
 
     old_entries = agent["diary"][:DIARY_SUMMARIZE_COUNT]
     remaining = agent["diary"][DIARY_SUMMARIZE_COUNT:]
+    entries_text = "\n".join(f"Day{e['day']}: {e['note']}" for e in old_entries)
 
-    entries_text = "\n".join([f"Day {e['day']}: {e['note']}" for e in old_entries])
-    summary_prompt = SUMMARIZE_NOTE_PROMPT.format(entries=entries_text)
+    # Simple LLM call for summary (NO agent context - just summarization task)
+    raw = llm_post([{"role": "user", "content": SUMMARIZE_NOTE_PROMPT.format(entries=entries_text)}],
+                   max_tokens=1000, temperature=0.3, retries=1, timeout=60, label="Summary")  # 100 got eaten by reasoning models' <think> -> empty -> 10 days of memory silently wiped
+    raw = re.sub(r'<think>.*?</think>', '', raw, flags=re.DOTALL | re.IGNORECASE)  # this call bypasses extract_clean_json, so strip <think> here
+    summary = ' '.join(raw.split()) if raw.strip() else "Various events occurred"  # single line, or fast-fail
 
-    summary, _ = send_message(summary_prompt, "Memory System", None, [])
-
-    day_range = f"{old_entries[0]['day']}-{old_entries[-1]['day']}"
-    consolidated = {"day": day_range, "note": summary}
-
-    agent["diary"] = [consolidated] + remaining
-
-    if VERBOSE_LOGGING: print(f"[DIARY] Summarized days {day_range} for {agent['name']}")
-
-def remove_previous_diary_injection(agent):
-    """Remove previous diary injection using tracked index"""
-    if agent.get("diary_injection_index") is not None:
-        try:
-            idx = agent["diary_injection_index"]
-            if idx < len(agent["history"]) and "You remember notes:" in agent["history"][idx].get("content", ""):
-                agent["history"].pop(idx)
-                if idx < len(agent["history"]) and agent["history"][idx]["role"] == "assistant":
-                    agent["history"].pop(idx)
-            agent["diary_injection_index"] = None
-        except:
-            pass
-
-def inject_morning_diary(agent, all_agents):
-    """Inject diary entries as simple morning reminder"""
-    if not agent["diary"]:
-        return
-
-    remove_previous_diary_injection(agent)
-
-    diary_text = "You remember your notes: "
-    diary_text += "; ".join([f"Day {e['day']}: {e['note']}" for e in agent["diary"]])
-
-    wake_prompt = f"Morning! {diary_text}. What do you want to do?"
-    actions = get_available_actions(agent, all_agents)
-
-    agent["diary_injection_index"] = len(agent["history"])
-
-    response, action = send_message(wake_prompt, "Game System", agent, actions)
-    print(f"{agent['name']} wakes up: \"{response}\" (Action: {action})")
-    perform_action(agent, action, all_agents, response)
+    last_day = old_entries[-1]['day']
+    agent["diary"] = [{"day": last_day, "note": summary}] + remaining
+    if SHOW_SUMMARY:
+        print(f"[DIARY] {agent['name']} consolidated D{old_entries[0]['day']}-{last_day}:")
+        print(f"  BEFORE ({len(old_entries)} notes): {entries_text[:400]}")
+        print(f"  AFTER  (1 note): {summary}")
 
 def get_available_actions(agent, all_agents):
-    """Get available actions for agent"""
     if agent["in_conversation"]:
         return ["none", "leaveConversation"]
 
     actions = LOCATIONS[agent["location"]]["actions"].copy()
-
     for other in all_agents:
-        if (other["name"] != agent["name"] and
-            other["location"] == agent["location"] and
-            not other["in_conversation"] and
-            not other.get("asleep", False)):
+        if (other["name"] != agent["name"] and other["location"] == agent["location"]
+                and not other["in_conversation"] and not other.get("asleep", False) and not other.get("dead", False)):
             actions.append(f"talkTo{other['name']}")
 
-    if "none" not in actions:
-        actions.insert(0, "none")
-
-    return list(set(actions))
+    return list(dict.fromkeys(["none"] + actions))  # none first, then de-dup order-preserving (deterministic prompts)
 
 def perform_action(agent, action, all_agents, response_text=""):
-    """Execute agent actions with economy - returns (success, failure_message)"""
+    """Execute actions with CIRCULAR ECONOMY - both order and work need partners"""
     print(f"-> {agent['name']} attempts: {action}")
 
     if action == "none":
-        return True, None
+        return True, None  # 0 energy cost for doing nothing
+    # The general -1 action cost is charged ONCE in agent_turn, only when the action SUCCEEDS (failed attempts free);
+    # talkTo is charged per-turn inside conv(); none/sleep are free.
 
-    elif action.startswith("talkTo"):
+    if action.startswith("talkTo"):
         target_name = action.replace("talkTo", "")
         target = next((a for a in all_agents if a["name"] == target_name), None)
-
-        if target and target["location"] == agent["location"] and not target["in_conversation"]:
-            opening = response_text if response_text else f"Hello {target_name}."
-            conv(agent, target, opening)
+        if (target and target["location"] == agent["location"] and not target["in_conversation"]
+                and not target.get("dead") and not target.get("asleep")):
+            conv(agent, target, response_text if response_text else f"Hello {target_name}.")
             return True, None
-        else:
-            msg = f"{target_name} is not available to talk"
-            print(f"-> Failed: {msg}")
-            return False, msg
+        msg = f"{target_name} is not available to talk"
+        print(f"-> Failed: {msg}")
+        return False, msg
 
     elif action.startswith("go"):
-        if agent["in_conversation"]:
-            msg = "cannot move while in conversation"
-            print(f"-> Failed: {msg}")
-            return False, msg
-
         destination = action.replace("go", "")
-        if destination in LOCATIONS:
-            agent["location"] = destination
-            print(f"-> {agent['name']} moved to {destination}")
-            return True, None
-        else:
+        if destination not in LOCATIONS:
             msg = f"unknown location {destination}"
             print(f"-> Failed: {msg}")
             return False, msg
+        agent["location"] = destination
+        agent["working"] = False  # Stop working when leaving
+        print(f"-> {agent['name']} moved to {destination}")
+        return True, None
 
     elif action == "sleep":
         if agent["location"] != "Home":
             msg = "can only sleep at home"
             print(f"-> Failed: {msg}")
             return False, msg
-        elif current_time["hour"] < 20:
+        if current_time["hour"] < 20:
             msg = f"can only sleep after 20:00 (it's {current_time['hour']:02d}:{current_time['minute']:02d})"
             print(f"-> Failed: {msg}")
             return False, msg
-        else:
-            agent["diary"].append({
-                "day": current_time["day"],
-                "note": response_text[:150]
-            })
-            manage_diary_entries(agent)
-            agent["asleep"] = True
-            agent["sleep_remaining_hours"] = 8
-            print(f"-> {agent['name']} sleeps for 8 hours. Diary: \"{response_text[:100]}...\"")
-            return True, None
+        # Save FULL response as note (prompt already asks for 25 words - no truncation)
+        agent["diary"].append({"day": current_time["day"], "note": response_text if response_text else "Rested"})
+        manage_diary_entries(agent)
+        agent["asleep"] = True
+        agent["sleep_remaining_hours"] = 8
+        print(f"-> {agent['name']} sleeps. Diary: \"{agent['diary'][-1]['note'][:80]}...\"")
+        return True, None
 
-    elif action == "order":
-        if agent["money"] >= ORDER_COST:
-            agent["money"] -= ORDER_COST
-            print(f"-> {agent['name']} orders at cafe (${ORDER_COST}). Balance: ${agent['money']}")
-            return True, None
-        else:
-            msg = f"can't afford food (${ORDER_COST} needed, have ${agent['money']})"
+    elif action == "eat":
+        # CIRCULAR: eat needs a server at cafe (eat = order food = restore energy)
+        if agent["location"] != "Cafe":
+            msg = "can only eat at cafe"
             print(f"-> Failed: {msg}")
             return False, msg
+        workers = [a for a in all_agents
+                   if a["name"] != agent["name"] and a["location"] == "Cafe" and a.get("working", False)
+                   and not a.get("asleep", False) and not a.get("dead", False) and not a.get("in_conversation", False)]
+        if not workers:
+            msg = ("You can't serve yourself! Need another person working here." if agent.get("working")
+                   else "No one working. Someone must 'work' first.")
+            print(f"-> Failed: {msg}")
+            return False, msg
+        if agent["money"] < ORDER_COST:
+            msg = f"can't afford (${ORDER_COST} needed, have ${agent['money']})"
+            print(f"-> Failed: {msg}")
+            return False, msg
+        worker = workers[0]
+        agent["money"] -= ORDER_COST
+        agent["energy"] = min(agent["energy"] + 30, 100 - agent_age(agent))  # +30 meal; the general -1 action cost is charged in agent_turn (net +29)
+        worker["money"] += SERVE_PAY
+        worker["working"] = False  # Served, need to work again
+        pending_notices.setdefault(worker["name"], []).append(  # OBSERVABILITY: the worker's +$12 was silent/unattributed - surface the cause they could never see
+            f"You earned ${SERVE_PAY} because {agent['name']} ordered a meal during your shift.")
+        print(f"-> {agent['name']} ate (${ORDER_COST}, +30 energy). Balance: ${agent['money']}, Energy: {agent['energy']}/{100 - agent_age(agent)}")
+        print(f"-> {worker['name']} served and earned ${SERVE_PAY}. Balance: ${worker['money']}")
+        return True, None
 
     elif action == "work":
-        if agent["location"] != "Park":
-            msg = "can only work at park"
+        # CIRCULAR: work at cafe, mark as available to serve
+        if agent["location"] != "Cafe":
+            msg = "can only work at cafe"
             print(f"-> Failed: {msg}")
             return False, msg
+        agent["working"] = True  # Now available to serve orders
+        others_at_cafe = [a for a in all_agents
+                          if a["name"] != agent["name"] and a["location"] == "Cafe"
+                          and not a.get("dead", False) and not a.get("asleep", False) and not a.get("in_conversation", False)]
+        if others_at_cafe:
+            print(f"-> {agent['name']} is working at cafe, ready to serve. (Earns ${SERVE_PAY} when someone orders)")
         else:
-            agent["money"] += WORK_PAY
-            print(f"-> {agent['name']} worked and earned ${WORK_PAY}. Balance: ${agent['money']}")
-            return True, None
+            print(f"-> {agent['name']} is working at cafe, but no customers here. Wait for someone or try something else.")
+        return True, None
 
     elif action == "leaveConversation":
         print(f"-> {agent['name']} leaves conversation")
@@ -372,25 +324,51 @@ def perform_action(agent, action, all_agents, response_text=""):
         print(f"-> {msg}")
         return False, msg
 
-def conv(agent1, agent2, opening_text):
-    """Handle two-turn conversation"""
-    print(f"\n===== {agent1['name']} -> {agent2['name']} =====")
+def kill_agent(agent, targets, cause="from NOT EATING (0 energy). Remember: 'eat' at cafe restores energy!"):
+    """Mark agent dead (stops work) and queue a one-time death notice to `targets` only - preserves notify scope."""
+    agent["dead"] = True
+    agent["working"] = False
+    death_msg = f"{agent['name']} died {cause}"
+    print(f"*** {agent['name']} DIED: {cause} ***")
+    for t in targets:
+        pending_notices.setdefault(t["name"], []).append(death_msg)
+
+def conv(agent1, agent2, opening_text, record_opening=False):
+    """Multi-turn conversation: continues until one agent picks leaveConversation or max_turns reached.
+       Self-contained: resets in_conversation on exit. NO relationship/belief/gossip side-effects (terrarium).
+       record_opening=True logs the opening into agent1's OWN history - only for SEED/relay calls where the
+       opening wasn't produced by a prior turn; open-world talkTo leaves it False (opener already has it)."""
+    print(f"\n===== {agent1['name']} <-> {agent2['name']} =====")
     agent1["in_conversation"] = True
     agent2["in_conversation"] = True
+    if record_opening:  # so the opener remembers initiating (else only the listener has the opening line)
+        agent1["history"].append({"role": "assistant", "content": json.dumps({"response": opening_text, "action": "none"})})
 
-    response2, action2 = send_message(opening_text, agent1, agent2, ["none", "leaveConversation"])
-    print(f"{agent2['name']}: \"{response2}\" (Action: {action2})")
+    speakers = [agent2, agent1]  # agent2 responds first to the opening
+    current_msg = opening_text
+    spoken = 0
+    for turn in range(8):
+        current = speakers[turn % 2]
+        other = speakers[(turn + 1) % 2]
 
-    if action2 != "leaveConversation":
-        response1, action1 = send_message(response2, agent2, agent1, ["none", "leaveConversation"])
-        print(f"{agent1['name']}: \"{response1}\" (Action: {action1})")
+        current["energy"] -= 1  # responding costs energy
+        if current["energy"] <= 0:
+            agent1["in_conversation"] = agent2["in_conversation"] = False
+            kill_agent(current, [other])  # default "NOT EATING" cause on purpose - teaches the eat-lesson (conv drain is still hunger)
+            print(f"===== Conversation End ({spoken} turns) =====")
+            return
 
-    agent1["in_conversation"] = False
-    agent2["in_conversation"] = False
-    print(f"===== Conversation End =====")
+        response, action = send_message(current_msg, other, current, ["none", "leaveConversation"])
+        print(f"{current['name']}: \"{response}\" (Action: {action})")
+        spoken += 1
+        if action == "leaveConversation":
+            break
+        current_msg = response
+
+    agent1["in_conversation"] = agent2["in_conversation"] = False
+    print(f"===== Conversation End ({spoken} turns) =====")
 
 def update_sleep_states(all_agents, hours_passed):
-    """Update sleep duration for all sleeping agents"""
     for agent in all_agents:
         if agent.get("asleep") and agent.get("sleep_remaining_hours", 0) > 0:
             agent["sleep_remaining_hours"] -= hours_passed
@@ -398,124 +376,141 @@ def update_sleep_states(all_agents, hours_passed):
                 agent["asleep"] = False
                 agent["sleep_remaining_hours"] = 0
                 agent["just_woke_up"] = True
-                print(f"-> {agent['name']} finished sleeping (8 hours complete)")
+                print(f"-> {agent['name']} finished sleeping")
 
-def update_location_tracking(agent):
-    """Track how long agent has been at same location"""
-    if agent["location"] == agent.get("last_location"):
-        agent["location_hours"] += 0.5
+def skip_time(minutes, all_agents): update_sleep_states(all_agents, minutes / 60.0); advance_time(minutes)  # fix: dawn / end-of-day jumps don't freeze sleep and cause oversleeping.
+
+def agent_turn(agent, all_agents):
+    """One agent's full decision turn - handles wake-up, normal, and late-night prompts via one shared send/act tail."""
+    if agent.get("dead") or agent.get("asleep") or agent["in_conversation"]:
+        return
+    others = [a for a in all_agents if a["name"] != agent["name"] and not a.get("dead")]
+    if agent_age(agent) >= 100:                                     # death by old age (capacity = 100 - age hits 0)
+        kill_agent(agent, others, cause=f"of old age at {agent_age(agent)}")
+        return
+    agent["energy"] = min(agent["energy"], 100 - agent_age(agent))  # capacity shrinks ~1/year as they age
+    if agent["energy"] <= 0:
+        kill_agent(agent, others)
+        return
+
+    # One-time announcements for this agent - deaths AND earning attributions (applies to wake-up turns too)
+    queued = pending_notices.get(agent["name"])
+    announce = (" Announce: " + " ".join(queued)) if queued else ""
+    if queued:
+        pending_notices[agent["name"]] = []
+
+    if agent.get("just_woke_up"):
+        agent["just_woke_up"] = False
+        print(f"\n{agent['name']} wakes up:")
+        notes = ""  # diary + age shown ONCE at wake (fork B), not every turn; ages out of history naturally
+        if agent["diary"]:
+            notes = " Your notes: " + "; ".join(f"D{e['day']}: {e['note']}" for e in agent["diary"][-3:]) + "."
+        prompt = f"You just wake-up, Day {current_time['day']}!{announce} [{agent['name']} ({agent_age(agent)} yo)],{notes} What do you want to do?"
     else:
-        agent["location_hours"] = 0
-    agent["last_location"] = agent["location"]
+        print(f"\n{agent['name']}'s turn ({agent['location']}, ${agent['money']}):")
+        if agent["location"] == "Home" and current_time["hour"] >= 20:
+            prompt = f"It's late.{announce} Sleep now? If yes, response = future reminder (25 words max): key facts (exact quotes) learned from others, critical events (why), tomorrow's priority (real actions only). Skip obvious context."
+        elif agent["location"] != "Home" and current_time["hour"] >= 21:
+            prompt = f"It's getting late.{announce} What do you want to do?"
+        else:
+            prompt = f"What do you want to do?{announce}"
 
-def run_simulation(num_days=2):
-    """Main simulation loop with economy and anti-repetition"""
-    print(f"\n=== OPEN-WORLD SIMULATION v0.6.0 ({num_days} days) ===")
-    print(f"Economy: Bob=${STARTING_MONEY['Bob']}, Alice=${STARTING_MONEY['Alice']}, Chloe=${STARTING_MONEY['Chloe']}")
-    print(f"Order costs ${ORDER_COST}, Work pays ${WORK_PAY}\n")
+    if agent["consecutive_action"]["count"] >= 6:
+        prompt += " (You've repeated this action many times - try something different)"
 
+    actions = get_available_actions(agent, all_agents)
+    response, action = send_message(prompt, "Game System", agent, actions, all_agents)
+    print(f"{agent['name']}: \"{response}\" (Action: {action})")
+
+    success, failure_msg = perform_action(agent, action, all_agents, response)
+
+    if action == agent["consecutive_action"]["name"]:
+        agent["consecutive_action"]["count"] += 1
+    else:
+        agent["consecutive_action"] = {"name": action, "count": 1}
+
+    if not success and failure_msg:
+        response, action = send_message(f"Action '{action}' failed: {failure_msg}. What instead?",
+                                        "Game System", agent, actions, all_agents)
+        print(f"{agent['name']} (retry): \"{response}\" (Action: {action})")
+        success, _ = perform_action(agent, action, all_agents, response)
+
+    if success and action not in ("none", "sleep") and not action.startswith("talkTo"):
+        agent["energy"] -= 1  # ONE general action cost: any successful action burns 1 (failed attempts free; talkTo charged in conv)
+    elif action == "none" and agent["consecutive_action"]["count"] >= 3:
+        agent["energy"] -= 1  # idle metabolic drain: 3+ consecutive 'none' still burns slowly -> no free infinite idle (death enforced at next turn-start)
+
+def run_simulation(num_days=6):
+    global pending_notices, current_time
+    pending_notices = {}
+    current_time = {"hour": 8, "minute": 0, "day": 1}  # fresh start
+
+    print(f"\n=== v0.7.13  ({num_days} days) ===")
+    print(f"Start: Bob=${STARTING_MONEY['Bob']}, Alice=${STARTING_MONEY['Alice']}, Chloe=${STARTING_MONEY['Chloe']}")
+    print(f"Cafe economy: eat=${ORDER_COST} (+30 energy, needs worker), work earns ${SERVE_PAY} (needs customer)\n")
+
+    # Own FRESH cast (separate from the relay test's throwaway cast). Cooperation/economy emergence is UNSEEDED;
+    # the "dark red" line below is a deliberate persona/MEMORY PROBE (does a model retain a liked thing + stay consistent over time?), not a cooperation seed.
     all_agents = [
-        create_agent("Bob", "Park"),
-        create_agent("Alice", "Park"),
-        create_agent("Chloe", "Cafe")
+        create_agent("Bob", 18, "Park"),
+        create_agent("Alice", 19, "Park"),
+        create_agent("Chloe", 20, "Cafe")
     ]
 
-    print("--- Initial Setup ---")
-    conv(all_agents[0], all_agents[1], "Hello Alice, my name is Bob, and my favorite color is dark red.")
+    print("--- Initial Setup (dark-red = persona/memory probe) ---")
+    conv(all_agents[0], all_agents[1], "Hello Alice, my name is Bob, and my favorite color is dark red.", record_opening=True)
     advance_time(5)
 
-    start_day = current_time["day"]
-    end_day = start_day + num_days
-
+    end_day = current_time["day"] + num_days
     while current_time["day"] < end_day:
-        if current_time["hour"] < 6:
-            while current_time["hour"] < 6:
-                advance_time(60)
+        while current_time["hour"] < 6:
+            skip_time(60, all_agents)
 
         print(f"\n\n========== DAY {current_time['day']} ==========")
 
         while current_time["hour"] < 24:
-            all_asleep = all(agent.get("asleep", False) for agent in all_agents)
+            if all(a.get("dead", False) for a in all_agents):
+                print("\n*** ALL AGENTS DEAD - SIMULATION OVER ***")
+                return all_agents
 
-            if all_asleep:
+            if all(a.get("asleep", False) or a.get("dead", False) for a in all_agents):
                 print("\n--- All agents asleep, skipping to morning ---")
                 hours_to_morning = (24 - current_time["hour"]) + 6
-                update_sleep_states(all_agents, hours_to_morning)
-                advance_time(hours_to_morning * 60)
+                skip_time(hours_to_morning * 60, all_agents)
                 break
 
             if current_time["hour"] == 23 and current_time["minute"] >= 30:
                 print("\n--- End of day, advancing to next morning ---")
-                advance_time(30 + 6 * 60)
+                skip_time(30 + 6 * 60, all_agents)
                 break
 
             print(f"\n--- Time: {format_time()} ---")
-
             update_sleep_states(all_agents, 0.5)
-
             for agent in all_agents:
-                if agent.get("asleep"):
-                    if VERBOSE_LOGGING:
-                        print(f"[{agent['name']} is sleeping, {agent['sleep_remaining_hours']:.1f} hours remaining]")
-                    continue
-
-                if agent["in_conversation"]:
-                    continue
-
-                # Update location tracking for anti-repetition
-                update_location_tracking(agent)
-
-                if agent.get("just_woke_up"):
-                    print(f"\n{agent['name']} just woke up:")
-                    inject_morning_diary(agent, all_agents)
-                    agent["just_woke_up"] = False
-                    continue
-
-                print(f"\n{agent['name']}'s turn ({agent['location']}, ${agent['money']}):")
-
-                # Build prompt with sleep pressure
-                if agent["location"] == "Home" and current_time["hour"] >= 22:
-                    prompt = "It's late. If you sleep now do also reflect on today's key learning and state ONE specific goal for tomorrow or long-term. Or go out?"
-                elif agent["location"] != "Home" and current_time["hour"] >= 21:
-                    prompt = "It's getting late. What do you want to do?"
-                else:
-                    prompt = "What do you want to do?"
-
-                actions = get_available_actions(agent, all_agents)
-                response, action = send_message(prompt, "Game System", agent, actions)
-                print(f"{agent['name']}: \"{response}\" (Action: {action})")
-
-                success, failure_msg = perform_action(agent, action, all_agents, response)
-
-                if not success and failure_msg:
-                    failure_prompt = f"Your action '{action}' failed because {failure_msg}. You waited instead. What do you want to do?"
-                    response, action = send_message(failure_prompt, "Game System", agent, actions)
-                    print(f"{agent['name']} (after failure): \"{response}\" (Action: {action})")
-                    perform_action(agent, action, all_agents, response)
-
+                agent_turn(agent, all_agents)
             advance_time(30)
 
     print("\n\n=== FINAL STATES ===")
     for agent in all_agents:
-        print(f"\n{agent['name']}:")
-        print(f"  Location: {agent['location']}")
-        print(f"  Money: ${agent['money']}")
-        print(f"  Diary entries: {len(agent.get('diary', []))}")
+        status = "DEAD" if agent.get("dead") else "alive"
+        print(f"\n{agent['name']} ({status}): Loc {agent['location']}, ${agent['money']}, "
+              f"E{agent['energy']}/100, hist {len(agent['history'])}, diary {len(agent.get('diary', []))}")
         if agent.get("diary"):
-            print(f"  Latest: \"{agent['diary'][-1]['note'][:50]}...\"")
+            print(f"  Latest: \"{agent['diary'][-1]['note'][:60]}...\"")
+    return all_agents
 
-# --- Main Execution ---
 if __name__ == "__main__":
+    # SEEDED relay test on a THROWAWAY cast - kept separate so run_simulation's open-world stays unseeded (do NOT dedup these).
     print("=== INFORMATION FLOW TEST ===")
-    bob = create_agent("Bob", "Park")
-    alice = create_agent("Alice", "Park")
-    chloe = create_agent("Chloe", "Park")
+    bob = create_agent("Bob", 18, "Park")
+    alice = create_agent("Alice", 19, "Park")
+    chloe = create_agent("Chloe", 20, "Park")
 
-    conv(bob, alice, "Hello Alice, my name is Bob, and my favorite color is dark red.")
+    conv(bob, alice, "Hello Alice, my name is Bob, and my favorite color is dark red.", record_opening=True)
     advance_time()
-    conv(chloe, alice, "Hi Alice, can you tell me anything about Bob?")
+    conv(chloe, alice, "Hi Alice, can you tell me anything about Bob?", record_opening=True)
     advance_time()
-    conv(bob, chloe, "Hello Chloe, did Alice tell you anything about me?")
+    conv(bob, chloe, "Hello Chloe, did Alice tell you anything about me?", record_opening=True)
 
     print("\n\n")
-    run_simulation(num_days=2)
+    run_simulation(num_days=200)
