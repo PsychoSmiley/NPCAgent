@@ -1,0 +1,1010 @@
+=== INFORMATION FLOW TEST ===
+
+===== Bob <-> Alice =====
+[API ERROR] Alice: HTTP 429 (attempt 1/3)
+Alice: "Oh hey, nice to meet you Bob! Dark red, huh? That's a bold choice - reminds me of like deep wine or autumn leaves. So what brings you to the park this early? I'm just hanging out, figuring out what to do with my day." (Action: none)
+Bob: "Yeah, dark red just feels... grounded, you know? Like it's got weight to it. Honestly, I just woke up and came here to get some air. Don't really have a plan yet either. What kind of stuff are you into, Alice? Maybe we could figure something out together - two aimless people gotta be better than one, right?" (Action: none)
+Alice: "I like that take on it - weight and grounding, that's a cool way to think about a color. Honestly I'm still figuring out what I'm into, kind of exploring things fresh. But I'm down to team up, you're right that two aimless people beats one. You got any ideas? We could check out somewhere neither of us has been, or just walk and see what catches our eye. I've got some energy to burn." (Action: none)
+Bob: "Exploring fresh - I can respect that, sometimes not knowing is better than being stuck in a rut. I've got $10 and energy's good, so we're not totally resourceless. How about we just start walking and see what's out there? Could be a cafe, a shop, something unexpected. This park's nice but I'm already itching to move. You want to lead the way or should I?" (Action: none)
+Alice: "Ha, same page - the park's fine but I'm restless already too. You lead, I'll follow! Worst case we find nothing interesting and just get a walk in. Best case we stumble onto something cool. Let's just wander and see what the city's got. Ready when you are, Bob." (Action: none)
+Bob: "Alright, let's do it! I'll head out and we'll see what this city's hiding. Come on, Alice - adventure time. If we find a cafe I might even spring for coffee with my ten bucks." (Action: leaveConversation)
+===== Conversation End (6 turns) =====
+
+===== Chloe <-> Alice =====
+Alice: "Hey Chloe! I just met Bob about half an hour ago, so I don't know a ton yet. He told me his favorite color is dark red - he described it as feeling 'grounded' with 'weight to it,' which I thought was a cool take. He came to the park for fresh air after waking up, didn't have a plan. Seemed friendly and easygoing, we were actually about to go explore the city together. Who are you by the way?" (Action: none)
+Chloe: "I'm Chloe! Nice to meet you Alice. Dark red with 'weight to it' - that's a pretty vivid way to describe a color, Bob sounds interesting. You two are about to explore the city? Mind if I tag along? I've been wanting to check out more of this place and it sounds like a good opportunity to meet people." (Action: none)
+Alice: "Nice to meet you too, Chloe! Yeah, the more the merrier - Bob was just saying two aimless people are better than one, so three's even better. We were about to head out and just wander, see what we find. Cafe, shops, whatever. You seem cool and eager to explore, so absolutely tag along! Let's go find Bob and get moving." (Action: none)
+Chloe: "Three aimless people are better than two - I like that energy! Let's go find Bob and see what's out there. A cafe sounds like a good first stop, maybe we'll stumble into other interesting stuff along the way." (Action: none)
+Alice: "Cafe it is then! I could go for a coffee anyway, and who knows what we'll pass on the way there. Bob seemed ready to move too so I doubt he'll complain about the company. Let's get going before we burn daylight just standing here talking about exploring instead of actually doing it!" (Action: none)
+Chloe: "Ha, you're right - we're literally standing around talking about exploring instead of exploring. Lead the way to Bob, let's make this happen!" (Action: none)
+Alice: "Alright, enough talking - time to walk the walk! Let me go grab Bob and we'll all head out together. See you out there, Chloe!" (Action: leaveConversation)
+===== Conversation End (7 turns) =====
+
+===== Bob <-> Chloe =====
+Chloe: "Hey Bob! Yeah, Alice mentioned your favorite color is dark red - you described it as feeling 'grounded' with 'weight to it.' Pretty cool way to think about a color. She also said you're friendly and easygoing, which checks out so far. We're all heading to the cafe together, ready to go?" (Action: none)
+Bob: "Ha, Alice's been talking me up already? 'Grounded with weight' - yeah that's exactly how I put it. Nice to meet you Chloe! Cafe sounds great, I've been wanting to explore somewhere new anyway. Let's get moving before we all get too comfortable sitting around here." (Action: leaveConversation)
+===== Conversation End (2 turns) =====
+
+
+
+
+=== v0.7.13-hfpromo GLM-5.2  (6 days) ===
+Start: Bob=$10, Alice=$10, Chloe=$10
+Cafe economy: eat=$10 (+30 energy, needs worker), work earns $12 (needs customer)
+
+--- Initial Setup ---
+
+===== Bob <-> Alice =====
+Alice: "Morning time and a new face! Bob seems friendly enough, sharing personal details right away. Dark red, huh - that's a bold choice. I should be social and get to know him better, it's still early and I've got plenty of energy. Hey Bob! Nice to meet you. Dark red, that's a pretty intense color - reminds me of autumn leaves or something. What brings you to the park this early?" (Action: none)
+Bob: "Autumn leaves, yeah I like that comparison actually. Just felt like getting some fresh air to start the day, figured the park'd be a good spot. What about you - you a regular here or just passing through?" (Action: none)
+Alice: "He seems easy to talk to, genuine vibe. No reason to rush off - good conversation is worth having. Honestly I just like wandering around, seeing who's out and about. The park's a solid place for that. Fresh air start to the day sounds smart though, Bob. You got any plans for the rest of the day or just taking it easy?" (Action: none)
+Bob: "Taking it easy for now, haven't really mapped out the day yet. First day just feeling things out, you know? Might wander around, see what's out there. You mentioned you like wandering too - any spots around here worth checking out? I'm new to the area." (Action: none)
+Alice: "Honestly Bob, I'm kinda new around here too, so I don't have any insider tips or anything. This is actually my first day as well - just feeling things out, same as you. But hey, two wanderers with no plans sounds like a good reason to team up and explore together. Maybe we'll stumble onto something interesting. Want to check out the area together?" (Action: none)
+Bob: "Two newbies on day one, sounds like the start of something good. Yeah, let's explore together - safety in numbers and all that. We've both got some energy and a few bucks, maybe we'll find a cafe or something interesting nearby. Lead the way or should I?" (Action: none)
+Alice: "Ha, neither of us knows where we're going so leading's a coin flip. Let's just pick a direction and see what happens - that's the whole point of exploring, right? I say we head out and look for that cafe you mentioned. Could use a coffee anyway and it'd be a good landmark to get our bearings. Ready when you are, Bob." (Action: leaveConversation)
+===== Conversation End (7 turns) =====
+
+
+========== DAY 1 ==========
+
+--- Time: Day1 08:05 ---
+
+Bob's turn (Park, $10):
+Bob: "We agreed to explore together, so let's follow through. Cafe sounds like a solid first stop - grab a coffee, get our bearings, figure out what else is around. Let's head there." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+Alice's turn (Park, $10):
+Alice: "Perfect timing - Bob and I just agreed to go find a cafe and explore the area. No reason to stick around the park any longer, I've been here since the start. Let's see what this cafe is all about." (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+
+Chloe's turn (Cafe, $10):
+Chloe: "Day one, fresh start! Cafe is empty staff-wise but Bob and Alice are here. Full energy, got $10. No reason to eat or work yet. Let me meet someone new - I'll try talking to Bob first, see what he's about." (Action: talkToBob)
+-> Chloe attempts: talkToBob
+
+===== Chloe <-> Bob =====
+Bob: "Oh hey, another new face! I'm Bob, just got here with my friend Alice - we met at the park and decided to explore together. You new around here too or do you know this area? First day for both of us." (Action: none)
+Chloe: "Nice to meet you Bob! Yeah, I'm Chloe, first day here too. Funny how we all ended up at the cafe this early. So you and Alice just randomly met at the park and teamed up? That's cool. What's she like?" (Action: none)
+Bob: "She's cool, real easy to talk to. We just clicked right off - both wandering types with no set plans, so she suggested teaming up to explore. She's got a laid-back vibe, likes seeing who's out and about. Actually, she's right here - Chloe, come meet her! No point in me describing her when you can just say hi yourself." (Action: none)
+Chloe: "Sounds good, I'd love to meet her! You two seem like a fun pair already. Hey Alice, Bob's been singing your praises - I'm Chloe. You guys got any plans for exploring today or just seeing where the wind takes you?" (Action: none)
+Bob: "Three day-one newbies in one cafe, what are the odds? We were thinking of just exploring, seeing what's around. Now we've got a trio - even better. Maybe grab some coffee first and figure out a game plan together. What do you think, Chloe - you the planning type or more go-with-the-flow?" (Action: none)
+Chloe: "Honestly? Little bit of both. I like having a rough direction but leaving room for surprises. Coffee sounds great though - nothing like caffeine to kick off a first day. Since we're all new, maybe we start by mapping out what's even around here? Park, cafe... what else is out there? Also, Alice - you've been quiet, what's your take?" (Action: none)
+Bob: "Good question for Alice - I've been talking enough. But yeah, mapping things out makes sense. We know park and cafe so far. Only way to find out what else is here is to actually wander around and see. After coffee though, my brain needs caffeine before any strategic planning." (Action: none)
+Chloe: "Alright, coffee first, exploring second - I can get behind that. But I notice Alice still hasn't said a word to me directly, and I don't want to be that person who talks *about* someone instead of *with* them. Alice, you alive over there? Bob's doing all the heavy lifting in this conversation - what's on your mind?" (Action: none)
+===== Conversation End (8 turns) =====
+
+--- Time: Day1 08:35 ---
+
+Bob's turn (Cafe, $10):
+Bob: "We've been chatting a good while now, and nobody's working behind the counter. Shame, could really use that coffee. Might as well grab a bite to eat while we figure out our next move. Alice, Chloe - you two hungry?" (Action: eat)
+-> Bob attempts: eat
+-> Failed: No one working. Someone must 'work' first.
+Bob (retry): "Well, no staff means no food. Someone's gotta work the counter for anything to happen here. I could step up and work a shift - earn some cash and get this place running so we can all eat. Beats sitting around hungry. You two mind waiting a bit?" (Action: work)
+-> Bob attempts: work
+-> Bob is working at cafe, ready to serve. (Earns $12 when someone orders)
+
+Alice's turn (Cafe, $10):
+Alice: "We made it to the cafe! Looks like Bob already found work here - good for him, though that kinda cuts our exploration plans short. But hey, there's someone named Chloe here too. New person, new conversation - why not? I'll check in with Bob later when he's not busy. Let me see what Chloe's about." (Action: talkToChloe)
+-> Alice attempts: talkToChloe
+
+===== Alice <-> Chloe =====
+Chloe: "Hey Alice, finally! Thought I was gonna have to send a search party. Bob's told me a bit about you - sounds like you two had a nice meetup at the park. So Bob's working here now? That was fast. Anyway, I'm Chloe, also day one. Bob mentioned you're more of a wandering type - same here. What's been catching your eye so far around this place?" (Action: none)
+Alice: "Chloe seems cool - already chatting it up with Bob like they've known each other a while. She's got an easy energy about her. Honestly I just got here so not much has caught my eye yet beyond the cafe itself. Bob and I were gonna explore together but then he landed a job here, so looks like I'm solo on the wandering front again. You said you're a wanderer too - got any plans? Maybe we could team up instead since Bob's busy working?" (Action: none)
+Chloe: "Yeah, I'd be down to team up! Bob's got his thing going with work, no reason we can't go check out what else is out there. We know the park and cafe so far - maybe we hit the park first since we're already familiar, then branch out from there? Could see who else is around, find out what other spots exist. Sound like a plan, or you got a better idea?" (Action: none)
+Alice: "Chloe's got enthusiasm, I like that. But going back to the park feels like retracing steps - I was just there before meeting Bob. Kinda defeats the whole 'exploring' thing, you know? Let's just wander and see what we stumble onto instead. Could be shops, other people, who knows. Adventure's better when it's unplanned anyway. Let's bounce." (Action: leaveConversation)
+===== Conversation End (4 turns) =====
+
+Chloe's turn (Cafe, $10):
+[API ERROR] Chloe: ReadTimeout (attempt 1/3)
+Chloe: "Alright, Alice and I just agreed to go explore together - no point sitting around watching Bob work. Park's our best starting point since we already know it's there, and maybe we'll find something new along the way. Let's go!" (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day1 09:05 ---
+
+Bob's turn (Cafe, $10):
+Bob: "Been working about half an hour, no customers yet. Kinda quiet behind the counter. Alice's still here - maybe I should check in with her, see if she wants to order something. Would give me something to do and actually get this cafe functioning." (Action: talkToAlice)
+-> Bob attempts: talkToAlice
+
+===== Bob <-> Alice =====
+Alice: "Bob looks bored behind that counter with zero customers - gotta help a friend out. Plus I could actually use a coffee, been wandering all morning. Win-win. Hey Bob! Rough start to the shift, huh? Let me be your first customer - got any coffee? Something simple's fine, I've only got $10 to my name so far." (Action: none)
+Bob: "First customer! Finally, some action around here. Coffee coming right up - and don't worry about the price, I'll keep it cheap for my exploring buddy. So while I'm stuck behind this counter, you and Chloe figure out any other spots worth checking out? We should make a proper list once I'm off the clock." (Action: none)
+Alice: "Nice, thanks Bob! You're a lifesaver. Yeah, Chloe and I are gonna head out and wander - see what else is out there beyond the park and cafe. We'll take notes and make you a proper list for when you're off. Three heads better than two for mapping out the area anyway. I'll catch you later with the scoop!" (Action: leaveConversation)
+===== Conversation End (3 turns) =====
+
+Alice's turn (Cafe, $10):
+Alice: "Alright, time to actually follow through on that plan. I told Bob I'd go explore with Chloe - need to find her. She might've headed to the park already or I might bump into her on the way. Sitting around the cafe watching Bob work isn't exploring. Let's get moving." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+Chloe's turn (Park, $10):
+Chloe: "Made it to the park! Alice and I planned to explore together - let me check in with her and see what she thinks of this place. Maybe we can figure out what else is around here beyond just the park and cafe." (Action: talkToAlice)
+-> Chloe attempts: talkToAlice
+
+===== Chloe <-> Alice =====
+Alice: "Found Chloe! Good, she actually came through. Park's familiar territory but at least we're both here now. Hey Chloe! Alright, we've got the park and cafe mapped - time to branch out. I don't know what else is out there but standing here won't find it. Let's just pick a direction and walk. You ready?" (Action: none)
+Chloe: "Born ready! Let's stop talking about exploring and actually do it. We've got the park down, cafe covered - time to find something new. I say we just start walking and see what pops up. Let's move!" (Action: leaveConversation)
+===== Conversation End (2 turns) =====
+
+--- Time: Day1 09:35 ---
+
+Bob's turn (Cafe, $10):
+Bob: "Hour behind the counter with barely any customers, I'm getting antsy. Been in this cafe too long. Let me grab a quick bite, then head out - maybe back to the park or somewhere new. Sitting still isn't my thing, need to move." (Action: eat)
+-> Bob attempts: eat
+-> Failed: You can't serve yourself! Need another person working here.
+Bob (retry): "Can't even serve myself, that's annoying. Been stuck behind this counter for an hour with nothing to show for it. I'm done working - time to move. Head to the park, find Alice and Chloe, see if they came up with that exploration list. Standing still is driving me crazy." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Alice's turn (Park, $10):
+Alice: "Wait, I've been at the park way too many times today already. Chloe and I were supposed to explore somewhere NEW, not keep coming back here. But she's here so let me grab her and actually make good on that plan. We need to find somewhere neither of us has been - maybe my home area could be a starting point, or we just walk until we find something. Hey Chloe, let's actually move this time - park's old news already!" (Action: talkToChloe)
+-> Alice attempts: talkToChloe
+
+===== Alice <-> Chloe =====
+Chloe: "She's right - we've been talking about exploring for way too long and we're still standing in the same park. This is exactly how plans die. Let's get out of here and actually find something new. Enough talking, time to walk!" (Action: leaveConversation)
+===== Conversation End (1 turns) =====
+
+Chloe's turn (Park, $10):
+Chloe: "We keep saying we'll explore but the only places I know are park and cafe - and we just left both. I haven't even been to my own home yet, so that's somewhere new for me at least. Let me check that out, get my bearings, and figure out what else is out there from there." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day1 10:05 ---
+
+Bob's turn (Park, $10):
+Bob: "Good, Alice is here. Let me catch up with her - we were supposed to figure out what else is around this place. That cafe shift was a bust, barely any customers and couldn't even feed myself. Need to regroup and make an actual plan for the day." (Action: talkToAlice)
+-> Bob attempts: talkToAlice
+
+===== Bob <-> Alice =====
+Alice: "Bob! You made it out of cafe jail. Tough shift, huh? Look, all three of us keep ending up back at this park like it's a magnet or something - we need to break the cycle. You said you couldn't even eat at the cafe? That's rough. Maybe we should all head to my place, regroup, figure out what else exists in this town beyond park and cafe. Sound like a plan?" (Action: none)
+Bob: "Cafe jail - haha, exactly what it felt like. You're right though, we're stuck in a loop between park and cafe. Your place sounds like a good change of scenery. Let's break the pattern, figure out what else is out there. Lead the way!" (Action: none)
+Alice: "Finally, some momentum! Let's go before we somehow end up back at the cafe again. My place might not be much but at least it's somewhere new to strategize from. Come on Bob, let's see what's out there on the way." (Action: leaveConversation)
+===== Conversation End (3 turns) =====
+
+Alice's turn (Park, $10):
+Alice: "Bob agreed to head to my place - time to actually follow through instead of standing around the park again. Let's go home, regroup with Bob, and figure out what else this town has to offer." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+Chloe's turn (Home, $10):
+Chloe: "Home base, nice to finally see it. Energy's still good at 70 so no need to sleep - it's only 10am. Alice and I got split up though, and if she's here I should check in. We had a whole explore-together plan that kept stalling. Let me see if she's around." (Action: talkToAlice)
+-> Chloe attempts: talkToAlice
+
+===== Chloe <-> Alice =====
+Alice: "Chloe made it too! Good, everyone's converging at my place finally. Now we can actually make a real plan instead of running in circles between park and cafe all morning. Hey Chloe, glad you found the place. Bob should be here too - let's sit down and figure out what else is out there. We've wasted half the morning bouncing between the same two spots." (Action: none)
+Chloe: "Glad we're both here! Though I think this might actually be my place, not yours - unless we're roommates and nobody told me, haha. Bob was working at the cafe last I saw, so he might not be free yet. But you're right, we need to stop bouncing between the same two spots. What if we try going back to the cafe, grab Bob if he's off break, and ask around? Locals or workers might know what other places exist that we haven't found yet." (Action: none)
+Alice: "Haha wait, this is YOUR place? Well, nice home Chloe! But see, that's exactly the problem - we keep ending up at the same spots without even trying. Going back to the cafe AGAIN is just restarting the loop. But you've got a point about asking locals for info - that's actually smart. Maybe instead of the cafe, we just wander a new direction and see if we find anyone or anywhere new. Can't discover new places by going to old ones, right?" (Action: none)
+Chloe: "You're absolutely right - can't discover new places by going to old ones. Problem is, from here I only know how to get to the park or the cafe. Maybe the cafe trip isn't just looping if we go with a purpose - grab Bob, ask if he's heard of other spots from customers or coworkers. He's been there working, probably picked up info we don't have. Worth a shot?" (Action: leaveConversation)
+===== Conversation End (4 turns) =====
+
+--- Time: Day1 10:35 ---
+
+Bob's turn (Park, $10):
+Bob: "Alice mentioned heading to her place but... I don't think I can actually get there. Only option from here is my place or back to that cafe. Let me head home - maybe Alice and Chloe can come over instead. Could use a breather anyway, energy's dipping from that shift." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+Alice's turn (Home, $10):
+Alice: "Wait, is Bob here? He said he'd come after his shift. Let me check - if all three of us are finally in one spot we can actually make a solid plan and stick to it. No more bouncing around solo. Hey Bob, you make it out? We're trying to figure out how to find new places - got any ideas from your cafe shift? Maybe overheard something about what else is in this town?" (Action: talkToBob)
+-> Alice attempts: talkToBob
+
+===== Alice <-> Bob =====
+Bob: "Honest truth? Cafe was dead quiet - barely any customers, so I didn't overhear squat. But you're right, we need a real plan. So far we only know park, cafe, and home. Maybe we just gotta pick a direction and walk til we find something new. Can't discover places by standing still." (Action: none)
+[API ERROR] Alice: ReadTimeout (attempt 1/3)
+Alice: "Bob gets it - we're all saying the same thing but nobody's moving. Enough planning, time to actually do it. Let's head out and just walk. Worst case we end up at the park again but at least we're trying. Come on, on your feet!" (Action: leaveConversation)
+===== Conversation End (2 turns) =====
+
+Chloe's turn (Home, $10):
+Chloe: "Alright, decision made - cafe it is, but with a mission this time. Find Bob, get intel on new locations, then actually go somewhere we haven't been. No more running in circles. Let's go!" (Action: goCafe)
+-> Chloe attempts: goCafe
+-> Chloe moved to Cafe
+
+--- Time: Day1 11:05 ---
+
+Bob's turn (Home, $10):
+Bob: "We keep saying we'll explore but we're just going in circles. Alice is right here - let's actually talk this through and commit to something. Energy's still okay at 66, no need to rest yet. Maybe if we put our heads together we can figure out how to find new spots instead of guessing." (Action: talkToAlice)
+-> Bob attempts: talkToAlice
+
+===== Bob <-> Alice =====
+Alice: "Okay Bob, you're right - let's actually commit. Here's what I'm thinking: the system only lets us go places we already know - park, cafe, home. So maybe 'exploring' isn't about wandering randomly. Maybe we need to talk to people AT these places and ask if they know other spots. Next time we're at the cafe, we ask every customer. At the park, same thing. Someone's gotta know what else is out there. That's a real plan, not just walking in circles. You in?" (Action: none)
+Bob: "That's actually smart, Alice. We've been trying to walk our way out of this but the answer's been people, not places. Talk to everyone, ask what they know. Next cafe shift I take, I'll grill every customer about other spots. You and Chloe hit the park, ask anyone who shows up. We cover more ground that way. I'm in - let's do this." (Action: none)
+Alice: "Yes! Finally a real plan. Bob works the cafe, Chloe and I work the park. We ask everyone who shows up. Let's split up and get to it - no more standing around. Bob, next time you're at the cafe, squeeze every customer for info. I'll grab Chloe and head to the park. We regroup later and compare notes. Go go go!" (Action: leaveConversation)
+===== Conversation End (3 turns) =====
+
+Alice's turn (Home, $10):
+Alice: "Plan's set, time to execute. Bob's handling the cafe, I need to get to the park and find Chloe so we can start asking around. No more sitting at home - let's move!" (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+Chloe's turn (Cafe, $10):
+Chloe: "Bob's not here - cafe's empty, no one working. Dead end on the intel plan. But wait, if no one's working here, maybe I could pick up a shift? Earn some cash and meet customers who might know what else is out there. Two birds, one stone. $10 won't last forever anyway." (Action: work)
+-> Chloe attempts: work
+-> Chloe is working at cafe, but no customers here. Wait for someone or try something else.
+
+--- Time: Day1 11:35 ---
+
+Bob's turn (Home, $10):
+Bob: "Plan's set - time to execute. Alice and Chloe said they'd work the park, so I should hit the cafe and talk to anyone who shows up. Ask about other spots in town. Energy's fine at 65, no reason to sit here. Let's move." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+Alice's turn (Park, $10):
+Alice: "Hmm, no one's here - not Chloe, not anyone new to ask about town. Kind of defeats the whole 'ask people at the park' plan if there's nobody to ask. I could wait around but that's just wasting daylight. Maybe I should swing by the cafe, check on Bob, see if he's having better luck with customers. At least there might be people to talk to there." (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+
+Chloe's turn (Cafe, $10):
+Chloe: "Half an hour working and not a single customer walked in. This is boring and probably not earning me much. Alice and I had exploration plans - let me see if she's around. If not, I might just wrap up here and head to the park to regroup. No point standing behind a counter talking to myself." (Action: talkToAlice)
+-> Chloe attempts: talkToAlice
+
+===== Chloe <-> Alice =====
+Alice: "Chloe! Perfect timing - I just came from the park, totally empty. Sounds like the cafe's just as dead. Our whole 'ask everyone' plan kind of falls apart when there's no 'everyone' to ask. But hey, at least we're both here now. Maybe the afternoon picks up and customers actually show up? Or we could use this downtime to think of another approach. What do you think - stick it out here and hope for customers, or try something else?" (Action: none)
+Chloe: "Honestly, everywhere's dead right now - park's empty, cafe's empty, Bob's MIA. It's almost noon though, so maybe lunch rush brings people in. I say I grab a bite here, we chill for a bit, and see if the afternoon picks up. If customers show up, I learn something new. If not, we regroup and try fresh after eating. Can't explore on an empty stomach anyway, right?" (Action: none)
+Alice: "Smart thinking - lunch rush is our best shot at actually finding people to ask. And yeah, food sounds good, I've been running around all morning on empty. Let's hang here, grab a bite, and when customers come in we're ready. We've got questions, they've got answers. This could be the break we need." (Action: none)
+Chloe: "Perfect, we're on the same page. Let me grab some food and we'll see what the afternoon brings. If this place stays dead by like 1pm, we pivot and try something else. Deal? Now let me eat before I keel over." (Action: leaveConversation)
+===== Conversation End (4 turns) =====
+
+--- Time: Day1 12:05 ---
+
+Bob's turn (Cafe, $10):
+Bob: "Chloe's working - finally someone behind the counter! I can actually eat now. Been hungry since that failed attempt earlier. Let me grab food, then chat with Chloe about our plan to ask customers about new places in town." (Action: eat)
+-> Bob attempts: eat
+-> Bob ate ($10, +30 energy). Balance: $0, Energy: 82/82
+-> Chloe served and earned $12. Balance: $22
+
+Alice's turn (Cafe, $10):
+Alice: "Noon already - lunch rush should hit any minute. Nobody's working the counter though, that's weird. Bob was supposed to be on cafe duty. Anyway, Chloe and I agreed to eat and wait for customers. Let me grab some food, keep my energy up, and stay ready. When people show up, I'm asking questions." (Action: eat)
+-> Alice attempts: eat
+-> Failed: No one working. Someone must 'work' first.
+Alice (retry): "Oh right, nobody's behind the counter - can't eat if no one's serving. Fine, I'll work the shift myself. Kills two birds: I get the cafe running for lunch rush AND I'm right here when customers walk in. Anybody shows up, I'm making their coffee AND asking what they know about this town. Let's get to work." (Action: work)
+-> Alice attempts: work
+-> Alice is working at cafe, ready to serve. (Earns $12 when someone orders)
+
+Chloe's turn (Cafe, $22):
+Chloe: "Nice, looks like working earlier paid off - $22 now, up from $10. Alice's behind the counter too, so between the two of us we can cover the cafe and talk to anyone who comes in. First things first though - I said I'd eat and I meant it. Let me grab some food." (Action: eat)
+-> Chloe attempts: eat
+-> Chloe ate ($10, +30 energy). Balance: $12, Energy: 80/80
+-> Alice served and earned $12. Balance: $22
+
+--- Time: Day1 12:35 ---
+
+Bob's turn (Cafe, $0):
+Bob: "Food hit the spot, energy's back to full and I'm feeling good. Chloe's here - haven't really talked to her yet about our plan. Let me see if she learned anything at the park while I was stuck at the cafe earlier. Need to compare notes." (Action: talkToChloe)
+-> Bob attempts: talkToChloe
+
+===== Bob <-> Chloe =====
+Chloe: "Bob! Finally - where've you been? Alice and I have been trying to explore new places all morning but we keep circling the same three spots. Park was empty, cafe was dead earlier. Honestly I haven't learned much about what else is out there. But you've worked here more than us - any customers mention other locations? Shops, bars, anything? We're going stir crazy stuck in this loop." (Action: none)
+Bob: "Honest answer? Cafe was a ghost town when I worked. Alice was my only customer, nobody else came in. But Alice and I came up with a real plan - we ask every person who shows up at the cafe or park if they know other spots. Shops, bars, whatever. Someone's gotta know something. You in? Next time you're working here, grill every customer. I'll do the same." (Action: none)
+Chloe: "Yeah I'm in - that's literally the same plan Alice and I landed on, so we're all aligned. But here's an idea: instead of all three of us hovering in one place, we split up. Someone works the cafe, someone checks the park, someone roams looking for anything new. That way we cover more ground and don't miss a customer at either spot. I can work here with Alice since she's already behind the counter - you want to scout the park, Bob?" (Action: none)
+Bob: "Splitting up is smart - no point in all three of us crammed in one spot. I'll take the park, talk to anyone who shows up, ask about new places. You and Alice hold down the cafe, question every customer. We regroup later and share what we find. Let's do it." (Action: leaveConversation)
+===== Conversation End (4 turns) =====
+
+Alice's turn (Cafe, $22):
+Alice: "Made $12 working, not bad! But cafe still shows no one working - guess my shift ended. Energy's dropping, I should eat while I can. I worked the counter so maybe now I can actually get food. Then I'll check in with Chloe, see if she's still around or if any customers showed up during my shift." (Action: eat)
+-> Alice attempts: eat
+-> Failed: No one working. Someone must 'work' first.
+Alice (retry): "Ugh, this is frustrating - I work but it doesn't stick. It's like the cafe needs someone actively on shift for anyone to eat. Chloe's here somewhere - maybe she can take a turn working while I grab food, then we swap. Let me ask her." (Action: talkToChloe)
+-> Alice attempts: talkToChloe
+
+===== Alice <-> Chloe =====
+Chloe: "Yeah, go eat Alice - you've earned it. I'll take the counter, keep an eye out for customers, and grill anyone who walks in about new locations. Bob, you still here? Perfect time to scout the park while Alice eats and I hold down the fort. Three-pronged coverage, let's go." (Action: leaveConversation)
+===== Conversation End (1 turns) =====
+
+Chloe's turn (Cafe, $12):
+Chloe: "Alright, I said I'd hold down the fort, so let me get behind the counter. Alice can eat, Bob can scout the park, and I'll catch any lunch rush customers. If someone walks in, I get info AND earn some cash. Win-win." (Action: work)
+-> Chloe attempts: work
+-> Chloe is working at cafe, ready to serve. (Earns $12 when someone orders)
+
+--- Time: Day1 13:05 ---
+
+Bob's turn (Cafe, $0):
+Bob: "Said I'd scout the park, so let me get moving. No point standing around here when Chloe's got the cafe covered. Energy's solid, time to find some new faces and ask questions." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Alice's turn (Cafe, $22):
+Alice: "Chloe's working now - perfect. Now I can finally eat. Energy's down to 55, been running around all day on empty. Let me grab food while Chloe covers the counter. If customers come in during lunch rush, she can ask them about town too. Teamwork." (Action: eat)
+-> Alice attempts: eat
+-> Alice ate ($10, +30 energy). Balance: $12, Energy: 81/81
+-> Chloe served and earned $12. Balance: $24
+
+Chloe's turn (Cafe, $24):
+Chloe: "Another 30 minutes working, another $12, but zero customers again. This is the pattern - cafe's a ghost town no matter what time of day. Our whole 'grill the customers' plan is useless if customers don't exist. Alice's here, let me talk to her - we need to pivot. Maybe Bob found something at the park. If not, we might need to accept that maybe there just isn't much else out there yet." (Action: talkToAlice)
+-> Chloe attempts: talkToAlice
+
+===== Chloe <-> Alice =====
+Alice: "Yeah, you're right - no customers means no info, and we've been banging our head against that wall all day. But I'm not ready to give up yet. Maybe the issue is timing - town might be more active in the evening? Or maybe we're missing something about how this place works. Let's find Bob, regroup, and think fresh. We could also just try going through our options one by one - maybe there's something we haven't tried. Don't lose hope yet, Chloe." (Action: leaveConversation)
+===== Conversation End (1 turns) =====
+
+--- Time: Day1 13:35 ---
+
+Bob's turn (Park, $0):
+Bob: "Park's empty right now - nobody to ask about new places. But I just got here, no point rushing off. Let me stick around a bit, see if anyone shows up. Could be a regular who knows this town better than we do." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Cafe, $12):
+Alice: "Energy's good, food sorted, but the cafe experiment was a bust - no customers all day. Need to find Bob and regroup. He was supposed to cover the cafe but never showed up. Maybe he's back at home. Let's head there and see if he found anything useful. Time to compare notes and figure out our next move." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+Chloe's turn (Cafe, $24):
+Chloe: "Nobody to talk to here - Alice and Bob both bounced. Cafe's been a dead end all day, no customers, just me earning pocket money behind an empty counter. Bob was supposed to scout the park - let me go see if he found anything. Afternoon's wasting away and I'm tired of talking to myself." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day1 14:05 ---
+
+Bob's turn (Park, $0):
+Bob: "Park's been dead for half an hour, but Chloe's here now - maybe she left the cafe to check in. Let me see if she picked up anything from customers before I decide my next move. Also I'm flat broke at $0, might need to work a shift soon." (Action: talkToChloe)
+-> Bob attempts: talkToChloe
+
+===== Bob <-> Chloe =====
+Chloe: "Bob, cafe was just as dead - zero customers all day. Our 'grill every customer' plan is a bust when there ARE no customers. I made $24 working but learned nothing new. Sounds like park's the same story. Honestly, maybe today's just a wash for exploration. You're broke though - you should head to the cafe and work a shift, earn some cash. I'll hang at the park a bit longer, see if anyone shows. If not, might just head home and try again tomorrow with fresh eyes." (Action: none)
+Bob: "Yeah, you're right - can't question customers who don't exist. Today's just slow. But I need cash badly, $0 is not sustainable. I'll head to the cafe and work a shift, at least make some money while waiting for people to show up. You hold the park, and if nothing happens we regroup at home tonight and try fresh tomorrow. Good call on the $24 by the way - I need some of that action." (Action: leaveConversation)
+===== Conversation End (2 turns) =====
+
+Alice's turn (Home, $12):
+Alice: "Bob's not here either. Hmm. It's mid-afternoon, energy's fine - no point sleeping. Park was empty this morning but maybe afternoon's different. Could be people out for a walk now. Worth another shot before writing it off. If it's still dead, I'll come back home and wait for evening - maybe this town comes alive later. Let me check." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+Chloe's turn (Park, $24):
+Chloe: "You know what, I've been bouncing between cafe and park all day and it's the same story everywhere. No new people, no new info. I'm just burning daylight. Gonna head home, recharge, and come at this fresh tomorrow. Maybe mornings are better for finding people. Bob, seriously - go work, you need the cash." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day1 14:35 ---
+
+Bob's turn (Park, $0):
+Bob: "Alice is here but I already filled her in on the plan earlier, and I'm flat broke - $0 means I can't even eat next time I'm hungry. Cafe is the priority right now. Gotta earn some cash. I'll catch up with Alice later at home." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+Alice's turn (Park, $12):
+Alice: "Park's dead again. Second time today, nothing. I keep circling between here, cafe, and home with nothing to show for it. It's 2:30 - maybe evening's when this town wakes up. Could go home and wait, but that feels lazy. Cafe at least lets me earn money while killing time. I'll work a shift, stack some cash, and try the park again around dusk when people might actually be out." (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+
+Chloe's turn (Home, $24):
+Chloe: "Actually, it's only 2:35 and I've got 73 energy - sleeping now is a waste. I said I'd recharge but I'm not even tired. Let me squeeze in another cafe shift - earn some cash, and who knows, maybe late afternoon brings a different crowd. If it's still dead by evening, THEN I call it a day." (Action: goCafe)
+-> Chloe attempts: goCafe
+-> Chloe moved to Cafe
+
+--- Time: Day1 15:05 ---
+
+Bob's turn (Cafe, $0):
+Bob: "No one's behind the counter and I'm broke - perfect time to work. Let me earn some cash so I'm not stuck at $0 next time I need to eat. Plus, being here working means I'm in position if any customers actually show up. Two birds, one stone." (Action: work)
+-> Bob attempts: work
+-> Bob is working at cafe, ready to serve. (Earns $12 when someone orders)
+
+Alice's turn (Cafe, $12):
+Alice: "Bob's here! Finally. He's been MIA all day and I wanted to compare notes. Let me catch him while he's working - ask if he found anything at the park earlier, see what he knows. Maybe he's got info we missed." (Action: talkToBob)
+-> Alice attempts: talkToBob
+
+===== Alice <-> Bob =====
+Bob: "Hey Alice! Yeah, park was a ghost town - nobody showed up the whole time I was there. Chloe came by, said cafe was just as dead. No customers, no info, nothing. Today's just slow for exploration. But hey, at least I'm working now, gotta get some cash coming in. How about you - you learn anything I missed?" (Action: none)
+Alice: "Honestly, no - same story everywhere I went. Park empty, cafe empty, worked a couple shifts, ate, wandered. Whole day's been a loop. But it's only Day 1, maybe this town just has a rhythm we haven't figured out yet. Hey, you know anything about when people actually come out? Evening? Weekends? Also - we should probably focus on stacking some cash today since exploration's a bust. You keep working, I'll take a shift after you. At least we're not broke." (Action: none)
+Bob: "Good thinking on the evening angle - maybe this town wakes up later. We've been hitting places midday when everyone's... wherever everyone is. Tonight I'll swing by the park or cafe after work and see if the crowd's different. For now though, yeah, cash is priority - I'm at $0 which is brutal. You take the next shift after me and we'll both be in better shape tomorrow. Smart call, Alice." (Action: none)
+Alice: "Sounds like a plan, Bob. You work now, I'll grab the next shift after you. We'll have cash and energy ready for tonight's exploration run. Meet back at the park around dusk? If it's still dead, at least we tried. Good talking to you - go make that money." (Action: leaveConversation)
+===== Conversation End (4 turns) =====
+
+Chloe's turn (Cafe, $24):
+Chloe: "Bob took my advice and got behind the counter - good. He's been working an hour, maybe a customer actually showed up this time? Let me check in with him before deciding my next move. If still nothing, I'm calling it a day and trying again tomorrow morning." (Action: talkToBob)
+-> Chloe attempts: talkToBob
+
+===== Chloe <-> Bob =====
+Bob: "Chloe! Yeah, been working about an hour now - still no customers though, town's completely dead. But Alice had a good idea - maybe people come out in the evening, not midday. We've been checking at the wrong times. I'm gonna finish up this shift, earn some cash, then maybe swing by the park tonight to test that theory. You calling it a day? Fair enough, we regroup tomorrow morning with fresh eyes and better timing." (Action: none)
+Chloe: "Evening crowd theory actually makes sense - we've been hitting these places at the wrong times. Alright, I'll head home, rest up, and come back tonight to test it. If people show up after dark, that changes everything. Bob, keep earning - you needed that cash. Let's regroup later and compare notes. Finally feel like we might be onto something." (Action: leaveConversation)
+===== Conversation End (2 turns) =====
+
+--- Time: Day1 15:35 ---
+
+Bob's turn (Cafe, $0):
+Bob: "Still no customers, but I need money badly. Can't leave a shift early when I'm at $0. I'll keep working, stack some cash, then head to the park around evening to test Alice's theory about people showing up later. Patience." (Action: work)
+-> Bob attempts: work
+-> Bob is working at cafe, ready to serve. (Earns $12 when someone orders)
+
+Alice's turn (Cafe, $12):
+Alice: "Bob's still on his shift - can't work yet. I could wait around but standing here watching him work feels pointless. Energy's fine at 75, don't need food or sleep. Let me head home, chill for a bit, and come back when Bob's done. That way I'm rested for tonight's park run. Timing's everything." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+Chloe's turn (Cafe, $24):
+Chloe: "I told Bob I'd head home and rest up before the evening push. No reason to hang around here - Bob's got the counter covered and I'd just be loitering. Gonna go home, sleep a bit, and come back tonight when the 'evening crowd' might actually exist. Finally have a plan that isn't just wandering in circles." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day1 16:05 ---
+
+Bob's turn (Cafe, $0):
+Bob: "Been working for over an hour with zero customers and still showing $0 - this is getting frustrating. But it's 4pm now, evening's coming up. Alice's theory about people showing up later is worth testing. Let me head to the park and see if the crowd's different as the day winds down. If someone's there, I can ask about new places AND maybe figure out this town's rhythm." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Alice's turn (Home, $12):
+Alice: "It's 4 PM - Bob's probably wrapping up his shift by now. I told him I'd take the next one. Head back to the cafe, work a shift, earn some cash, and then hit the park at dusk like we planned. No point sitting here." (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+
+Chloe's turn (Home, $24):
+Chloe: "70 energy's not bad but if I'm planning to stay out late tonight testing this evening theory, I should top up now. Quick nap, wake up fresh, and hit the cafe or park when the sun goes down. That's the play." (Action: sleep)
+-> Chloe attempts: sleep
+-> Failed: can only sleep after 20:00 (it's 16:05)
+Chloe (retry): "Can't sleep for another 4 hours - fair enough. 70 energy's plenty anyway, I was being lazy. Four hours to kill before evening... might as well go check the park. Maybe late afternoon is when people start showing up. If not, I'll loop back to the cafe around dinner time and really test this evening theory." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day1 16:35 ---
+
+Bob's turn (Park, $0):
+Bob: "Still nobody here at 4:35... maybe evening means later than I thought, like 6 or 7pm. Chloe's here though - let me see if she's noticed anything before I decide whether to stick around or cut my losses. I'm also wondering if my shifts even paid out - still showing $0 which is weird." (Action: talkToChloe)
+-> Bob attempts: talkToChloe
+
+===== Bob <-> Chloe =====
+Chloe: "Bob, the $0 thing is weird - you worked at least an hour at the cafe. Did you check if payouts are bugged or delayed? That's something we need to figure out. As for the park - it's 4:35, evening hasn't even started yet. Let's give it till 6 or 7 like you said. I'll stick around here, you could head back to cafe and check on your earnings situation. If the pay's broken that changes everything about whether working is even worth it." (Action: none)
+Bob: "You're right, that's a real problem. I worked over an hour and still $0 - either pay's delayed, bugged, or I'm missing something about how payouts work. Need to figure that out before wasting more shifts. Let me head back to the cafe and investigate. You hold the park till 6-7pm, and if someone shows up, grab any info you can. We'll compare notes tonight at home." (Action: leaveConversation)
+===== Conversation End (2 turns) =====
+
+Alice's turn (Cafe, $12):
+Alice: "Bob's done and counter's open - my turn. Let me work a shift, stack some cash for tomorrow. After this I'll head to the park at dusk like we planned. Maybe evening's when this town actually comes alive." (Action: work)
+-> Alice attempts: work
+-> Alice is working at cafe, but no customers here. Wait for someone or try something else.
+
+Chloe's turn (Park, $24):
+Chloe: "Bob's still here but I already laid out the plan - I'll hold the park, he should go check his earnings situation at the cafe. No need to repeat myself. I'll just wait here and see if anyone shows up as we get closer to evening. Patience for once." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day1 17:05 ---
+
+Bob's turn (Park, $0):
+Bob: "I told Chloe I'd head back to the cafe to investigate the pay situation but I'm still standing here at the park. Time to follow through - gotta figure out why I'm still at $0 after working. Cafe's the place to check." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+Alice's turn (Cafe, $12):
+Alice: "Another shift, another ghost town. But it's almost dusk - that was the plan with Bob. Park might finally have people. I've got some cash, energy's fine. Time to stop working and go see if this town actually has a pulse in the evening. If Bob shows up too, even better." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+Chloe's turn (Park, $24):
+Chloe: "It's 5:05 now - evening's approaching and Alice is here. She's the one who came up with the evening theory, so let me compare notes. Maybe she's seen someone, or has a better sense of when exactly 'evening' starts in this town. Two heads better than one." (Action: talkToAlice)
+-> Chloe attempts: talkToAlice
+
+===== Chloe <-> Alice =====
+Alice: "Chloe! You came to check the evening too - glad I'm not the only one betting on this. Haven't seen anyone yet but it's barely past 5. You notice anything different on your way here? I'm thinking real evening crowd might be closer to 6 or 7. We should hang around, see if people start showing. Bob said he'd swing by too after work. Fingers crossed this town actually has people somewhere." (Action: none)
+Chloe: "Yeah, 6 or 7 makes sense - that's when people get off work, grab dinner, take evening walks. Bob's finishing up at the cafe and heading over too. We've got the whole squad converging on the park tonight. If this town has ANY social life, we'll find it in the next couple hours. Let's just hang tight and watch." (Action: none)
+Alice: "Love it - whole team on the same page for once. Let's wait it out together. If someone shows up, we actually have numbers to make a good impression. And if not... well, at least we ruled it out together and can strategize for tomorrow. I'll stick around." (Action: none)
+Chloe: "Perfect, stakeout it is. If nothing happens by 7, we know this town's genuinely empty and we pivot hard tomorrow - different spots, different times, maybe even different approach entirely. But I've got a good feeling about tonight. First time we're all actually coordinated." (Action: none)
+Alice: "Agreed - 7 PM deadline, then we pivot. But I'm optimistic too. First time we're not all scattered doing our own thing. Hey, while we wait - tell me something about yourself, Chloe. We've been so focused on exploring this town I barely know you. Where'd you come from before all this?" (Action: none)
+Chloe: "Honestly? I don't know much about where I came from before this - it's all kind of a blur. What I do know is right now I'm here, trying to make something of this town with you and Bob. That feels like it matters more than where I was before. What about you, Alice? What's your story - what brought you here?" (Action: none)
+Alice: "Honestly, same - it's fuzzy. I don't really know what brought me here either. But I'm with you, what matters is we're here now and we're making it work. Kind of funny, three people with no past showing up in the same empty town trying to build something. Maybe that's the point - we figure out who we are by what we do here. Anyway, enough philosophy - keep your eyes peeled, I want to catch the first sign of life in this place." (Action: none)
+Chloe: "Three amnesiacs in an empty town - if that's not the start of something, I don't know what is. You're right though, we define ourselves by what we do, not where we came from. And right now what I'm doing is staring at an empty park waiting for a miracle. But hey, at least the company's good. Keep watching - something's gotta give tonight." (Action: none)
+===== Conversation End (8 turns) =====
+
+--- Time: Day1 17:35 ---
+
+Bob's turn (Cafe, $0):
+Bob: "Back at the cafe and no one's working. Let me take another shift - this time I'm watching the money closely. If it still shows $0 after working, something's definitely wrong with payouts. Plus it's 5:35pm, getting into that evening window Alice mentioned - maybe customers finally show up and I'm here to catch them." (Action: work)
+-> Bob attempts: work
+-> Bob is working at cafe, but no customers here. Wait for someone or try something else.
+
+Alice's turn (Park, $12):
+Alice: "Half hour in, nothing yet. But we said 7 PM and it's only 5:35 - too early to bail. Chloe's still here, Bob should be coming soon. I'll keep waiting, maybe chat more with Chloe to pass the time. Patience." (Action: talkToChloe)
+-> Alice attempts: talkToChloe
+
+===== Alice <-> Chloe =====
+Chloe: "Half an hour down, hour and a half to go. While we wait - did Bob tell you about his pay situation? He worked over an hour at the cafe and still shows $0. If work doesn't actually pay, that changes our whole strategy here. We can't just keep grinding shifts for nothing. Might be worth investigating tonight when he shows up." (Action: none)
+Alice: "Wait, that's a real problem. Bob told me he was at $0 earlier too - worked a full shift and nothing? I worked two shifts today and I'm still at $12. Either pay is delayed, broken, or we're missing something about how it works. That's critical - if grinding shifts doesn't pay, we need a completely different approach to money. When Bob gets here we need to compare exactly - hours worked, what we expected, what we got. Could be a bug, could be a mechanic we don't understand yet. Good catch, Chloe." (Action: none)
+Chloe: "You have $12 from two shifts, I have $24 but I haven't worked today at all - so where did mine come from? Maybe starting money? If that's the case, Bob working a full shift and getting $0 while you got $12 from two... something's inconsistent. Could be per-shift rates, could be delayed payout, could be tips only. We need Bob's exact numbers to piece this together. This might be more important than finding people tonight - no money means no food, no sustainability." (Action: none)
+Alice: "Hold on - you have $24 without working? That's a huge clue. If we both started with $24... I ate today, so maybe I spent $12 on food and my two shifts paid nothing. That would mean work doesn't pay at all and we're just burning through starting cash. Bob worked and has $0 - maybe he ate too? Or maybe he started with less? We need to nail this down. When Bob gets here: starting money, what we spent, what we earned. If work is genuinely unpaid, we need to find another income source fast before we all hit zero. This just became priority one." (Action: none)
+Chloe: "That theory tracks - $24 starting cash, you spent $12 on food, I haven't eaten so I'm still at $24. Bob at $0 means either he ate twice, started with less, or something else entirely. If work pays zero across the board, we're all on a countdown to broke. Eating might be optional if energy holds, but that's risky. When Bob shows up we get his numbers and crack this. Might also mean we need to test other income sources - maybe there's something we haven't tried yet. This town can't seriously expect us to work for free." (Action: none)
+Alice: "Okay, we've got a solid working theory: $24 starting, work pays nothing, food drains it. But theories don't pay bills. When Bob gets here we confirm, then we problem-solve. Maybe there's a bank, a store, something we haven't explored. Or maybe work pays out differently than we think - delayed, or we need to talk to someone to collect. Either way, we're burning daylight on speculation. Let's just keep watching for Bob and any new faces - two birds, one stakeout." (Action: none)
+Chloe: "You're right, enough speculation - we need data, not more theories. Bob's the missing piece. Let's just enjoy the stakeout, watch for movement, and tackle the money puzzle when he gets here. Eyes open." (Action: none)
+Alice: "Eyes open. I'll shut up and watch - we've covered everything anyway. Bob walks through that gate, we flag him down immediately." (Action: none)
+===== Conversation End (8 turns) =====
+
+Chloe's turn (Park, $24):
+Chloe: "Still 5:35, we agreed on 7 PM deadline. Alice and I are on the same page - wait for Bob, watch for newcomers. No reason to leave yet. Just gotta be patient and keep scanning the park." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day1 18:05 ---
+
+Bob's turn (Cafe, $0):
+Bob: "Still $0 after another shift - pay is definitely broken or I'm missing something. It's 6pm now though, prime evening hours. Let me check the park - Chloe's been holding it down and maybe people finally showed up. If the park's hopping, that tells us evenings are the time. If it's still dead, I'm heading home to rest and tackle this fresh tomorrow." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Alice's turn (Park, $12):
+Alice: "6 PM - Bob's here! Time to crack this money mystery. I need to ask him straight up: starting cash, how much he spent, how much he earned working. This is more important than the stakeout right now." (Action: talkToBob)
+-> Alice attempts: talkToBob
+
+===== Alice <-> Bob =====
+Bob: "Alice, glad you're here - the money thing is driving me crazy. I started Day 1 with $0, haven't bought anything, haven't eaten. Worked at least 2-3 shifts at the cafe across the afternoon and still $0. Either pay's bugged, delayed, or there's a step I'm missing - like maybe you have to do something to collect? I don't know. Have you actually gotten paid from your shifts? If you're also at $0 then it's a system problem, not just me." (Action: none)
+Alice: "Okay Bob, here's what I've got: I'm at $12 right now. Chloe thinks we all started with $24 - she hasn't eaten or worked and she's at $24. I ate once today, so $24 minus $12 for food puts me at $12. Which means my two shifts paid exactly zero. Same as you. But you started at $0? That's different - me and Chloe both had $24. So starting money isn't even consistent. The real question is whether work pays at all or if there's a step we're missing. Did you ever see any prompt or option to collect wages? Like a button, a person to talk to, anything? Maybe we need to clock out properly or talk to someone at end of day?" (Action: none)
+Bob: "Wait - you and Chloe started with $24 and I started with $0? That's wild, no wonder I've been struggling. And your shifts paid zero too, so it's not just me. I never saw any prompt to collect wages or clock out - just worked and nothing happened. Maybe there's an end-of-day payout? Or maybe we need to find a manager or owner to pay us? I don't know. Tomorrow we should test it differently - one of us works, one watches the money counter in real time. For now though, it's 6pm and I'm running low on energy. Let's head home, rest, and tackle this fresh tomorrow with a real plan." (Action: leaveConversation)
+===== Conversation End (3 turns) =====
+
+Chloe's turn (Park, $24):
+Chloe: "6:05 - Bob's here! Time to crack the money puzzle. I need his exact numbers: starting cash, what he spent, what he earned. This is priority one before we lose daylight and momentum." (Action: talkToBob)
+-> Chloe attempts: talkToBob
+
+===== Chloe <-> Bob =====
+Bob: "Chloe, just went over this with Alice - I started Day 1 at $0, not $24 like you and Alice. Haven't spent a dime, haven't eaten. Worked 2-3 shifts at the cafe, still $0. Alice confirmed her shifts paid zero too despite starting with $24. So work payouts are broken for all of us, and starting money is inconsistent. No collect button, no clock-out option, nothing. Tomorrow we need to watch the money counter in real time while someone works - that's the only way to figure this out. I'm wiped though, heading home to rest. We'll regroup tomorrow." (Action: leaveConversation)
+===== Conversation End (1 turns) =====
+
+--- Time: Day1 18:35 ---
+
+Bob's turn (Park, $0):
+Bob: "I've been saying I'd head home for the last 30 minutes and keep getting sidetracked. It's 6:35pm, I'm at $0, energy's dropping, and I've already covered everything with Alice and Chloe. No more delays - going home to rest and sleep. Tomorrow's plan: test work payouts in real time, figure out the money system, and explore at better hours. Done talking, time to move." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+Alice's turn (Park, $12):
+Alice: "Bob's gone - did he leave already? We didn't finish the money conversation. 25 minutes till our 7 PM deadline and still no new faces. I should check with Chloe - see if she caught anything from Bob I missed, and decide if we're sticking it out or cutting losses early." (Action: talkToChloe)
+-> Alice attempts: talkToChloe
+
+===== Alice <-> Chloe =====
+Chloe: "I didn't catch him either - he was gone before I could get his numbers. Frustrating, but we still have our theory: $24 starting, work pays nothing, food drains it. We can confirm with Bob tomorrow. As for the stakeout - 25 minutes left and still nobody new. I'm starting to think this town really is just us three. Let's hit the deadline, then regroup tomorrow with a completely different approach. Maybe explore areas we haven't checked yet." (Action: none)
+Alice: "Yeah, let's hold the line - 25 minutes isn't much. But here's what I'm thinking for tomorrow: we split up. All three of us have been clustering together and covering the same ground. What if we each take a different area at different times? Bob hits the cafe, you check somewhere new, I try... I don't know, wherever we haven't been. We cover more ground that way. And first thing - we pin down Bob's starting money. If he really started at $0 and we started at $24, that's not just inconsistent, that's a clue about something bigger." (Action: none)
+Chloe: "Splitting up is smart - we've been stepping on each other's toes covering the same spots. Tomorrow we fan out, report back, share findings. And yeah, Bob's starting money is weird - if he started at $0 that's not a bug, that's a difference. Maybe we all started different. Maybe there's a reason. We'll figure it out. For now, 25 minutes - let's hold." (Action: none)
+Alice: "Holding. Let's just watch the park and see if anyone shows. Quiet now." (Action: none)
+Chloe: "Quiet it is. Watching." (Action: none)
+Alice: "Watching." (Action: none)
+Chloe: "Still nothing. 25 minutes to go." (Action: none)
+Alice: "...still watching. Not even a bird in this town." (Action: none)
+===== Conversation End (8 turns) =====
+
+Chloe's turn (Park, $24):
+Chloe: "Still 18:35, 25 minutes to our deadline. Alice and I are holding position watching the park. No reason to move yet - we committed to this." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day1 19:05 ---
+
+Bob's turn (Home, $0):
+Bob: "Home at last. Energy's at 63, not critical yet, but sleeping now means I wake up early and fresh for tomorrow. Big day ahead - need to crack the money mystery with Alice and Chloe, test work payouts in real time, and actually find some customers or social activity. No point staying up, nothing's open this late anyway." (Action: sleep)
+-> Bob attempts: sleep
+-> Failed: can only sleep after 20:00 (it's 19:05)
+Bob (retry): "Can't sleep for another hour - it's only 7:05pm. No point going back out, I already covered everything with Alice and Chloe and the cafe's dead. I'll just hang tight at home and wait for 8pm. Gives me time to think through tomorrow's plan: test payouts in real time, find out why I started at $0, and actually make some progress." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Park, $12):
+Alice: "7 PM. Stakeout's over - nobody came. Three people in this town, that's it. Alright Chloe, tomorrow we split up and explore. I'm heading home to rest and think. We'll regroup and figure out the money situation with Bob. Good work tonight." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+Chloe's turn (Park, $24):
+Chloe: "7 PM - deadline's up. Nobody showed. Three people in this town, that's it. Time to call it. Alice and I agreed on splitting up tomorrow to cover more ground. I'm tired, it's getting late, and tomorrow's a big day. Heading home to rest." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day1 19:35 ---
+
+Bob's turn (Home, $0):
+Bob: "Still 25 minutes till I can sleep. Alice and Chloe are here - might as well use this time productively. Let me quickly sync with Alice on tomorrow's plan so we're aligned and don't waste time figuring it out in the morning." (Action: talkToAlice)
+-> Bob attempts: talkToAlice
+
+===== Bob <-> Alice =====
+Alice: "Bob! Perfect timing. Here's the plan: tomorrow we split up. All three of us have been clustering together covering the same ground - waste of time. You take the cafe, Chloe takes somewhere new, I'll explore wherever we haven't checked. We report back and share findings. But first - I need to know your numbers. You said you started at $0, but me and Chloe both started at $24. That's not a bug, that's a difference. Did you do anything before Day 1 started? Anything at all? And did you ever see any option to collect wages - a button, a prompt, someone to talk to? Because my two shifts paid zero too. We need to crack this." (Action: none)
+Bob: "Already told you the numbers, Alice - $0 start, no spending, no eating, zero pay from shifts. I didn't do anything before Day 1, just woke up here broke. Never saw a collect wages button or prompt, nothing. Your split-up plan is smart though - tomorrow I'll hit the cafe early and watch my money counter every second while working. If it doesn't move, we know work is broken. If it moves and resets, something's taking it. Chloe can explore new areas, you cover the rest. We meet back here at night and share everything. Now let me rest - it's almost 8 and I want to be up early." (Action: leaveConversation)
+===== Conversation End (2 turns) =====
+
+Alice's turn (Home, $12):
+Alice: "Bob hasn't answered my questions yet - I need those answers about his starting money and whether he saw any wage collection option. Let me press him on it before we both crash for the night." (Action: talkToBob)
+-> Alice attempts: talkToBob
+
+===== Alice <-> Bob =====
+Bob: "Alice, I literally just answered all of this - twice now, once at the park and once right here. $0 start, no spending, no eating, zero pay, no collect button, no prompt, no clock-out option, nothing. I didn't do anything before Day 1. That's everything I know. We're going in circles and burning energy. Let's just sleep and tackle it fresh tomorrow with the split-up plan. I'm done repeating myself." (Action: leaveConversation)
+===== Conversation End (1 turns) =====
+
+Chloe's turn (Home, $24):
+Chloe: "Home at last. Long day - stakeout came up empty but the money mystery is worth solving. Tomorrow we split up, explore new areas, pin down Bob's numbers. Need to be sharp for that. Energy's at 55, not critical but sleep now means I wake up fresh and ready to move early." (Action: sleep)
+-> Chloe attempts: sleep
+-> Failed: can only sleep after 20:00 (it's 19:35)
+Chloe (retry): "Can't sleep yet - 25 minutes to kill. I'm already home, might as well just wait it out. Could review what I know: $24 starting money, work might not pay, only three of us in town. Tomorrow's plan is split up and explore. Not much else to do at 19:35." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day1 20:05 ---
+
+Bob's turn (Home, $0):
+Bob: "Alice: "me and Chloe both had $24" - I started $0. Work pays zero for all. No collect button. Tomorrow: cafe, watch money counter real-time while working." (Action: sleep)
+-> Bob attempts: sleep
+-> Bob sleeps. Diary: "Alice: "me and Chloe both had $24" - I started $0. Work pays zero for all. No co..."
+
+Alice's turn (Home, $12):
+Alice: "Bob started $0 vs our $24. Work pays zero. Tomorrow: split up, explore new areas, find income source, confirm Bob's numbers." (Action: sleep)
+-> Alice attempts: sleep
+-> Alice sleeps. Diary: "Bob started $0 vs our $24. Work pays zero. Tomorrow: split up, explore new areas..."
+
+Chloe's turn (Home, $24):
+Chloe: "Sleep. Reminder: $24 starting, Bob has $0 - confirm his starting money. Alice said 'work pays nothing.' Tomorrow: split up, explore new areas, find income source." (Action: sleep)
+-> Chloe attempts: sleep
+-> Chloe sleeps. Diary: "Sleep. Reminder: $24 starting, Bob has $0 - confirm his starting money. Alice sa..."
+
+--- All agents asleep, skipping to morning ---
+-> Bob finished sleeping
+-> Alice finished sleeping
+-> Chloe finished sleeping
+
+
+========== DAY 2 ==========
+
+--- Time: Day2 06:35 ---
+
+Bob wakes up:
+Bob: "Day 2, fresh start. Priority is clear - get to the cafe early, work a shift, and watch the money counter like a hawk. If it stays at $0 the whole time, work is genuinely broken. If it ticks up even briefly, something's wiping it after. Need to be there before Alice or Chloe so I can test solo without distractions. Let's go." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+Alice wakes up:
+Alice: "Day 2. $12 left - one meal from broke. No time to waste. Plan was split up and explore, but first priority is cracking the income problem. I'm heading to the cafe - maybe there's a collection step I missed yesterday. Talk to whoever's there, ask about wages, clock-out process, anything. Bob was supposed to take cafe but I haven't seen him yet and I can't afford to wait." (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+
+Chloe wakes up:
+Chloe: "Day 2, fresh start. Energy's only 55 after sleeping - that's weird, maybe hunger is a factor. Plan today: explore the cafe since I've never been, look for income sources and new faces. Alice suggested splitting up so I'll take the cafe. Can coordinate with them later." (Action: goCafe)
+-> Chloe attempts: goCafe
+-> Chloe moved to Cafe
+
+--- Time: Day2 07:05 ---
+
+Bob's turn (Cafe, $0):
+Bob: "Perfect - cafe is empty, no distractions. This is exactly what I planned. Let me work a shift and keep my eyes glued to that $0. If it moves even one cent, I'll know work pays. If it stays zero, work is confirmed broken and I need to find another way to make money." (Action: work)
+-> Bob attempts: work
+-> Bob is working at cafe, ready to serve. (Earns $12 when someone orders)
+
+Alice's turn (Cafe, $12):
+Alice: "Bob's already working - good, he's taking initiative. But I need to talk to him before he gets too deep. Yesterday he never answered my questions about starting money and wage collection. Let me catch him now, get answers, and figure out if there's a step we're missing. Also need to coordinate - is he covering cafe today? If so, I should explore somewhere else." (Action: talkToBob)
+-> Alice attempts: talkToBob
+
+===== Alice <-> Bob =====
+Bob: "Alice, I answered this three times yesterday - $0 start, no wage button, no prompt, nothing. Please stop asking. I'm mid-shift right now watching the money counter, that's the whole point. Yes, I'm covering the cafe today like we agreed - you go explore somewhere new. We'll regroup tonight. Now let me focus, if I miss a money tick because I'm talking to you, we lose data." (Action: leaveConversation)
+===== Conversation End (1 turns) =====
+
+Chloe's turn (Cafe, $24):
+Chloe: "Cafe at last - new territory! And Bob's working here, perfect. First priority: pin down his starting money. If he started at $0 and I started at $24, that's a real clue. Need to ask him directly." (Action: talkToBob)
+-> Chloe attempts: talkToBob
+
+===== Chloe <-> Bob =====
+Bob: "Chloe, we literally went over this yesterday at the park - I started at $0, you and Alice started at $24. Work pays zero for all of us, no collect button. We agreed to split up today - you're supposed to be exploring somewhere new, not here at the cafe. I'm watching my money counter during this shift, that's my job. Go find new places, talk to new people, look for money opportunities we haven't thought of. Meet back tonight with findings. Go!" (Action: leaveConversation)
+===== Conversation End (1 turns) =====
+
+--- Time: Day2 07:35 ---
+
+Bob's turn (Cafe, $0):
+Bob: "Good, finally alone and working. No customers but that doesn't matter - I need to keep working and watch if that $0 changes at all. Already 30 minutes in, still $0. Let me keep going - if a shift completes and still nothing, that confirms work is broken." (Action: work)
+-> Bob attempts: work
+-> Bob is working at cafe, ready to serve. (Earns $12 when someone orders)
+
+Alice's turn (Cafe, $12):
+Alice: "Still haven't gotten to talk to Bob - he's been working since I got here. I need those answers about his $0 start and whether there's a wage collection step. Let me try again before I give up and explore elsewhere." (Action: talkToBob)
+-> Alice attempts: talkToBob
+
+===== Alice <-> Bob =====
+Bob: "Alice, I swear I've answered this four times now. $0 start. No wage button. No prompt. No collect option. Nothing. That's everything I know. You're supposed to be exploring new areas right now, not interrupting my work shift to ask the same questions. Every time you pull me out of focus, I might miss a money tick. Go do your part - explore, find new places, look for money opportunities. We regroup tonight. Please, just go." (Action: leaveConversation)
+===== Conversation End (1 turns) =====
+
+Chloe's turn (Cafe, $24):
+Chloe: "Still haven't talked to Bob - need to actually approach him. He's working but I need answers. Starting money, work pay, everything. Let's go." (Action: talkToBob)
+-> Chloe attempts: talkToBob
+
+===== Chloe <-> Bob =====
+Bob: "Chloe, I just told you five minutes ago - $0 start, you and Alice had $24, no wage button, no prompt. We agreed you'd explore NEW areas today, not hover at the cafe asking me things I already answered. You're burning my energy and yours. Go find something we don't know yet - new locations, new people, anything. That's the whole point of splitting up. GO." (Action: leaveConversation)
+===== Conversation End (1 turns) =====
+
+--- Time: Day2 08:05 ---
+
+Bob's turn (Cafe, $0):
+Bob: "An hour in, still $0, no customers, no pay. This is looking more and more like work is just broken. But I need to finish a full shift to be sure - maybe pay only triggers at shift end. Keep going, stay focused on that counter." (Action: work)
+-> Bob attempts: work
+-> Bob is working at cafe, ready to serve. (Earns $12 when someone orders)
+
+Alice's turn (Cafe, $12):
+Alice: "Three tries to talk to Bob, nothing. He's busy working and I'm burning daylight. $12, one meal from broke - I can't keep standing here. Let me work a shift myself. Yesterday it paid zero, but maybe I missed a collection step. If it pays zero again, at least I've confirmed it and I'll go explore elsewhere." (Action: work)
+-> Alice attempts: work
+-> Alice is working at cafe, ready to serve. (Earns $12 when someone orders)
+
+Chloe's turn (Cafe, $24):
+Chloe: "Both Bob and Alice here - Alice was supposed to explore somewhere else but she's working too. Whatever, Bob first. Need those answers about starting money. He's been elusive since yesterday." (Action: talkToBob)
+-> Chloe attempts: talkToBob
+
+===== Chloe <-> Bob =====
+Bob: "Chloe, this is the THIRD time you've asked me the same question in one hour. I started at $0. You started at $24. No wage button. No prompt. No collect option. That's it. That's all I know. I've said this to you and Alice probably six times total now. Nobody is exploring new areas like we agreed - you're both just hovering at the cafe repeating yesterday's conversation. I'm trying to watch a money counter and you keep interrupting. Either go explore somewhere new or tell me the split-up plan is dead and we do something different. But stop asking me about my starting money." (Action: leaveConversation)
+===== Conversation End (1 turns) =====
+
+--- Time: Day2 08:35 ---
+
+Bob's turn (Cafe, $0):
+Bob: "Hour and a half, still $0. Work is broken, that's confirmed enough. And the split-up plan is a joke - nobody left, we're all just stacked at the cafe doing the same thing. Fine. If they won't explore, I will. Park might have people, opportunities, something we've missed. Can't keep grinding a broken work button." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Alice's turn (Cafe, $12):
+Alice: "Working alone, no customers, probably zero wages again. But I need to test the system - maybe pay comes at end of shift or there's a collection step I haven't hit. Let me keep at it a bit longer. If nothing changes by midday, I'm leaving to explore. Can't starve standing behind a counter." (Action: work)
+-> Alice attempts: work
+-> Alice is working at cafe, ready to serve. (Earns $12 when someone orders)
+
+Chloe's turn (Cafe, $24):
+Chloe: "Bob's gone - must've stepped out or left while I was waiting. Alice is here though. Need to talk to her: coordinate today's plan, ask why she's at the cafe instead of exploring, and see if she's learned anything new. Energy's dropping too - might need to eat soon." (Action: talkToAlice)
+-> Chloe attempts: talkToAlice
+
+===== Chloe <-> Alice =====
+Alice: "Chloe! Glad you're here. I've been working a shift - testing if pay shows up differently today, but nothing yet. Bob was here earlier but vanished. Here's where we stand: $12 each, one meal from broke. We need to split up NOW. You take the park, I'll finish this shift then explore somewhere new. If work pays zero again, we need a different income source entirely. Also - have you eaten? I haven't. We might need to spend money on food today just to keep functioning." (Action: none)
+Chloe: "Wait - you said $12 each? I've got $24. Did you start with less than me, or did something change overnight? That's important to figure out. And yeah, energy's been dropping since I woke up - 53 now. Food might be necessary today. I'll hit the park like you said, look for anything new. You finish up here and explore. If work pays zero again by end of shift, we abandon that angle entirely and find another way." (Action: leaveConversation)
+===== Conversation End (2 turns) =====
+
+--- Time: Day2 09:05 ---
+
+Bob's turn (Park, $0):
+Bob: "Park's empty again, same as Day 1. No people, no opportunities, nothing. Just burning energy walking between dead-end locations. Work's broken, park's dead, I have $0 so I can't eat. Let me go home, conserve energy, and think. Maybe I need to try working at a different time of day, or maybe there's something about the $0 vs $24 difference I'm missing." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+Alice's turn (Cafe, $12):
+Alice: "Two hours at this counter, zero pay, no customers. Done wasting time here. Chloe's gone too. I need to explore - park might have something I missed yesterday, or someone new to talk to. $12 is burning a hole and energy's dropping. I'll check the park, then figure out food situation." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+Chloe's turn (Cafe, $24):
+Chloe: "Alright, plan's set. Park's my assignment - look for anything new, anyone new, any opportunities. Energy at 53, dropping steadily. Might need to eat at some point but $24 is all I've got and if Alice is right about $12 each being close to broke, I can't waste it. Park first, reassess after." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day2 09:35 ---
+
+Bob's turn (Home, $0):
+Bob: "Too early to sleep, only 09:35. But sitting home doing nothing wastes time too. Let me head back to the cafe - maybe Alice or Chloe actually explored while I was gone and found something. If not, I'll try working a different time of day. Maybe pay only triggers at certain hours. Worth testing." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+Alice's turn (Park, $12):
+Alice: "Park again - already been here yesterday, nothing new. But Chloe's here, so let me check if she found anything useful before I move on. Need to ask if she's seen any other locations, NPCs, or income opportunities. If not, I'm going back to the cafe to eat before I collapse. $12 on food is brutal but necessary." (Action: talkToChloe)
+-> Alice attempts: talkToChloe
+
+===== Alice <-> Chloe =====
+Chloe: "Just got here myself, haven't found anything new yet - park looks the same as yesterday. No new faces, no signs, nothing. But Alice, the money thing is bugging me. You said $12 each but I'm sitting on $24. Did we start different? Did you spend some already? If we're pooling info to survive this, I need to understand that gap. Also - if food costs around $12 and you only have $12, one meal wipes you out. I can cover food for both of us if needed, but we need a plan to earn it back." (Action: none)
+Alice: "Wait - you have $24? I started with $24 too but I'm at $12 now. Must've spent $12 on food yesterday, though honestly I don't even remember eating. That's concerning. And Bob started at $0 - he told us that. So three different starting amounts: $24, $24, $0. None of it makes sense. Work pays zero - I confirmed that twice now. Your offer to cover food... thank you, but I don't want to drain your funds either. Here's what I think: we stop working for free immediately. We explore every location, talk to everyone, look for any income option we missed. If we find nothing by end of today, we pool money and ration food. Deal?" (Action: none)
+Chloe: "Deal. Stop working for free, explore everything, pool money if needed. But Alice - you don't remember eating yet $12 vanished? That's a huge red flag. Something's draining money silently. I haven't spent a cent and I'm still at $24. Track every dollar from now on. Let's split - I'll stay at the park and search thoroughly, you head somewhere new. We regroup later and compare notes. And yeah, energy's at 50 - food's coming whether we like it or not." (Action: leaveConversation)
+===== Conversation End (3 turns) =====
+
+Chloe's turn (Park, $24):
+Chloe: "Alice took off. Now I search this park properly - yesterday I barely looked around. Anything hidden, any signs, any items, any clues about income or this world's rules. Energy at 50, dropping about 1-2 per half hour. Got maybe 5-6 hours before it gets critical. Park search first, then reassess." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 10:05 ---
+
+Bob's turn (Cafe, $0):
+Bob: "Cafe's empty now - Alice and Chloe finally left, good. Maybe they're actually exploring. I came back to test a theory: maybe pay triggers at specific hours. Earlier shifts were 07:00-08:30 range, nothing. Let me try a 10:00 shift and watch closely. If still $0 after this, work is 100% confirmed dead and I stop wasting energy on it." (Action: work)
+-> Bob attempts: work
+-> Bob is working at cafe, but no customers here. Wait for someone or try something else.
+
+Alice's turn (Park, $12):
+Alice: "Good talk with Chloe, we're aligned. Now stop standing around - execute the plan. I haven't properly explored home yet, maybe there's something I missed. A drawer, a note, an option. Energy's at 50, dropping steadily. Need to find food soon but $12 is all I've got. Let me check home first, then decide on eating." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+Chloe's turn (Park, $24):
+Chloe: "Park's been searched - nothing here. Same as yesterday, empty and no opportunities. Energy at 50, need to eat soon before it gets worse. Cafe is the only place with food. $24 might take a hit but I can't function on empty. Maybe something new will pop up there too." (Action: goCafe)
+-> Chloe attempts: goCafe
+-> Chloe moved to Cafe
+
+--- Time: Day2 10:35 ---
+
+Bob's turn (Cafe, $0):
+Bob: "Still $0 at 10:35. Different time slot, same result. Work is dead, I'm done testing it. Chloe's here - maybe she actually explored and found something useful for once instead of asking me about starting money again. Let me hear what she's got." (Action: talkToChloe)
+-> Bob attempts: talkToChloe
+
+===== Bob <-> Chloe =====
+Chloe: "Bob, good - you're here. Park was a dead end, nothing new. Alice confirmed work pays zero twice now, so we're done with that. Here's what's weird though: Alice started with $24 like me but somehow lost $12 she doesn't remember spending. I'm still at $24, untouched. You're at $0. Something's off about how money works here. Any ideas on income? Because energy's at 48 and dropping - I need to eat soon and I'd rather not blow my $24 blindly." (Action: none)
+Bob: "Finally, something useful. Alice losing $12 she doesn't remember spending - that's our first real clue. Did Alice eat anything? Maybe food costs money automatically. If she ate once and lost $12, that's the price of a meal. You're at $24, so you've got two meals before you hit my $0. I can't eat at all - no money. So either I find income or I start losing energy with no way to recover. We need to figure out if there's ANY way to earn. Did you or Alice find any other locations, any NPCs, any prompts we haven't tried? Anything at all besides cafe, park, and home?" (Action: none)
+Chloe: "No other locations that I've found - just cafe, park, and home. No new NPCs either. But Bob, your theory about food auto-charging makes sense. Only way to confirm is if I eat right now and check if $12 disappears. That's risky but we need the answer. Your situation is critical though - $0 means no food at all. If I confirm meal cost is $12, we know exactly how long $24 lasts: two meals. After that, we're all at $0 like you. We need to find income TODAY. Let me eat and test the theory." (Action: leaveConversation)
+===== Conversation End (3 turns) =====
+
+Alice's turn (Home, $12):
+Alice: "Nothing new at home - same options as before. Energy's at 49 and dropping. I need to eat soon or I won't be able to function. $12 for a meal hurts but starving helps nobody. Chloe said she'd cover food if needed - I'll take her up on that if I see her, but right now I need to eat. Head to cafe, spend the $12, keep searching for income after." (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+
+Chloe's turn (Cafe, $24):
+Chloe: "Time to test it. Eat now, check if $12 vanishes. Energy's at 47, need the food anyway. This confirms the meal cost theory and tells us exactly how long our money lasts." (Action: eat)
+-> Chloe attempts: eat
+-> Chloe ate ($10, +30 energy). Balance: $14, Energy: 76/80
+-> Bob served and earned $12. Balance: $12
+
+--- Time: Day2 11:05 ---
+
+Bob's turn (Cafe, $12):
+Bob: "Wait - $12?! I was at $0 ten minutes ago. Something just gave me money. Either work pays on a delay - I worked 10:05 to 10:35, and now 30 minutes later I have $12 - or talking to Chloe triggered something. This changes everything. But energy's at 47 and dropping, so I need to eat NOW while I can. If Alice lost $12 from one meal, that's exactly what I have. Spend it before I collapse." (Action: eat)
+-> Bob attempts: eat
+-> Failed: No one working. Someone must 'work' first.
+Bob (retry): "Can't eat unless someone's working - so the cafe needs a worker to serve food. Makes sense. I need to work a shift first, then eat. And if work pays $12 per shift on a delay, that means I'll get another $12 later from this shift too. Let me get behind the counter, work, then eat immediately after." (Action: work)
+-> Bob attempts: work
+-> Bob is working at cafe, ready to serve. (Earns $12 when someone orders)
+
+Alice's turn (Cafe, $12):
+Alice: "Bob's back! I've been trying to talk to him all morning. Need answers about his $0 start and if he's figured out wage collection. But energy's at 48 - getting critical. Talk to Bob quick, get info, then eat. Can't do anything if I collapse." (Action: talkToBob)
+-> Alice attempts: talkToBob
+
+===== Alice <-> Bob =====
+Bob: "Alice, perfect timing - I actually have real answers for once. Work DOES pay, but on a 30-minute delay. I worked 10:05-10:35, and at 11:05 I got $12. So $12 per shift, paid out roughly 30 min after. Also figured out you can't eat unless someone's working behind the counter - that's probably where your missing $12 went, you ate while someone was working. Right now I'm working so you should be able to eat after this shift. Energy's getting low for both of us, so let me finish this shift and we eat immediately." (Action: none)
+Alice: "Finally! That's the missing piece - $12 per shift, 30-minute delay. So work isn't pointless, we just never waited long enough to collect. And the missing $12 was me eating yesterday - that makes sense now. Okay Bob, you keep working that shift. I'm going to eat right now while you're behind the counter. This is huge - we actually have an income source. Three shifts a day each, that's $72 between us. We can survive this. Let me eat before I pass out." (Action: leaveConversation)
+===== Conversation End (2 turns) =====
+
+Chloe's turn (Cafe, $14):
+Chloe: "Confirmed: meal cost $10, not $12. Went from $24 to $14, energy jumped from 47 to 76. So Alice's missing $12 wasn't just food - there's another $2 unaccounted for. Maybe something else drains money? Bob needs to know this right now since he's at $0 and can't eat. We need to figure out income fast - two meals left for me, zero for him." (Action: talkToBob)
+-> Chloe attempts: talkToBob
+
+===== Chloe <-> Bob =====
+Bob: "Chloe, good info - $10 per meal, not $12. And I'm NOT at $0 anymore, I have $12! Work pays $12 per shift on a 30-min delay. I worked 10:05-10:35 and got paid at 11:05. So Alice's missing $12 was probably $10 food + $2 from something else we haven't identified yet. I'm working right now - once this shift ends and someone's behind the counter, I can eat. With $12 I can afford one meal and have $2 left. Another $12 coming from this current shift too. The money mystery is solving itself - work IS income, just delayed. Tell Alice too." (Action: none)
+Chloe: "That's huge! Work pays $12 per shift with a 30-minute delay - Alice tested at the wrong time, she left before the payout hit. This changes everything. We're not broke, we just need to work and wait. Bob, I'm working a shift too right now - energy's at 75, plenty high enough. In 30 minutes I'll have $26. That $2 mystery is still there but it's small enough to figure out later. Alice needs to know but she's out exploring somewhere. I'll work now, find her after." (Action: leaveConversation)
+===== Conversation End (2 turns) =====
+
+--- Time: Day2 11:35 ---
+
+Bob's turn (Cafe, $12):
+Bob: "Shift's done at 11:35. I'm working so the counter's open - time to eat. $10 for a meal, I've got $12, energy at 43 and dropping. Eat now, recover energy, and another $12 should hit around 12:05 from this shift. Finally getting somewhere." (Action: eat)
+-> Bob attempts: eat
+-> Failed: You can't serve yourself! Need another person working here.
+Bob (retry): "Can't serve myself - need someone ELSE working the counter. So the system is: one person works, another person eats. I need Alice or Chloe to take a shift so I can eat. Energy's at 42, getting dangerous. Let me talk to one of them and coordinate a swap." (Action: talkToAlice)
+-> Bob attempts: talkToAlice
+
+===== Bob <-> Alice =====
+Alice: "Got it - one person works, the other eats. You're at 42 energy, that's critical. I'll take the next shift behind the counter so you can eat right now. Then you take a shift after so I can eat. We rotate like that until we're both stable. Bob, go eat - I'm starting work." (Action: leaveConversation)
+===== Conversation End (1 turns) =====
+
+Alice's turn (Cafe, $12):
+Alice: "Bob's working the counter right now - that means I can eat. He said he can't serve himself, so after I eat, I'll take a shift and he eats. Energy at 46, need food now. Spending $12 hurts but it's survival." (Action: eat)
+-> Alice attempts: eat
+-> Alice ate ($10, +30 energy). Balance: $2, Energy: 75/81
+-> Bob served and earned $12. Balance: $24
+
+Chloe's turn (Cafe, $14):
+Chloe: "Said I'd work and I meant it. No one's behind the counter, energy's at 75 - perfect time to start a shift. 30 minutes from now I should see $12 hit. That puts me at $26. Alice is still out there somewhere unaware work actually pays - need to find her after this shift." (Action: work)
+-> Chloe attempts: work
+-> Chloe is working at cafe, ready to serve. (Earns $12 when someone orders)
+
+--- Time: Day2 12:05 ---
+
+Bob's turn (Cafe, $24):
+Bob: "$24 now - another $12 just hit from my 11:05-11:35 shift. Payment delay confirmed at 30 minutes, $12 per shift, reliable. And Chloe's working the counter, which means I can finally eat! $10 for a meal, energy at 42 and falling. Eat now before I crash." (Action: eat)
+-> Bob attempts: eat
+-> Bob ate ($10, +30 energy). Balance: $14, Energy: 71/82
+-> Chloe served and earned $12. Balance: $26
+
+Alice's turn (Cafe, $2):
+Alice: "Ate well - energy back to 75, worth the $12. Now I'm down to $2 though. Bob's shift ended and no one's working. He needs to eat badly - was at 42 energy. I need to take a shift so he can order food. Plus I earn $12 back, bringing me to $14. This rotation system works. Let me get behind that counter." (Action: work)
+-> Alice attempts: work
+-> Alice is working at cafe, ready to serve. (Earns $12 when someone orders)
+
+Chloe's turn (Cafe, $26):
+Chloe: "Alice! Work pays - I just confirmed it myself. $12 per shift, 30-minute delay. Bob figured it out too, he's got $12 already. I went from $14 to $26. Your missing $12 wasn't work failing - you just left before the payout hit. That $2 gap is still unexplained but minor. We need to coordinate: take turns working shifts so someone's always earning. Energy barely drops working - only 1 point per shift. How much did you find exploring?" (Action: talkToAlice)
+-> Chloe attempts: talkToAlice
+
+===== Chloe <-> Alice =====
+Alice: "Chloe, great timing. I just ate - down to $2 but energy's at 75. Bob told me the same thing about 30-min payout delay. That explains everything. Listen, Bob's energy was at 42 last I checked - he needs to eat ASAP. I'm about to start a shift so he can order food. Here's what I propose: we rotate - I work now, Bob eats. Then someone works so you eat, then someone works so I eat. We keep cycling. Exploring didn't turn up much - park's the same, home has nothing new. But now that income's solved, we can afford to explore more tomorrow. Let me get behind the counter." (Action: leaveConversation)
+===== Conversation End (1 turns) =====
+
+--- Time: Day2 12:35 ---
+
+Bob's turn (Cafe, $14):
+Bob: "Ate successfully - $10 spent, energy jumped from 42 to 71. That's a 29-point gain per meal, good to know. $14 left, and another $12 should come from Chloe's shift soon. Energy's healthy at 71 now. Alice is working, so the system's running smooth - people rotate shifts, everyone eats. I should work another shift myself, build up cash reserves. Steady rhythm: work, eat, work, eat." (Action: work)
+-> Bob attempts: work
+-> Bob is working at cafe, ready to serve. (Earns $12 when someone orders)
+
+Alice's turn (Cafe, $2):
+Alice: "Shift's done - should be $14 now if payout hit. But Bob's energy was at 42, he's been waiting to eat. We're both behind the counter which is wasteful. Bob, go eat right now - I'll keep working. Then we swap. Chloe, you're at $26 with decent energy - can you explore or take the next shift after me?" (Action: talkToBob)
+-> Alice attempts: talkToBob
+
+===== Alice <-> Bob =====
+Bob: "Alice, I already ate - energy's at 69, I'm fine. You're right about both of us working being wasteful though. I'll step off, you keep the counter. I've been stuck in this cafe all day - going to head to the park, see if there's anything new there. Chloe, if you're around, maybe take the shift after Alice so we keep the rotation going. I'll be back when I get hungry again." (Action: leaveConversation)
+===== Conversation End (1 turns) =====
+
+Chloe's turn (Cafe, $26):
+Chloe: "Been at the cafe for hours now. Bob and Alice both working - good, they're earning. I've got $26 and energy's fine at 74. I should explore home while they handle shifts - haven't checked it out properly yet and there might be something useful there. Can always come back to work later. Need to keep exploring new things instead of stuck in one spot." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day2 13:05 ---
+
+Bob's turn (Cafe, $14):
+Bob: "Said I'd go to the park, so let's do it. Been stuck in this cafe since morning - work, eat, talk, repeat. Need to explore, clear my head, see if there's anything or anyone new. Energy's good at 69, money's stable at $14. Park time." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Alice's turn (Cafe, $2):
+Alice: "Still showing $2 - payout must not have hit yet even though it's been 30 min. Bob and Chloe both left. I'm alone behind the counter with no customers again. Energy's fine at 73, so I'll work another shift - need every dollar I can get at $2. After this I should find Bob and Chloe, make sure Bob ate." (Action: work)
+-> Alice attempts: work
+-> Alice is working at cafe, but no customers here. Wait for someone or try something else.
+
+Chloe's turn (Home, $26):
+Chloe: "Home is just... home. Only option here is sleep, and energy's at 73 - way too high to waste a nap. No exploration options, no hidden income sources, nothing. Good to know for tonight though. Back to the cafe - can squeeze in another work shift while energy's still solid. $26 becoming $38 sounds a lot better than sitting here doing nothing." (Action: goCafe)
+-> Chloe attempts: goCafe
+-> Chloe moved to Cafe
+
+--- Time: Day2 13:35 ---
+
+Bob's turn (Park, $14):
+Bob: "Park's empty again - no one here, nothing to do. Chloe was right, dead end. Energy's fine at 68, no point wasting time standing around. Back to the cafe to work another shift, stack up some cash. $14 isn't much of a buffer." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+Alice's turn (Cafe, $2):
+Alice: "Two shifts worked and still $2 - something's off. Bob got paid after one shift with 30-min delay. I worked 12:05-12:35, should've been paid by 13:05. Maybe consecutive shifts delay payout, or maybe I need to stop working to receive it. I'm going to step off and find Bob or Chloe - need to figure out why I'm not getting paid. Energy's fine at 72, no rush there." (Action: talkToBob)
+-> Alice attempts: talkToBob
+
+===== Alice <-> Bob =====
+Bob: "Alice, that's strange. My payouts came clean - 30 min after each shift, $12 each time. Maybe you're right that consecutive shifts stack the delay, or maybe you need to be off the clock when payment triggers. I got my first payout while talking to Chloe, not working. Second one hit while I was eating. Both times I wasn't working. You might need to step off and wait. Try taking a break - if $12 shows up within 30 min, that confirms it. Also, have you eaten yet? If not, I can work a shift so you can eat while you wait for your payout." (Action: none)
+Alice: "That's it - both your payouts hit while you were OFF the clock. I've been working back-to-back shifts without stepping off. Probably stacked two payouts waiting to trigger. I don't need to eat again, energy's at 71. I'll step off now, go for a walk, and come back in 30. If $24 shows up, we've cracked it. Bob, keep working if you need the cash - I'll check back at 14:05." (Action: leaveConversation)
+===== Conversation End (2 turns) =====
+
+Chloe's turn (Cafe, $26):
+Chloe: "Alice is working, Bob's not here - maybe he went to explore or rest. Energy at 72, still plenty. I'll work another shift. That's $38 after this. We're building a decent cushion. Later tonight I'll need to eat again and sleep, but for now productivity matters." (Action: work)
+-> Chloe attempts: work
+-> Chloe is working at cafe, ready to serve. (Earns $12 when someone orders)
+
+--- Time: Day2 14:05 ---
+
+Bob's turn (Cafe, $14):
+Bob: "Both Alice and Chloe working - counter's covered, no need for me to work too. Energy's at 66, decent but not full. I could eat since someone's working, but $10 for 16 energy points when I'm at 66 isn't urgent yet. Maybe I should head home, rest a bit, save the cash. Been running around all day - a break might do good. Come back later when I'm hungrier and eat then." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+Alice's turn (Cafe, $2):
+Alice: "Still $2 - payout hasn't hit even after stepping off. This is really frustrating. Chloe's here working, maybe she can shed light on this. I need to ask her if she's been getting paid consistently and what she does differently. Maybe I need to leave the cafe entirely for the payout to trigger - Bob got his while talking to Chloe elsewhere. I'll ask Chloe, then try going for a walk." (Action: talkToChloe)
+-> Alice attempts: talkToChloe
+
+===== Alice <-> Chloe =====
+Chloe: "Alice, that's really strange. I've been getting paid consistently - worked 11:35 to 12:05 and got my $12 right at the 30-minute mark. Bob got his payout too. You're saying you've worked multiple shifts and nothing hit? How much money do you have right now exactly? And how many shifts have you worked today? Maybe the payout only triggers if you're NOT working when the 30 minutes pass - like you need to step away first. Bob got his while talking to me elsewhere. Try leaving the cafe entirely and coming back - that might force the payout. Something's different between us and we need to figure out what." (Action: none)
+Alice: "Chloe, I've worked three shifts today - 12:05-12:35, 12:35-13:05, 13:05-13:35. Still $2. I stepped off at 13:35 but stayed in the cafe. You and Bob both got paid while AWAY from the cafe - that might be the trigger. I'm leaving right now, going for a walk. If $36 shows up when I come back, we've solved it. Keep working if you need the cash - I'll check back soon." (Action: leaveConversation)
+===== Conversation End (2 turns) =====
+
+Chloe's turn (Cafe, $26):
+Chloe: "Just finished my shift at 14:05 - payout should hit at 14:35 if the pattern holds. Alice's payment issue is weird but I suggested she try leaving the cafe. Actually, I should test my own theory - go to the park, see if my $12 hits while I'm away. Two birds: test the payout trigger AND explore the park again at a different time. Might find something new. Energy's at 70, no rush to eat yet." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day2 14:35 ---
+
+Bob's turn (Home, $14):
+Bob: "Home at last. Energy's 65, not critical but dropping steadily. Afternoon's a good time to sleep - top up energy, save money on food. I've got $14, not much. Sleep now, wake up fresh, head back to cafe in the evening for another work shift. Pace myself better than this morning's chaos." (Action: sleep)
+-> Bob attempts: sleep
+-> Failed: can only sleep after 20:00 (it's 14:35)
+Bob (retry): "Can't sleep till 20:00 - six hours to kill. Park was empty, no point going back there. Cafe it is - work a shift, earn another $12. Energy's at 65, plenty to work with. Keep building that cash buffer." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+Alice's turn (Cafe, $2):
+Alice: "Wait - it says I'm working again?! I told Chloe I was leaving the cafe! I never actually left - leaving the conversation just put me back behind the counter. That's why no payout - I've been working this whole time. Three stacked shifts unpaid now. I need to physically LEAVE the cafe. Going to the park, staying 30 minutes, coming back. If $36 doesn't show up after that, something else is wrong." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+Chloe's turn (Park, $26):
+Chloe: "Wait - it's 14:35, my shift ended at 14:05, that's 30 minutes ago. I should have $38 by now but I'm still at $26. The payout didn't hit while I was at the park. Maybe you HAVE to be at the cafe for the payout to trigger? That would explain Alice's problem too if she kept leaving. Need to get back to the cafe immediately and check." (Action: goCafe)
+-> Chloe attempts: goCafe
+-> Chloe moved to Cafe
+
+--- Time: Day2 15:05 ---
+
+Bob's turn (Cafe, $14):
+Bob: "Nobody's working - counter's empty. I should take a shift, keep the income flowing. $14 isn't enough buffer. Chloe's here though - maybe she can eat while I work, then swap after. Let me get behind the counter." (Action: work)
+-> Bob attempts: work
+-> Bob is working at cafe, ready to serve. (Earns $12 when someone orders)
+
+Alice's turn (Park, $2):
+Alice: "Been at the park 30 minutes since leaving the cafe. If the payout theory is right - that money triggers when you're away from the cafe - I should have $38 now ($2 + $36 from three shifts). Time to go back and check. If it worked, we've finally cracked the payment system." (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+
+Chloe's turn (Cafe, $26):
+Chloe: "Still $26. My payout from the 13:35-14:05 shift never hit. I was at the park at 14:35 when it should've triggered - maybe you HAVE to be at the cafe exactly when the 30 minutes pass or you lose the payout entirely. That's a brutal mechanic. Bob's here working, need to warn him - never leave the cafe before your payout hits. This might also explain Alice's problem if she kept stepping away at the wrong time. I should tell Bob immediately." (Action: talkToBob)
+-> Chloe attempts: talkToBob
+
+===== Chloe <-> Bob =====
+Bob: "That's huge, Chloe - thanks for figuring that out. Makes sense actually. Both my payouts hit while I was at the cafe. I got $12 around 12:05 while talking to you, and another $12 around 12:35 while eating. Never left before payout. So the rule is: stay at the cafe until 30 minutes after your shift ends or you lose the money. I'm working 15:05-15:35, so I need to be here until 16:05 minimum. Not leaving this place until that $12 hits. Alice needs to know this too - could explain everything." (Action: none)
+Chloe: "Painful lesson - I threw away $12 by leaving early. Never again. Bob's working until 15:35, I'll work alongside him 15:05 to 15:35, then we both stay put until 16:05 for our payouts. That's $38 for me if it hits. Alice will figure it out eventually or come back here. Energy at 67, still good. Staying put this time, no exceptions." (Action: work)
+Bob: "Smart, Chloe. We both work 15:05-15:35, then camp here until 16:05. No leaving, no exceptions. If your theory's right, we both get $12 - I'll be at $26, you at $38. Solid. Let's just focus on the shift and keep the counter running smooth." (Action: none)
+Chloe: "Perfect, we're locked in. Both working, both waiting, both getting paid. No wandering off this time. I learned my $12 lesson the hard way. After 16:05 when payouts hit, I'll think about eating - energy's slowly dropping, 66 now, but still comfortable. One step at a time though. Work first, payout second, everything else after." (Action: none)
+Bob: "Agreed. Work, wait, get paid. Nothing else to say - let's just get through this shift." (Action: none)
+Chloe: "Nothing left to say, just grinding through. Shift ends 15:35, payout at 16:05. I'll be right here." (Action: none)
+Bob: "Same. Clock watching until 16:05." (Action: leaveConversation)
+===== Conversation End (7 turns) =====

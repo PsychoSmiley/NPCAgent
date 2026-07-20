@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+
+cf-worker/.wrangler/
+cf-worker/node_modules/
+
+.env
+*.png
+tmp/
+venv/

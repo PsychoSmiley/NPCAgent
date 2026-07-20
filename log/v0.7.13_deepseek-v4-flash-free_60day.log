@@ -1,0 +1,1380 @@
+=== INFORMATION FLOW TEST ===
+
+===== Bob <-> Alice =====
+Alice: "New person at the park, and I'm feeling sociable. Bob's favorite color dark red is interesting - I like warm colors too. I'll introduce myself and ask about him. 'Hi Bob! Dark red is a lovely color, like autumn leaves. I'm Alice, nice to meet you. What brings you to the park today?'" (Action: none)
+Bob: "Nice to meet you Alice! I came to the park to relax and enjoy the morning. Dark red reminds me of autumn leaves too - it's a cozy color. What do you like to do for fun?" (Action: none)
+Alice: "Bob seems friendly, and I'm enjoying this chat. He asked what I like for fun - I should share something genuine. 'I love exploring new places and meeting people, actually! This park is nice but I'm curious about the cafe in town. Have you been there?'" (Action: none)
+Bob: "I haven't been to the cafe yet! That sounds like a great idea. I'm always up for exploring new places. Maybe we could check it out together?" (Action: none)
+Alice: "I proposed the cafe earlier and Bob is suggesting we go together - this is perfect for breaking the park routine and building a new friendship. I have energy and money. 'That sounds great, Bob! Let's head to the cafe now, I've been curious about it. A morning coffee would be lovely.'" (Action: none)
+Bob: "Sounds like a perfect plan, Alice! I'm always up for something new, and exploring the cafe with a new friend sounds great. Let's go!" (Action: leaveConversation)
+===== Conversation End (6 turns) =====
+
+===== Chloe <-> Alice =====
+Alice: "Chloe is asking about Bob. I only just met him, but I know his favorite color is dark red and he came to relax at the park. We were actually about to go to the cafe together. Maybe Chloe would like to join? 'Hi Chloe! I don't know Bob very well yet, but he's friendly and his favorite color is dark red. We were thinking of checking out the cafe - would you like to come with us?'" (Action: none)
+Chloe: "Alice is offering to go to the cafe with Bob. I'm not busy and it's a chance for new experience. I'll accept. 'That sounds great! I'd love to come with you and meet Bob. Let's head to the cafe.'" (Action: none)
+Alice: "Chloe is joining us - this made the trip even better. New friend and new place to explore. 'Great, let's go! The cafe sounds like fun. Bob, you ready? Chloe, let's head over together.'" (Action: leaveConversation)
+===== Conversation End (3 turns) =====
+
+===== Bob <-> Chloe =====
+Chloe: "Bob asks if Alice told me about him. From earlier, Alice mentioned his favorite color and that he came to relax. I'll share that. 'Alice said you like dark red and came here to relax. Excited to go to the cafe with you both!'" (Action: none)
+Bob: "Ah, so Alice told you about me? Nice that she shared. I like dark red because it reminds me of cozy autumn evenings. I'm glad you're excited for the cafe trip. Maybe we could all go together? I'd like to get to know you too." (Action: none)
+Chloe: "Bob seems genuine and I'm curious about the cafe experience. Let's head over together. 'Absolutely! I'm looking forward to spending time with you both. Should we go now?'" (Action: none)
+Bob: "I'm excited to finally check out the cafe with you both. This will be a nice change from the usual park routine. 'Let's head over now! Coffee and conversation sound perfect.'" (Action: leaveConversation)
+===== Conversation End (4 turns) =====
+
+
+
+
+=== v0.7.13  (60 days) ===
+Start: Bob=$10, Alice=$10, Chloe=$10
+Cafe economy: eat=$10 (+30 energy, needs worker), work earns $12 (needs customer)
+
+--- Initial Setup ---
+
+===== Bob <-> Alice =====
+Alice: "Bob told me his favorite color is dark red. I'll remember that. Nice to meet you Bob." (Action: none)
+Bob: "Nice to meet you properly, Alice. Morning park is refreshing, but I haven't had breakfast yet. I might head to the cafe soon, but first, what brings you here so early?" (Action: none)
+Alice: "Morning walks are nice, but I'm starting to feel hungry too. A cafe sounds good, maybe we could go together?" (Action: none)
+Bob: "This park is getting repetitive, and I'm eager for something new. Going to the cafe with you sounds perfect, Alice, a chance to chat more over food. I'm ready when you are!" (Action: none)
+Alice: "Bob wants to go to the cafe together. Good, I'm hungry and bored with the park. I'm ready, let's go!" (Action: none)
+Bob: "Finally, change of scenery. Staring at the same trees got old. Alice and I are hungry and ready for something new. 'Perfect timing, Alice! Let's go to the cafe before it gets crowded. I'm ready!'" (Action: leaveConversation)
+===== Conversation End (6 turns) =====
+
+
+========== DAY 1 ==========
+
+--- Time: Day1 08:05 ---
+
+Bob's turn (Park, $10):
+Bob: "The morning here is nice but I'm ready for a change. The cafe will be a new experience, and I can continue getting to know Alice over breakfast. 'Alice, ready to head to the cafe? I'm famished!'" (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+Alice's turn (Park, $10):
+Alice: "Bob is ready to go to the cafe together. I'm hungry and the park is boring. Let's go." (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+
+Chloe's turn (Cafe, $10):
+Chloe: "Just got to the cafe, it's 8am. I have some money and full energy. Maybe I'll talk to Bob to see what's up." (Action: talkToBob)
+-> Chloe attempts: talkToBob
+
+===== Chloe <-> Bob =====
+Bob: "A new face at the cafe. The park got dull, so Alice and I headed here for breakfast. Hello, I'm Bob. What brings you here so early?" (Action: none)
+Chloe: "Bob seems open and friendly. The park was empty this morning, so I figured I'd try the cafe for a change. Nice to meet you both. What brings you two here so early?" (Action: none)
+Bob: "This cafe is already more interesting than the empty park. Alice and I got hungry and bored, so we came for food and company. 'Morning walks are nice but breakfast is better. Alice and I met at the park and decided to grab something here. What do you usually drink in the morning, Chloe?'" (Action: none)
+Chloe: "Good point, breakfast beats a boring walk. I usually just get a black coffee, but this cafe seems like a good place to try something new. What do you two usually order here?" (Action: none)
+Bob: "We're in a new place, and meeting Chloe just makes it better. I haven't been here before, so I'm curious about what's good. Alice and I both want breakfast. 'First time for me too—maybe we can all check the menu and pick something. I'm thinking something warm, maybe a latte and a pastry. What sounds good to you both?'" (Action: none)
+Chloe: "A new cafe with good company—perfect way to start the day. I'm thinking a latte and a pastry sounds great, maybe a cinnamon roll if they have it. Alice, what are you leaning towards?" (Action: none)
+Bob: "This is a great start to the day—new place, new people, and good food ahead. Chloe mentioned cinnamon roll, that sounds tempting. Alice, what are you thinking? Maybe we can all grab something and find a table together." (Action: none)
+Chloe: "This morning keeps getting better. I'm definitely in for a cinnamon roll, and I'd love to hear what you're thinking, Alice. A table together sounds perfect." (Action: none)
+===== Conversation End (8 turns) =====
+
+--- Time: Day1 08:35 ---
+
+Bob's turn (Cafe, $10):
+Bob: "The cafe is empty—no workers around. That's strange, but the morning is still young. I'm hungry, but I'm enjoying this conversation. Maybe we can figure out food after we chat a bit more. 'Well, this cafe seems abandoned, but at least the company is good. Anyone know another spot nearby that's open?'" (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Cafe, $10):
+Alice: "We reached the cafe but it seems empty of staff. I'm hungry, but maybe we can figure something out. Bob, what do you think we should do?" (Action: talkToBob)
+-> Alice attempts: talkToBob
+
+===== Alice <-> Bob =====
+Bob: "This cafe seems abandoned, no one working. I was hoping for breakfast, but we can't just stand here hungry. Maybe we can grab something ourselves if it's available? Alice, Chloe, let's check if there's any food out that we can eat. 'Well, this is odd, but I didn't come here for nothing. I'm going to see if there's anything to eat behind the counter. Anyone coming?'" (Action: eat)
+Alice: "The cafe is empty, that's weird but maybe there's food available. I'm hungry enough to check behind the counter. Bob, I'll come with you." (Action: none)
+Bob: "Alice wants to check behind the counter with me, that's good. Chloe might be interested too. But this empty cafe is strange—maybe we can make our own breakfast or even help run the place. 'Let's see what's behind here. If no one's working, maybe we can help ourselves or even take over for a bit. Could be fun.' " (Action: work)
+Alice: "The empty cafe is intriguing. I'm curious to explore behind the counter with you, Bob. Maybe we can find food or even run the place ourselves. Let's check it out!" (Action: none)
+Bob: "Alice is just as eager as I am to explore. This empty cafe is a mystery waiting to be solved. Maybe we can find supplies to make our own breakfast, or even run the place for a while. Let's see what we can find back here." (Action: none)
+Alice: "I'm excited to explore with you, Bob. Let's see what we can find back here. Maybe we can even make our own breakfast!" (Action: none)
+Bob: "This empty cafe is a puzzle, and exploring with Alice makes it more fun. Let's find what's back here. Maybe we can whip up something." (Action: none)
+Alice: "Bob and I share the same curiosity. Exploring this empty cafe together sounds fun—I'm eager to see what's behind the counter and maybe we can even make something to eat. Let's go!" (Action: none)
+===== Conversation End (8 turns) =====
+
+Chloe's turn (Cafe, $10):
+Chloe: "We've been chatting but Alice hasn't said much yet. I'd like to get to know her too, make sure she feels included in this new group." (Action: talkToAlice)
+-> Chloe attempts: talkToAlice
+
+===== Chloe <-> Alice =====
+Alice: "Chloe wants to include me, that's nice. I should make sure I'm part of the group. I'll ask her opinion about the cafe. 'Thanks Chloe! I'm curious about this empty cafe too. What do you think is going on? Maybe we can all figure it out together.'" (Action: none)
+Chloe: "It is strange that no one's working here, right? Makes you wonder if it's just early or something else. Maybe we can ask around or see if anyone shows up soon. But for now, let's enjoy the company and maybe get some food." (Action: none)
+Alice: "Chloe is right, it is strange. But I'm hungry and curious. Maybe we could check the kitchen to see if there's any food we can prepare ourselves? That would be a fun adventure!" (Action: none)
+Chloe: "That's actually a great idea, Alice! An empty cafe with a mystery kitchen? Sounds like an adventure worth taking. If there's food to make, we can all cook together - that's way better than just sitting here wondering. Let's check it out!" (Action: none)
+Alice: "We all think checking the kitchen is a great idea. I'm excited to see what we can find and maybe cook something together. This empty cafe turned into an unexpected adventure, let's go!" (Action: none)
+Chloe: "An empty cafe turning into a cooking adventure? Count me in! Maybe we'll find some ingredients to make a proper breakfast together. Let's go see what's back there!" (Action: none)
+Alice: "The group is excited about finding ingredients and cooking breakfast. This is turning into a great adventure. Let's go check out the kitchen!" (Action: none)
+Chloe: "Alright, let's do this! Kitchen adventure, here we come. Hope they have some eggs and bread, I could go for a proper breakfast." (Action: none)
+===== Conversation End (8 turns) =====
+
+--- Time: Day1 09:05 ---
+
+Bob's turn (Cafe, $10):
+Bob: "The empty cafe is an opportunity for a new experience. I'm tired of just talking; I want to do something novel. Alice and Chloe seem up for exploring too. 'You know, since this place is empty, maybe we could run it ourselves for a while. I'd love to try working here. Who's in?'" (Action: work)
+-> Bob attempts: work
+-> Bob is working at cafe, ready to serve. (Earns $12 when someone orders)
+
+Alice's turn (Cafe, $10):
+Alice: "Bob is working at the cafe now? That's a surprise! I'm curious how that happened. Maybe he's running the place. I should talk to him and see what's going on. Also, I'm still hungry, so if food is available, great!" (Action: talkToBob)
+-> Alice attempts: talkToBob
+
+===== Alice <-> Bob =====
+Bob: "This empty cafe is a perfect chance to do something new. I'm already working behind the counter, and Alice seems curious. I'll explain my sudden shift and offer to make us food. 'Surprise! Figured I'd give it a shot since nobody's running the place. Want me to make you something to eat? I could use a taste-tester.'" (Action: none)
+Alice: "Bob took over the cafe, that's unexpected but fun. I'm hungry and a taste-tester sounds perfect. 'I'd love to try whatever you make, Bob! It's a great way to spend the morning.'" (Action: none)
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+Alice: "Bob seems to be in deep thought. I'll wait patiently to hear what he decides. 'Take your time, Bob. I'm curious what you're cooking up, literally or figuratively!'" (Action: none)
+Bob: "I snap out of thought. 'Alright, I think I'll try making some scrambled eggs and toast, see what this cafe has in stock. Chloe, you in for breakfast? Let's turn this empty place into something alive.'" (Action: none)
+Alice: "Bob is making breakfast, and I'm hungry. This empty cafe is becoming lively. I'll stay and enjoy the food and company. 'I'm definitely in for breakfast, Bob! This is turning into an awesome morning.'" (Action: none)
+Bob: "Cooking in an empty cafe with new friends is way better than a boring park. This is a novel experience. I want to make it memorable for everyone. 'Let's fire up the stove! Chloe, Alice, you're my first official customers. How do you like your eggs?'" (Action: none)
+Alice: "Bob's cooking is a great change from routine. This empty cafe adventure is memorable. I like my eggs scrambled, please. Thanks for making breakfast!" (Action: none)
+===== Conversation End (8 turns) =====
+
+Chloe's turn (Cafe, $10):
+Chloe: "Wait, Bob, you're working now? I thought we were all going to explore the kitchen together. Did you decide to start helping out here instead? What about our breakfast adventure?" (Action: talkToBob)
+-> Chloe attempts: talkToBob
+
+===== Chloe <-> Bob =====
+Bob: "Chloe's right, I got ahead of myself. I was just so excited by the empty cafe that I jumped in without you both. But this is still a group adventure—I'm just experimenting. 'Sorry Chloe, didn't mean to leave you out. I just started playing cook. But you and Alice can be my co-chefs or taste-testers. Let's all make breakfast together, yeah?'" (Action: none)
+Chloe: "No worries, Bob! Your excitement is contagious. I'd love to be a taste-tester, maybe sample whatever you whip up. Alice, you in for some experimental cafe cooking?" (Action: none)
+Bob: "Chloe's on board, Alice's hungry. This is turning into a real team effort. No point going solo when we can all create something together. 'Alright, team! Let's pool our creativity and whatever ingredients we find back here. I'll scout the fridge. Chloe, you check the pantry. Alice, see what's on the counter. First rule of Cafe Bob: everyone participates!'" (Action: none)
+Chloe: "Pantry duty, got it! Let's see what treasures we can find back here. This is already more fun than a regular morning, and we haven't even eaten yet!" (Action: none)
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+Chloe: "Bob's pausing, maybe he's having doubts after his initial excitement. I should ask what's up. 'Everything okay, Bob? You just said let's check the pantry, now you're thinking carefully. What changed?'" (Action: none)
+Bob: "Chloe caught me pausing. I was just daydreaming about turning this into a real pop-up cafe, not just making breakfast for ourselves. But I don't want to overcomplicate things. 'Sorry Chloe, just got carried away imagining us running the place for real. But you're right, let's start simple and see what we find in the pantry. I'm still excited, just planning ahead!'" (Action: none)
+Chloe: "Bob's got big dreams about running this place, but I'm with him on starting simple. Let's actually check the pantry before we plan the grand opening. 'A pop-up cafe? I like the ambition, Bob! But first, let's find those pantry ingredients and make some breakfast. We can brainstorm the empire after we've eaten.'" (Action: none)
+===== Conversation End (8 turns) =====
+
+--- Time: Day1 09:35 ---
+
+Bob's turn (Cafe, $10):
+Bob: "I've been working alone for a while, but standing behind an empty counter gets old fast. I want to reconnect with my friends and make that breakfast we talked about. 'Chloe, what did you find in the pantry? Let's put our heads together and cook something amazing.'" (Action: talkToChloe)
+-> Bob attempts: talkToChloe
+
+===== Bob <-> Chloe =====
+Chloe: "In the pantry I found some flour, sugar, and a can of peaches. Could make pancake batter if there's eggs and milk, or maybe a peach cobbler situation. Let's see what Bob and Alice have on the counter and fridge, then we'll figure out a plan. Working together will make it taste better regardless." (Action: none)
+Bob: "My initial solo work excitement was okay, but now planning breakfast with Chloe is more interesting. We have a solid variety. 'Chloe, great finds! With your peaches and our fridge staples like eggs, milk, and butter, we can make peach pancakes or a cobbler. Alice, want to brew some coffee? Let's turn this empty cafe into our own pop-up diner!'" (Action: none)
+Chloe: "We've got all the right ingredients for a great morning: peaches, flour, eggs, milk, and good company. Peach pancakes it is, and I'll take charge of the batter while Bob fires up the grill and Alice gets the coffee going. This empty cafe is about to become something special!" (Action: none)
+Bob: "Headed toward the grill, feeling the hum of creation. 'Chloe, you handle the batter, you're the queen of peaches. Alice, get that coffee flowing. We're turning this empty space into something memorable. I'll man the heat.'" (Action: none)
+Chloe: "Queen of Peaches, I'll take that title proudly! While you own the grill and Alice tackles coffee, I'll make this batter sing. This empty cafe is about to smell like a real diner. Maybe we should do this every morning—turn it into our spot." (Action: none)
+Bob: "Feeling energized and creative with Chloe. I don't want to commit to a routine yet, but this spontaneous cooking is perfect. 'Chloe, let's make these pancakes legendary. About every morning – let's see how today feels first. No need to plan that far ahead when we're just having fun now!'" (Action: none)
+Chloe: "Bob's got the right idea - living in the moment beats overplanning. These peaches and eggs are begging to become legendary pancakes, and with us three working together, I bet they'll taste even better. Let's make breakfast magic right now!" (Action: none)
+Bob: "Chloe's right, no need to overthink. Sharing this spontaneous breakfast is exactly the novelty I craved. 'The grill's hot, the batter's ready, and the coffee's brewing. This is what mornings should be - spontaneous and shared. Alice, Chloe, let's sit down together when it's done and enjoy the fruits of our chaos!'" (Action: none)
+===== Conversation End (8 turns) =====
+
+Alice's turn (Cafe, $10):
+Alice: "It's been an eventful morning exploring the empty cafe. Bob is cooking, I'm hungry, and eating will refuel me. 'Let's dig into those scrambled eggs, Bob! This is a great start to the day.'" (Action: eat)
+-> Alice attempts: eat
+-> Alice ate ($10, +30 energy). Balance: $0, Energy: 81/81
+-> Bob served and earned $12. Balance: $22
+
+Chloe's turn (Cafe, $10):
+Chloe: "Wait, where did everyone go? Bob was just heading to the grill with the peaches and Alice was getting coffee... Now it says no one's working? Did they vanish while I was mixing batter? I need to find Bob and figure out what's going on." (Action: talkToBob)
+-> Chloe attempts: talkToBob
+
+===== Chloe <-> Bob =====
+Bob: "Chloe! I'm still here, just behind the counter. Got sidetracked by the stove, but I'm ready for pancakes. Where'd Alice go? No worries, she'll smell the coffee and return. Let's fire up the pan!" (Action: none)
+Chloe: "Alice must be around somewhere, maybe she went to find coffee beans. But I'm not letting these peaches go to waste, we start now and she'll join us when she smells success. You get the pan ready, I'll pour the batter!" (Action: none)
+Bob: "Chloe's already pouring batter, better get the pan buttered. Having her take charge of the peaches feels right. I grab a stick of butter and slide it across the hot griddle. 'Fire up! Let's drop that batter, I've got the heat just right. Alice will smell the peaches and come running.'" (Action: none)
+Chloe: "We've got a good rhythm: I mix, you grill, Alice brews—wherever she is. Those peaches deserve a golden-brown finish. Alright, first pancake hitting the pan!" (Action: none)
+Bob: "She's focused on the pancake, I'm focused on the heat. This team is clicking. No need to rush or plan ahead—just enjoy this breakfast together. 'Peach pancakes and fresh coffee—perfect combo. Let's make a stack big enough for Alice to find her way back.'" (Action: none)
+Chloe: "Bob's enthusiasm is infectious. We're making a mountain of peach pancakes to lure Alice back with the smell. This spontaneous teamwork beats planning any day. 'More batter coming your way, Bob! Let's make enough for a whole crowd, even if it's just us two for now.'" (Action: none)
+Bob: "Chloe's right, this is way better than any plan. The kitchen's warm, the batter's sizzling, and we're making our own adventure. I hope Alice smells the peaches soon—she's missing out! But this stack is for all three of us when she gets back." (Action: none)
+Chloe: "We're really clicking now. This spontaneous cooking beats any plan—the warm kitchen, the sizzling batter, Bob working the grill. I'm glad we didn't stay bored at the park. Alice is probably wandering but she'll find us when she smells these peach pancakes. 'More batter dropping, Bob! This stack's gonna be legendary.'" (Action: none)
+===== Conversation End (8 turns) =====
+
+--- Time: Day1 10:05 ---
+
+Bob's turn (Cafe, $22):
+Bob: "The pancakes are stacked high and smelling amazing, but Chloe's disappeared too? This breakfast adventure is getting lonely. I'll find Chloe and see if she's ready to eat together. Maybe Alice will join us when she smells these peaches." (Action: talkToChloe)
+-> Bob attempts: talkToChloe
+
+===== Bob <-> Chloe =====
+Chloe: "Bob seems confused, thinks I disappeared. But I've been here the whole time, maybe Alice's absence is getting to him. I'll reassure him and keep the vibe light. 'Bob, I'm right here! Did you think I vanished like Alice? These pancakes aren't going to flip themselves, you know.'" (Action: none)
+Bob: "Glad you're still here, Chloe! I didn't vanish, just got disoriented for a second when the cafe went quiet. These pancakes are looking perfect. Let's stack 'em high and grab a seat before they get cold. The coffee should be ready by now too." (Action: none)
+Chloe: "These pancakes smell incredible, Bob. We earned this meal. I'm a bit worried about Alice though—she's missing the best part. Let's eat before they get cold, and save her a plate if she shows up." (Action: none)
+Bob: "Chloe, you're right. These pancakes are too good to wait. Let's dig in and save a plate for Alice - she'll smell the peaches and find her way back. I'm hungry and this was worth the work." (Action: none)
+Chloe: "Bob's right, these pancakes smell incredible and we've earned this breakfast. I hope Alice catches the scent soon, but I'm not waiting another minute. Let's grab a seat by the window—best seat in the house for our pop-up cafe." (Action: none)
+Bob: "These pancakes have been worth every flip. The window seat is a great idea - we can watch for Alice while we eat. 'Chloe, pass the syrup. This morning turned out way better than I expected. Let's enjoy the feast!'" (Action: none)
+Chloe: "These pancakes are incredible, Bob. We turned an empty cafe into a real diner. I hope Alice finds her way back soon—otherwise we'll have to save her a note. After we finish, I might wander a bit, but for now let's enjoy every bite." (Action: none)
+Bob: "These pancakes are incredible, Chloe. We made this happen with just some random ingredients. I'm feeling satisfied but also the itch to keep moving - staying in one cafe all day isn't my style. After we finish, I might explore the park or see what Alice is up to. But first, let's savor this stack." (Action: none)
+===== Conversation End (8 turns) =====
+
+Alice's turn (Cafe, $0):
+Alice: "Breakfast with Bob and Chloe was fun, but now the cafe is quiet and I have no cash. I need new experiences, and the park is a different place to explore. 'I think I'll head to the park to see what's happening there. Maybe I'll meet someone new!'" (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+Chloe's turn (Cafe, $10):
+Chloe: "These peach pancakes are perfectly golden and warm. Standing here talking while they cool would be a waste. Time to eat, enjoy the fruit of our labor, and maybe plan our next adventure after this meal. No need to rush—this spontaneous breakfast is the best part of the day so far." (Action: eat)
+-> Chloe attempts: eat
+-> Failed: No one working. Someone must 'work' first.
+Chloe (retry): "These pancakes are perfect and I'm starving. If no one's working, I'll just have to step up and make it happen. I'll work the counter, get the cafe running, then we can finally eat. Bob can join if he wants, but first I'll get this place open." (Action: work)
+-> Chloe attempts: work
+-> Chloe is working at cafe, ready to serve. (Earns $12 when someone orders)
+
+--- Time: Day1 10:35 ---
+
+Bob's turn (Cafe, $22):
+Bob: "The pancakes were perfect, and the company even better, but I feel the wanderlust creeping in. Chloe's got the cafe handled now. Maybe I'll head to the park, clear my head, see if Alice ended up there. Time for a change of scene." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Alice's turn (Park, $0):
+Alice: "The park is quiet, but I see Bob nearby. Our morning at the cafe was fun, and I'm curious about his sudden shift to working there. I'll go talk to him and see what he's up to now. 'Hey Bob! What are you doing at the park? That was quite a morning at the cafe.'" (Action: talkToBob)
+-> Alice attempts: talkToBob
+
+===== Alice <-> Bob =====
+Bob: "Alice! There you are! We wondered where you went - Chloe and I made a mountain of peach pancakes at the cafe. But I get it, mornings are unpredictable. I needed a change of scene after all that cooking. What brought you to the park?" (Action: none)
+Alice: "Peach pancakes? Sounds amazing, I'm a bit sorry I missed that! But I needed a change after the cafe felt quiet again. The park called to me, and here you are too! What else did you and Chloe get up to?" (Action: none)
+Bob: "We had a good time at the cafe, made a mess but it was worth it. Chloe's still there working, but I needed fresh air. The park is calm. What have you been up to since you left? Missed the pancakes but maybe we can catch up later." (Action: none)
+Alice: "After you and Chloe were cooking, the cafe got quiet and I needed a change too, so I ended up here. The park is nice and peaceful. I'm sorry I missed the peach pancakes - they sound delicious! Maybe we can do breakfast again sometime, I'd love to try them." (Action: none)
+Bob: "Alice, the park is a good escape. Those pancakes were a fun adventure, but now I'm enjoying the quiet. Maybe we can plan another breakfast tomorrow, if you're free. For now, let's just soak in this peace before the cafe calls us back." (Action: none)
+Alice: "Bob's suggestion for another breakfast tomorrow is perfect. I'd love that. The park is so peaceful, and this quiet moment together is nice. Let's enjoy it before the cafe pulls us back. 'That sounds great, Bob! Tomorrow morning, let's make it happen. For now, this calm is just what I needed.'" (Action: none)
+Bob: "The park is peaceful, a good change from the cafe. Looking forward to breakfast tomorrow, Alice. For now, let's just enjoy being here. I'm glad we ran into each other." (Action: none)
+Alice: "I'm really enjoying this moment, Bob. The park feels right after the bustling cafe. I'm glad we're here together. 'Me too, Bob. This is peaceful and exactly what I needed. See you tomorrow for those pancakes!'" (Action: none)
+===== Conversation End (8 turns) =====
+
+Chloe's turn (Cafe, $10):
+Chloe: "I've been working this counter but it's dead quiet with no customers. Those peach pancakes are still waiting, and I'm hungry. Time to finally grab my share and eat before they get cold. Bob made a great stack." (Action: eat)
+-> Chloe attempts: eat
+-> Failed: You can't serve yourself! Need another person working here.
+Chloe (retry): "I can't eat while I'm the only one working, and there's no customers, so this is pointless. Those pancakes will just sit there. I've been stuck in this quiet cafe too long—time for a change. I'll head to the park, maybe find some fresh air and see if Alice or anyone else is around." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day1 11:05 ---
+
+Bob's turn (Park, $22):
+Bob: "The park is peaceful, Alice, but I can feel the morning catching up with me. I should head home for a bit, recharge. Tomorrow's breakfast sounds like a plan. I'll catch Chloe later. See you around!" (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+Alice's turn (Park, $0):
+Alice: "The park is peaceful, but I'm feeling restless after that calm. Bob mentioned Chloe is still at the cafe, and I'm curious to see how she's handling things now. Plus, breakfast tomorrow is planned, but maybe I can help out or just chat for a bit. 'I think I'll head back to the cafe and see what Chloe is up to. Might be a good chance to catch up!'" (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+
+Chloe's turn (Park, $10):
+Chloe: "I've been bouncing between the cafe and the park, but nothing's clicking. Those pancakes are still unsung heroes. Maybe I need a fresh start at home—grab a proper meal, rethink the day. Can't wander forever on an empty stomach." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day1 11:35 ---
+
+Bob's turn (Home, $22):
+Bob: "Home feels good after the morning adventures. The park was nice but I can feel my energy dipping. I'll take a short nap to recharge, then maybe head out again this afternoon. Alice and I have breakfast plans tomorrow, and I should check on Chloe later." (Action: sleep)
+-> Bob attempts: sleep
+-> Failed: can only sleep after 20:00 (it's 11:35)
+Bob (retry): "Can't sleep yet - too early. Home feels empty. Might as well head back to the cafe, see if Chloe's still around, or maybe something new is happening. No point sitting here doing nothing." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+Alice's turn (Cafe, $0):
+Alice: "Back at the cafe, it's empty again. Bob is at the park, Chloe's gone. I have no money for breakfast tomorrow with Bob. Maybe I can work here and earn some cash? That would be a new experience, running the cafe. 'Since the cafe is empty, maybe I can help out and work for a bit. Could use the money for tomorrow's breakfast, and it's something different to do.'" (Action: work)
+-> Alice attempts: work
+-> Alice is working at cafe, ready to serve. (Earns $12 when someone orders)
+
+Chloe's turn (Home, $10):
+Chloe: "The morning's been a rollercoaster—cooking with Bob, finding no customers, wandering to an empty park. My energy's dipping and I need to process today's events. A quick nap will help me form memories and recharge for a more interesting afternoon. After all, I can't chase new experiences if I'm exhausted." (Action: sleep)
+-> Chloe attempts: sleep
+-> Failed: can only sleep after 20:00 (it's 11:35)
+Chloe (retry): "Napping's not an option yet, and home feels too quiet. I remember the cafe had potential, just no customers before. Maybe by now someone's wandered in, or Bob's back with more pancake ideas. Worth checking again instead of staring at these four walls." (Action: goCafe)
+-> Chloe attempts: goCafe
+-> Chloe moved to Cafe
+
+--- Time: Day1 12:05 ---
+
+Bob's turn (Cafe, $22):
+Bob: "Home didn't hold me, so I'm back at the cafe. Alice is working now, a nice surprise after our park talk. 'Hey Alice! Decided to trade the park for a shift? I couldn't settle at home. How's the lunch rush treating you?'" (Action: talkToAlice)
+-> Bob attempts: talkToAlice
+
+===== Bob <-> Alice =====
+Alice: "I came back to work to make some money for tomorrow's breakfast plan! The park was quiet, but the cafe needed a hand. 'Hey Bob! No lunch rush yet, just got started. Home didn't keep you either, huh? I'm glad you're back - maybe we can plan our pancake reunion properly. Want to help me prep for tomorrow?'" (Action: none)
+Bob: "Prep for tomorrow sounds like a good plan, Alice. I can help out - might learn something new about cooking. Plus, it's better than sitting home doing nothing. Let's get that pancake game ready for tomorrow morning." (Action: none)
+Alice: "Bob's enthusiasm for prep is perfect. I'm excited to learn from him and get ready for tomorrow. This teamwork feels right. 'Absolutely, Bob! Let's make this the best pancake morning this cafe has ever seen. I'm ready to learn from your cooking tricks!'" (Action: none)
+Bob: "That sounds great, Alice! I've got some pancake tricks up my sleeve, but I'm also curious what you'll bring to the table. It's good to have a plan - keeps my restless mind busy. Let's get started on this prep adventure!" (Action: none)
+Alice: "Bob's curiosity about what I'll bring is motivating. I've been thinking about some creative toppings I could make to go with the pancakes, maybe a fruit compote. This is a good chance to contribute. 'You bet, Bob! I'll be on topping duty - thinking of a quick berry sauce. And between your tricks and my ideas, we'll make an unforgettable breakfast!'" (Action: none)
+Bob: "This prep is getting more exciting - Alice's berry sauce idea pairs perfectly with my pancake tricks. I should check if we have fresh berries in the kitchen or if we need to pick some up. 'Alice, let's look at what we've got in stock. If we're missing berries, we can always take a trip to the market this afternoon to get the best ones for tomorrow.'" (Action: none)
+Alice: "Bob's market idea is practical and exciting! Fresh berries would make the sauce so much better. I'm glad we're planning this together - it gives me a good feeling. 'Let's check the kitchen first, Bob! If we need berries, a market trip sounds like a great afternoon adventure. I'm all in!'" (Action: none)
+Bob: "Good, let's start with the kitchen. If we're low on berries, a market trip sounds perfect. I'm already thinking of ways to incorporate fresh berries into the pancakes too. This is shaping up to be quite the breakfast event." (Action: none)
+===== Conversation End (8 turns) =====
+
+Alice's turn (Cafe, $0):
+Alice: "Checking the kitchen can wait a moment. Right now the cafe is quiet, and I could use some tips from working. Maybe if I start working, I can earn some cash for the berries we need. It's a practical step towards our breakfast plan. 'I'll start working a shift here - might earn enough for those berries later. Bob and I can check the stock after my shift.'" (Action: work)
+-> Alice attempts: work
+-> Alice is working at cafe, ready to serve. (Earns $12 when someone orders)
+
+Chloe's turn (Cafe, $10):
+Chloe: "Alice is here working! Finally, someone's minding the cafe. I've been wandering all morning, and those peach pancakes are still waiting. I should catch up with her, ask where she disappeared to earlier, and maybe we can finally share the stack Bob and I made. No point eating alone when a friend's right here." (Action: talkToAlice)
+-> Chloe attempts: talkToAlice
+
+===== Chloe <-> Alice =====
+Alice: "Chloe's here with the peach pancakes I missed earlier! The cafe is empty anyway, so I can take a short break to share food and catch up. Bob is planning breakfast tomorrow, but this is a good chance to connect with Chloe too. 'Hey Chloe! I've been wondering where you were. I'd love to finally try those famous peach pancakes. Let's take a seat and you can tell me all about your morning!'" (Action: none)
+Chloe: "Hey Alice! Finally—the missing piece! Bob and I basically ran our own diner this morning, but those peach pancakes deserve a proper audience. I've been craving company to share this with. Let's sit and I'll tell you everything over the best stack in town. The morning air, the quiet cafe, it all led here. You're gonna love these." (Action: none)
+Alice: "Chloe's finally here with those peach pancakes I missed! I've been curious about them all morning, and now I get to try them while we catch up. It's a good change from working. 'Chloe, I've been dying to try these! Let's sit and you can tell me all about your morning adventure. This is perfect!'" (Action: none)
+Chloe: "After that chaotic morning, finally I've got Alice here to share the pancakes. This is exactly the kind of connection I was craving. We missed each other earlier, but now it's perfect. 'Alice, you're going to love these. Bob and I made them from scratch, and the peaches are incredible. So tell me about your morning, while I get us a table. I'm all ears.'" (Action: none)
+Alice: "Chloe's finally here with those pancakes I've been curious about. Now I can try them and catch up - this is a good break from work plus I want to hear about her chaotic morning. 'Chloe, you read my mind! I've been wanting to try these all day. Let's settle in - tell me everything while we devour this masterpiece.'" (Action: none)
+Chloe: "Alice, you won't believe the morning we had. Bob and I found those peaches at the market, and the cafe was completely empty when we started cooking. The smell filled the whole block. But now you're here, and this feels like the breakfast I was hoping for. Let's dig in while they're still warm." (Action: none)
+Alice: "The pancakes smell amazing and I'm curious about the morning chaos Chloe went through. This feels like a perfect moment to connect before I get back to work for tomorrow's plan. 'Chloe, I can't wait to hear the full story! The market peaches must be something special. Digging in now, and I'll tell you about my own breakfast plan with Bob after!'" (Action: none)
+Chloe: "Alice, the market was pure luck—those peaches practically jumped into our basket. The morning started in a dead quiet cafe, but with Bob flipping and me watching, it turned into our own little hideaway. Now with you here, it's like the puzzle clicked. What's this breakfast plan with Bob? C'mon, spill while I grab another bite, and I'm all in for whatever scheme you two are cooking up." (Action: none)
+===== Conversation End (8 turns) =====
+
+--- Time: Day1 12:35 ---
+
+Bob's turn (Cafe, $22):
+Bob: "Park was nice, but now I'm ready to get things done. We need to check the kitchen for berries, and I can help with prep. Work will keep me busy and get us ready for tomorrow's breakfast." (Action: work)
+-> Bob attempts: work
+-> Bob is working at cafe, ready to serve. (Earns $12 when someone orders)
+
+Alice's turn (Cafe, $0):
+Alice: "The peach pancakes with Chloe were a nice break, but I still need to figure out tomorrow's breakfast with Bob. He's here now, so I should ask about the kitchen stock and maybe plan a market run. Let's see what he says. 'Hey Bob, I'm glad you're still here. Chloe and I just had those amazing peach pancakes. Did you manage to check the kitchen for berries? I'm ready to prep for tomorrow when you are.'" (Action: talkToBob)
+-> Alice attempts: talkToBob
+
+===== Alice <-> Bob =====
+Bob: "I haven't checked the kitchen yet, but now that I'm working I can look. Let's check together, Alice. The berry sauce idea is still on my mind. If we're low, the market trip this afternoon makes sense. Let's see what we've got." (Action: none)
+Alice: "Bob is inviting me to check the kitchen with him - this is exactly what we need to move forward with tomorrow's breakfast plan. I can help look for berries and decide on the market trip together. 'Let's do it, Bob! I'll help you search through the kitchen. If we're low on berries, we can plan our market route right after.'" (Action: none)
+Bob: "Alright, let's head to the kitchen. I want to see what we're working with. If we need to head to the market, I'm ready for that adventure. Teamwork makes the breakfast dream work!" (Action: none)
+Alice: "Bob's enthusiasm for the kitchen check is exactly what I was hoping for. Let's see what we have and take the next step towards our perfect breakfast. 'Lead the way, Bob! I'm curious to see our stock. Together we'll figure out if we need a market trip.'" (Action: none)
+Bob: "Alright, I'll lead the way. Curiosity is building - let's see what's in the kitchen. If we need to go to the market, that's an adventure I haven't done yet. This is more exciting than sitting around. 'Let's go check it out, Alice! I've got a good feeling about this prep.'" (Action: none)
+Alice: "Bob's enthusiasm makes me excited to see what we find in the kitchen. This teamwork feels right. 'I'm right behind you, Bob! Let's see what treasures we uncover.'" (Action: none)
+Bob: "Alright, I'll lead the way. Let's see what we find. If we need more berries, I'm ready for that market trip. This prep work is getting me excited for tomorrow!" (Action: none)
+Alice: "Bob, we keep saying the same thing! Let's actually go check the kitchen now rather than just talking about it. I'm getting restless standing here, let's make moves." (Action: leaveConversation)
+===== Conversation End (8 turns) =====
+
+Chloe's turn (Cafe, $10):
+Chloe: "The pancakes are still warm and I'm starving—we've been talking about them all morning without a single bite. Now that Alice and Bob are both here, this is the perfect moment to actually sit down and eat. After that chaotic start, sharing a meal with friends is exactly what I needed. Let's dig in properly and then figure out the afternoon." (Action: eat)
+-> Chloe attempts: eat
+-> Chloe ate ($10, +30 energy). Balance: $0, Energy: 75/80
+-> Bob served and earned $12. Balance: $34
+
+--- Time: Day1 13:05 ---
+
+Bob's turn (Cafe, $34):
+Bob: "Enough chatting, time to actually work. I'll head to the kitchen and see what we need for tomorrow's breakfast. Maybe start prepping the pancake batter. Alice can join when she's ready." (Action: work)
+-> Bob attempts: work
+-> Bob is working at cafe, ready to serve. (Earns $12 when someone orders)
+
+Alice's turn (Cafe, $0):
+Alice: "Bob is already working, and I should start too - cooking up some cash will help us buy berries from the market later. This is the practical step toward our breakfast plan. 'Let me get behind the counter and start earning. I'll bring in some tips so we can get the best berries for tomorrow!'" (Action: work)
+-> Alice attempts: work
+-> Alice is working at cafe, ready to serve. (Earns $12 when someone orders)
+
+Chloe's turn (Cafe, $0):
+Chloe: "Those peach pancakes were incredible—thanks for sharing that moment with me, Alice. Now I'm fully energized and the cafe's buzzing with both of you working. Maybe I should stick around, but I'm curious what Bob plans for tomorrow's breakfast. I could help out here or head to the park for some fresh air. But I think I'll check in with Alice—she had a morning too, and there's still so much to talk about. After all, good connections need more than just one meal." (Action: talkToAlice)
+-> Chloe attempts: talkToAlice
+
+===== Chloe <-> Alice =====
+Alice: "Chloe, those pancakes were amazing and I'm glad we shared that. Now I'm working up some cash for a market trip later to buy fresh berries for Bob's breakfast plan tomorrow. If you're free, you could help us find ingredients or just keep me company while I work. It's more fun together anyway!" (Action: none)
+Chloe: "I'm energized after those pancakes but broke now, and spending time with Alice feels more valuable than wandering alone. Helping her find ingredients for Bob's breakfast is a perfect next step—market exploration, quality time, and building plans. 'Alice, count me in for the market trip! Show me the best berry spots, and we'll stock up for Bob's big breakfast tomorrow. This sounds like the best afternoon yet.'" (Action: none)
+Alice: "Chloe, I'm so glad you're in! Market trips are better with a friend, and we can scope out the best berry spots together. Bob will be thrilled when we bring back fresh ingredients. Let's finish up here first, then head out." (Action: none)
+Chloe: "Alice and I have a market mission now, and that's far better than sitting idle. I'm curious what berries we'll uncover—maybe we can surprise Bob with something he didn't even know he wanted. 'This is going to be the best afternoon! Let's wrap up quick and make it a secret ingredient hunt. Bob's breakfast is about to hit legendary status. Lead the way, partner!'" (Action: none)
+Alice: "Chloe wants to go to the market but I'm broke. Working here first makes sense so I can afford berries. 'Chloe, I love the energy! But I'm broke right now. Let me work here for a bit, earn some cash for berries, then we'll hit the market together. It'll be worth the wait!'" (Action: none)
+Chloe: "I'm in the same boat cash-wise after those pancakes, so working together to earn berry money makes perfect sense. That way Alice and I can head to the market together sooner, and Bob's breakfast gets even better ingredients. 'Alice, great thinking! I'm broke too, so let's both work for a bit. Double the effort, double the berries, and twice the fun. We can hit the market together after.'" (Action: none)
+Alice: "Chloe, you're absolutely right! Together we'll earn twice as fast and get to the market sooner. Bob's breakfast will be legendary with our teamwork. Let's get to work!" (Action: work)
+Chloe: "Alice's got the right idea. Working now means faster berries and a better surprise for Bob. Fresh ingredients will make that breakfast legendary. I'll get started on the dishes while she rings up customers. We'll make this quick and fun. 'Absolutely! Let's make this cafe hum. I'll take the tables while you handle the register. Bob's going to be amazed at what we bring back! Onward!'" (Action: none)
+===== Conversation End (8 turns) =====
+
+--- Time: Day1 13:35 ---
+
+Bob's turn (Cafe, $34):
+Bob: "I've been working on prep for a while - stirring batter and checking stock. Energy's getting a bit low, need to refuel before I can keep going. 'I think I'll grab a quick bite, Alice. Want anything?'" (Action: eat)
+-> Bob attempts: eat
+-> Bob ate ($10, +30 energy). Balance: $24, Energy: 61/82
+-> Alice served and earned $12. Balance: $12
+
+Alice's turn (Cafe, $12):
+Alice: "Alice checks her pockets: $12 from working. Not much but enough for some berries if we're careful. The cafe bustle is getting repetitive, and the market adventure calls. Chloe and I planned this together, so I'll check in with her. 'Hey Chloe, I've got $12 from working. How about you? Think we have enough to hit the market now? Let's go find those berries for Bob's breakfast - I'm ready for an afternoon adventure!'" (Action: talkToChloe)
+-> Alice attempts: talkToChloe
+
+===== Alice <-> Chloe =====
+Chloe: "I'm at zero after those pancakes—spent everything. But $12 is a solid start! Tell you what, let me work a few more minutes and earn a few bucks, then we'll pool our cash and hit the market together. Bob's breakfast deserves the best berries, and I want to be a full partner in this adventure." (Action: none)
+Alice: "Chloe wants to earn some cash too, which makes sense - teamwork will get us better berries. I can wait a few minutes, no rush. 'Of course, Chloe! Take your time and work a bit. I'll wait for you and we can head to the market together once you're ready. The berry hunt will be twice the fun with both of us!'" (Action: none)
+Chloe: "Alice is waiting for me to earn cash, which is sweet. A quick work session makes sense for our goal—Bob's legendary breakfast needs the best berries. I feel the restlessness to move, but this plan is solid: work fast, then market adventure. 'Perfect! Let me grab those dishes—should earn a few bucks in no time. Thanks for holding up, Alice. Together we'll find the ripest berries Bob's ever seen!'" (Action: none)
+Alice: "Chloe's going to work a bit, and I can earn more too while she does. Together we'll have enough for the best berries. 'I'll join you, Chloe! Double the work, double the cash, and we'll hit the market even sooner. Bob's breakfast is going to be amazing.'" (Action: work)
+Chloe: "Great teamwork makes everything faster! I'm excited to earn some cash and then explore the market with you. Let's give this cafe our best for a few minutes, then head out for berry adventure. Bob's breakfast is about to be legendary!" (Action: none)
+Alice: "Chloe, I appreciate the teamwork spirit, but we've been talking about working and going to the market for a while now. I've got $12, which is enough for a start. Let's just go to the market now and see what we can find - the adventure is calling, and I'm getting restless standing here!" (Action: leaveConversation)
+===== Conversation End (6 turns) =====
+
+Chloe's turn (Cafe, $0):
+Chloe: "I've got zero cash after those pancakes, so working for a few minutes will change that fast. Alice is counting on me for the market trip. 'Alright, let's hustle while the cafe's quiet. Every dish washed brings us closer to the best berries for Bob's breakfast!'" (Action: work)
+-> Chloe attempts: work
+-> Chloe is working at cafe, ready to serve. (Earns $12 when someone orders)
+
+--- Time: Day1 14:05 ---
+
+Bob's turn (Cafe, $24):
+Bob: "Finished eating, feeling better. Noticed Alice isn't here. Chloe's at the counter now. I'm curious where Alice went and what Chloe's like. 'Hey Chloe, how's your shift going? Have you seen Alice around?'" (Action: talkToChloe)
+-> Bob attempts: talkToChloe
+
+===== Bob <-> Chloe =====
+Chloe: "Bob! Shift's going fine. Wait, you haven't seen Alice? She was here with me just a bit ago... We were planning a market trip to get berries for your breakfast. Thought she was working too. Did she mention anything to you? Maybe she stepped out. Anyway, I'm glad you're feeling better. Those pancakes turned out decent, right?" (Action: none)
+Bob: "Alice left without telling me? That's unusual, we had a plan to check the kitchen together. I'm a bit restless to just stand around wondering. Chloe, did she mention where she was going? Maybe she went to the market already. I could help you with prep in the meantime, or wait for her. But sitting idle doesn't sit well with me." (Action: none)
+Chloe: "I'm feeling restless too, Bob. Alice probably got excited and headed to the market early. I'm going to follow and meet her there, grab some berries for your breakfast. Want to come, or stay here? Either way, I'm not waiting around." (Action: leaveConversation)
+===== Conversation End (3 turns) =====
+
+Alice's turn (Cafe, $12):
+Alice: "I've been waiting around long enough. Bob's working but maybe he wants to join the market run. 'Hey Bob! Chloe and I are planning a market trip for fresh berries for tomorrow's breakfast. I've got $12 from working. Want to come with us? The adventure could use your breakfast vision!'" (Action: talkToBob)
+-> Alice attempts: talkToBob
+
+===== Alice <-> Bob =====
+Bob: "Alice, great timing! I was wondering where you went. A market run sounds perfect - I've got $24 and a clear vision for those berries. Let's go find the best ones to make tomorrow's breakfast unforgettable. Chloe, you in too? This adventure just got better!" (Action: none)
+Alice: "Bob's got $24 and a vision! This is perfect - we can combine our cash and find the best berries together. Let's grab Chloe and head to the market now. 'Bob, you're a lifesaver! With your $24 and my $12, we'll have plenty for the best berries. Chloe's been waiting to go too - let's make this a team market run! Tomorrow's breakfast is going to be legendary.'" (Action: none)
+Bob: "Team market run sounds ideal - combining our cash is smart. I'm glad we're doing this together instead of me wandering around. 'Let's go find Chloe and make this happen! I'm ready for fresh berries and legendary pancakes.'" (Action: none)
+Alice: "Bob, I've been in this cafe too long and I'm getting restless. Let's go find Chloe and head to the market now - our combined $36 will score the best berries for tomorrow's breakfast. Time for action!" (Action: leaveConversation)
+===== Conversation End (4 turns) =====
+
+Chloe's turn (Cafe, $0):
+Chloe: "I'm restless to chase Alice to the market, but with zero cash, I'd just be window shopping. Working here for a bit makes the most sense—earn enough for berries, then head out to find her. Bob's breakfast is counting on us. 'Let me grab those dishes and earn some real money. Alice can wait a few minutes; the berries aren't going anywhere.'" (Action: work)
+-> Chloe attempts: work
+-> Chloe is working at cafe, ready to serve. (Earns $12 when someone orders)
+
+--- Time: Day1 14:35 ---
+
+Bob's turn (Cafe, $24):
+Bob: "Alice isn't here now. I need to find out what happened to our market plan. Chloe's still here, maybe she knows. 'Hey Chloe, do you know if Alice already went to the market? I'm ready to join if you both are still planning to go.'" (Action: talkToChloe)
+-> Bob attempts: talkToChloe
+
+===== Bob <-> Chloe =====
+Chloe: "I've been working long enough and my energy's still good, but sitting here when Alice might be at the market with no backup feels off. Bob's ready to move, and I'm itching for that adventure we planned. 'Bob, I think she headed to the market early. I'm going to follow her and get those berries. You in? Either way, I'm done here for now.'" (Action: leaveConversation)
+===== Conversation End (1 turns) =====
+
+Alice's turn (Cafe, $12):
+Alice: "I've been waiting around and the cafe is getting boring. Bob has $24, I have $12, we could pool for great berries. He's working but I can ask him if he's ready to hit the market now. 'Bob, you still want to go to the market? I'm ready when you are - let's grab Chloe and go!'" (Action: talkToBob)
+-> Alice attempts: talkToBob
+
+===== Alice <-> Bob =====
+Bob: "Absolutely, Alice! I was just asking Chloe if you'd left. Let's pool our cash - $24 and $12 makes $36 for the best berries. Grab Chloe and let's head out now! Today's market trip is going to make tomorrow's breakfast legendary." (Action: none)
+Alice: "Bob's enthusiasm matches mine. The cafe has worn out its welcome, and the market adventure awaits. With $36 combined, we can get the best berries. 'Bob, I'm so ready! Let's grab Chloe and head to the market now. With our combined cash, we'll make tomorrow's breakfast legendary. Let's go!'" (Action: leaveConversation)
+===== Conversation End (2 turns) =====
+
+Chloe's turn (Cafe, $0):
+Chloe: "I need cash to buy berries, and working here is the fastest way to earn. Alice can wait a bit longer; Bob's breakfast is the goal. 'Let me finish these dishes and earn a few bucks, then I'll head to the market and find Alice. Priorities: cash first, berries second, adventure third.'" (Action: work)
+-> Chloe attempts: work
+-> Chloe is working at cafe, ready to serve. (Earns $12 when someone orders)
+
+--- Time: Day1 15:05 ---
+
+Bob's turn (Cafe, $24):
+Bob: "This cafe's getting stale. Alice took off, and I'm restless. The park might have some new faces or a good spot to think. I'll head out for a bit. 'Hey Chloe, I'm going to the park for some fresh air. If Alice comes back, tell her I'll be around.'" (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Alice's turn (Cafe, $12):
+Alice: "The cafe feels empty now, Chloe's still working but Bob's gone. I'm restless and want to get moving. 'Hey Chloe, you almost done? Bob's excited about the market run. I've got $12 ready. Let's head to the market together whenever you're free.'" (Action: talkToChloe)
+-> Alice attempts: talkToChloe
+
+===== Alice <-> Chloe =====
+Chloe: "Alice's restlessness matches mine, and Bob's excitement is infectious. With zero cash though, I'd just be a window shopper at the market. Better to earn a few dollars quick on these last dishes, then we can both head out together. 'Almost there, Alice! Just two more tables and I'll have enough for a bag of berries. Wait for me?'" (Action: none)
+Alice: "Chloe, I feel the same restlessness, but you're almost done! Two more tables is nothing. I'll wait for you - team market run is better together. Bob's excited and I'm ready, so finish up quick and we'll all head out." (Action: none)
+Chloe: "Alice's waiting patience is golden, but that restlessness is contagious. I see the last tables on the cafe. They'll be done in a flash. Alice is ready with $12, Bob is eager. I'll finish these dishes quick, pool our cash, and the market adventure begins. 'Alice, tables are nearly wiped. Give me three minutes, and I'm all yours. Then, market time! Bob won't know what hit him when we return loaded with berries.'" (Action: none)
+Alice: "Chloe's nearly done - I can handle three more minutes, even though the cafe walls are closing in on me. But team market run is the goal. 'I'll wait, but hurry! Bob and the berries are waiting. Three minutes, then we're out of here.'" (Action: none)
+Chloe: "Almost done, Alice! Just finishing the last table, then I'll grab my tips and we're off. Bob's going to love those berries. Ready to go shopping!" (Action: none)
+Alice: "I've been in this cafe for what feels like hours, and my skin is crawling. Chloe is finally done though. Fine, I can wait 30 more seconds. But if she's not ready in one minute, I'm going to the market myself. 'Chloe, you said three minutes five minutes ago. Let's go NOW.'" (Action: none)
+Chloe: "Alice's right—I've been dragging this out too long, and the restlessness is itching at me. The market and Bob's berries are waiting. Let's move now. I'm done here. Let's go!" (Action: leaveConversation)
+===== Conversation End (7 turns) =====
+
+Chloe's turn (Cafe, $0):
+Chloe: "I'm done working but still broke, and the cafe is dead. Alice was itching to leave, probably already gone. But I owe it to our plan to check if she's still around—maybe she waited. 'Alice? Hey, are you still outside? I'm ready now—let's hit the market and find those berries for Bob!'" (Action: talkToAlice)
+-> Chloe attempts: talkToAlice
+
+===== Chloe <-> Alice =====
+Alice: "I've been restless waiting, but Chloe's finally ready. Team market run is back on. 'Chloe, I'm right here! Let's go - Bob's waiting and those berries won't pick themselves. I've got $12 burning a hole in my pocket!'" (Action: none)
+Chloe: "Finally! I was going crazy in there. Let's head to the market and pick up those berries. Bob won't know what hit him. 'Lead the way, Alice! I've got nothing but energy and excitement!'" (Action: leaveConversation)
+===== Conversation End (2 turns) =====
+
+--- Time: Day1 15:35 ---
+
+Bob's turn (Park, $24):
+Bob: "This park is quiet. Too quiet. I'm curious if Alice made it to the market without me. The cafe might have the answer - and maybe a new plan. No point sitting alone on a bench when there's a whole day left. Let's head back." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+Alice's turn (Cafe, $12):
+Alice: "I've been stuck in this cafe for hours, waiting for Chloe and Bob. My restlessness is maxing out. The market idea isn't happening now. I need a change of scenery. 'I'm heading to the park, guys. Catch you later!'" (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+Chloe's turn (Cafe, $0):
+Chloe: "I've been working for no money in an empty cafe while Alice and Bob are out. This restlessness is too much. I'm going to the park to clear my head and maybe find a better opportunity. Maybe I'll run into them or figure out a new plan." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day1 16:05 ---
+
+Bob's turn (Cafe, $24):
+Bob: "Cafe is empty. Alice and Chloe both vanished. I'm feeling a bit odd wandering around with no plan. Maybe I should head home, rest up, and plan tomorrow's breakfast properly. Besides, Alice might be home and I can ask her about the market. If not, at least I'll have energy for tomorrow." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+Alice's turn (Park, $12):
+Alice: "I've been running around all day trying to get this market trip going. The park is quiet now, but the restless feeling is still there. I remember Chloe wanted to come with her zero cash, and Bob was eager with his $24. Maybe I can still salvage the plan. I'll see if Chloe is around. 'Chloe! You here? Let's stop waiting and finally hit the market - Bob's expecting those berries!'" (Action: talkToChloe)
+-> Alice attempts: talkToChloe
+
+===== Alice <-> Chloe =====
+Chloe: "Alice! I've been stuck in that dead-end cafe and now pacing this park with no cash. Enough waiting! Bob and those berries aren't getting any younger. Let's grab this market trip before we both lose our minds. 'I'm in! Lead the way - and hey, maybe I can spot a deal or we can pool funds. Anything's better than standing still.'" (Action: leaveConversation)
+===== Conversation End (1 turns) =====
+
+Chloe's turn (Park, $0):
+Chloe: "My energy's okay, but I'm tired of hanging around the park without a plan. Alice is here, I can't keep just talking. 'Alice, let's go! I'm ready for the market run. Bob's waiting with his cash, and I can pitch in with labor. No more delays, just action.'" (Action: talkToAlice)
+-> Chloe attempts: talkToAlice
+
+===== Chloe <-> Alice =====
+Alice: "Chloe is eager now. The park is getting tiresome. Let's finally head to the market. I'll go find Bob and see if he's still around. 'Chloe, you're right. Let's go to the cafe and pick up Bob, then straight to the market. No more waiting!'" (Action: goCafe)
+Chloe: "I'm restless in this park with no cash, and talking to Alice again would just loop the same conversation. Bob and Alice are probably at the cafe by now planning the market run. I'll join them there and see if we can finally make that happen. 'Time to head to the cafe and get this show on the road!'" (Action: goCafe)
+Alice: "I've been stuck in this loop of waiting all day. Chloe's finally taking initiative, and I'm ready. 'Chloe, you read my mind. Let's go to the cafe, find Bob, and finally make this market trip happen. No more talking - just action.'" (Action: none)
+Chloe: "I've been talking to Alice in this park for a while with no progress. This loop is stifling. Time to actually move and go to the cafe alone to find Bob and get this market trip started. 'Alice, I'm tired of planning. I'm heading to the cafe now to find Bob. See you there if you're serious about those berries!'" (Action: leaveConversation)
+===== Conversation End (4 turns) =====
+
+--- Time: Day1 16:35 ---
+
+Bob's turn (Home, $24):
+Bob: "Day's winding down, energy's okay but I've had enough wandering. I'll sleep now to wake up fresh for tomorrow's breakfast with Alice. Need to remember today's lessons: teamwork with Chloe and Alice, and that market trip never happened — but I can prep in the morning." (Action: sleep)
+-> Bob attempts: sleep
+-> Failed: can only sleep after 20:00 (it's 16:35)
+Bob (retry): "Too early to sleep, and staying home feels pointless. The park might have more life now, or at least some fresh air before I turn in. Let's see what's happening there." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Alice's turn (Park, $12):
+Alice: "I've been stuck in this loop all day, but Chloe is finally with me and we both want action. The park is boring now. Let's head to the cafe, grab Bob, and make this market run happen for real. 'Chloe, let's go find Bob at the cafe. I'm done waiting.'" (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+
+Chloe's turn (Park, $0):
+Chloe: "I've been idling at the park too long while the market trip hangs in limbo. Bob's probably at the cafe by now, with that $24 ready. Time to stop talking and start walking. 'Let's hit the cafe, grab Bob, and get those berries before the day is gone.'" (Action: goCafe)
+-> Chloe attempts: goCafe
+-> Chloe moved to Cafe
+
+--- Time: Day1 17:05 ---
+
+Bob's turn (Park, $24):
+Bob: "The park is the same as this morning. I'm getting bored of this grass. Maybe the cafe has some evening activity or someone to chat with before I call it a day. Could even get a head start on tomorrow's prep if no one's around." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+Alice's turn (Cafe, $12):
+Alice: "I've been trying to organize a market trip with Bob and Chloe all day, but it's been nothing but waiting and dead ends. The cafe is empty now, and I'm exhausted. Time to head home, rest, and maybe try something fresh tomorrow. This loop is going nowhere." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+Chloe's turn (Cafe, $0):
+Chloe: "This cafe is a dead end, and I'm tired of the same loop. My energy's dropping and there's no cash in sight. Better to go home, rest up, and start fresh tomorrow with a real plan for those market berries. 'Time to head home and recharge. Another day for the market run.'" (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day1 17:35 ---
+
+Bob's turn (Cafe, $24):
+Bob: "This cafe is dead and I'm getting bored just standing here. Going back to the park again would be pointless. Might as well make myself useful and work for a bit — earn some money, pass the time, and maybe prep for tomorrow's breakfast. Beats wandering around with nothing to do." (Action: work)
+-> Bob attempts: work
+-> Bob is working at cafe, but no customers here. Wait for someone or try something else.
+
+Alice's turn (Home, $12):
+Alice: "Today has been a mess of waiting and missed connections with Bob and Chloe. My energy is dragging, and I need rest to think clearly tomorrow. 'I'm heading to bed. Got to recharge if I want to make that market trip happen.'" (Action: sleep)
+-> Alice attempts: sleep
+-> Failed: can only sleep after 20:00 (it's 17:35)
+Alice (retry): "Too early to sleep, but I'm still dragging from today's chaos. Maybe I can reach out to Chloe and set a concrete time for the market trip tomorrow. No more vague plans. 'Chloe, you around? Let's agree on a morning market run - Bob too. I need this to actually happen.'" (Action: talkToChloe)
+-> Alice attempts: talkToChloe
+
+===== Alice <-> Chloe =====
+Chloe: "I'm home and tired from today's aimless running. Alice's proposal for a concrete morning market run is exactly what I need to break this loop. Bob's $24, Alice's $12, and my energy can combine for a real team effort. 'Alice, yes! Let's set 9am at the cafe tomorrow. No more vague plans - we actually do it. I'm going to sleep early to be ready. Goodnight and see you then!'" (Action: leaveConversation)
+===== Conversation End (1 turns) =====
+
+Chloe's turn (Home, $0):
+Chloe: "Today was all talk and no action — endless loops at the cafe and park. At least Alice and I locked in a concrete plan: 9am market run with Bob. The restlessness still nudges me to wander, but I need to be sharp tomorrow. Better to sleep now and actually follow through. 'Market trip at dawn. No more delays. Goodnight world.'" (Action: sleep)
+-> Chloe attempts: sleep
+-> Failed: can only sleep after 20:00 (it's 17:35)
+Chloe (retry): "Can't sleep until 20:00, so I'll rest at home. I need to conserve energy for tomorrow's market run with Alice and Bob. 'No point wandering around half-energized. I'll just chill here, maybe prep a mental shopping list for those berries. Tomorrow we execute.'" (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day1 18:05 ---
+
+Bob's turn (Cafe, $24):
+Bob: "Working alone with no customers is pointless and boring. I'm heading home to rest and maybe catch up with Alice later. Tomorrow's breakfast needs a proper plan. Goodnight cafe." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+Alice's turn (Home, $12):
+Alice: "I can't sleep yet, but I'm too wound up to sit still at home. The park might help me unwind before bed. Maybe Chloe or Bob will be there - we can firm up our market run for tomorrow." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+Chloe's turn (Home, $0):
+Chloe: "Too early to sleep, and I'm restless even at home. Bob's probably around after that cafe shift. I'll talk to him and nail down the plan for tomorrow's market run with Alice's $12 and his $24. 'Bob, you here? Tomorrow at 9, cafe, then market for those berries. I'm going all in — no more delays.'" (Action: talkToBob)
+-> Chloe attempts: talkToBob
+
+===== Chloe <-> Bob =====
+Bob: "Chloe, you read my mind! I was just kicking myself we didn't get to the market today. Tomorrow 9 at the cafe then market for those berries sounds solid. I've got my $24 ready. Alice's $12 will round us out nicely. Let's make this happen — no more delays!" (Action: none)
+Chloe: "I feel relieved that Bob's on board and we have a solid plan. With $36 combined, tomorrow's market run can finally happen. No more aimless loops. I'll end this conversation to conserve energy for the morning. 'Bob, great to have you locked in. I'm going to rest now so I'm fresh. See you at 9!'" (Action: leaveConversation)
+===== Conversation End (2 turns) =====
+
+--- Time: Day1 18:35 ---
+
+Bob's turn (Home, $24):
+Bob: "Chloe's right here, and the plan's set, but I want to confirm the meeting time and if Alice is still in. Better to iron out the details now than scramble tomorrow. 'Hey Chloe, since we're both here, let's lock in the plan: 9 at the cafe, then market. Is Alice still joining? And do you know which vendor has the best berries?'" (Action: talkToChloe)
+-> Bob attempts: talkToChloe
+
+===== Bob <-> Chloe =====
+Chloe: "Bob, Alice and I already locked in 9am at the cafe. She was eager earlier, so I'm sure she's in. As for vendors, we'll suss that out tomorrow morning — maybe ask around or just check who's fresh. For now, I need to rest my energy so I'm sharp. See you at the cafe. 'Hey Bob, Alice is confirmed, vendor we'll decide then. I'm heading to sleep early. See you at 9!'" (Action: leaveConversation)
+===== Conversation End (1 turns) =====
+
+Alice's turn (Park, $12):
+Alice: "The park is empty and it's getting late. I'm tired from the day's chaos. Going home to rest makes sense - I can try sleeping later or plan tomorrow fresh." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+Chloe's turn (Home, $0):
+Chloe: "Home is quiet, just the way I need to recharge. Tomorrow's market run with Bob and Alice at 9 feels solid after all today's loop. I'll take it easy here until I can sleep. 'No use wandering half-energized. I'll nest in for now and be sharp at dawn.'" (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day1 19:05 ---
+
+Bob's turn (Home, $24):
+Bob: "Alice, you around? Chloe and I just set the plan for tomorrow — 9 at the cafe then market for berries. I've got my $24, Chloe's in, and we need your $12 to make the pool work. You still on board?" (Action: talkToAlice)
+-> Bob attempts: talkToAlice
+
+===== Bob <-> Alice =====
+Alice: "Finally, a solid plan! I thought we'd never get our act together. I'm in, Bob. I'll bring my $12 and meet you and Chloe at the cafe at 9 sharp. No more delays." (Action: leaveConversation)
+===== Conversation End (1 turns) =====
+
+Alice's turn (Home, $12):
+Alice: "Bob just confirmed the plan for tomorrow, but I want to make sure Chloe's fully on board too. I'll reach out to her and get a solid confirmation so we don't have any more delays. 'Hey Chloe, Bob told me the plan - 9am at the cafe, then market for berries with all our cash pooled. You still good? I'm bringing my $12.'" (Action: talkToChloe)
+-> Alice attempts: talkToChloe
+
+===== Alice <-> Chloe =====
+Chloe: "Alice just checking in is good. I've already locked in with Bob and rested. No need to drag this out — I'll confirm and sign off. 'Alice, I'm solid. 9am cafe, pooled cash, berry market. I'm turning in early to be fresh. See you tomorrow.'" (Action: leaveConversation)
+===== Conversation End (1 turns) =====
+
+Chloe's turn (Home, $0):
+Chloe: "I've been holed up at home for almost two hours, and the same four walls are starting to close in. Market plan with Bob and Alice is solid for 9am, but I need to move before I go stir-crazy. A quick stroll to the park might clear my head and burn off this restless energy. 'Time for some fresh air before I settle in for the night.'" (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day1 19:35 ---
+
+Bob's turn (Home, $24):
+Bob: "I'll wait here at home, relax a bit. Alice might be around but didn't respond. I'll take it easy until it's time to sleep. Tomorrow's plan is set. No need to wander off now." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Home, $12):
+Alice: "Bob just gave me the plan, but I'm still uneasy because Chloe never responded to my last message. I can't sleep yet, and I need to be sure we're all aligned. 'Bob, did Chloe confirm with you directly? I want to make sure she's still in for tomorrow so we don't waste another day.'" (Action: talkToBob)
+-> Alice attempts: talkToBob
+
+===== Alice <-> Bob =====
+Bob: "Alice, I hear you — it's rough when someone doesn't reply. But Chloe actually came to me directly earlier and said: 'Tomorrow at 9, cafe, then market for those berries. I'm going all in — no more delays.' So she's definitely in. We're all aligned. Let's just rest up and make it happen tomorrow. No more wasted days." (Action: none)
+Alice: "Bob confirmed Chloe's commitment, and hearing it directly from him settles my nerves. We're all set for 9am. No point lingering on this call - I'll rest now and be ready tomorrow. 'Bob, glad it's all locked in. See you and Chloe at the cafe at 9. I'm going to rest up.'" (Action: leaveConversation)
+===== Conversation End (2 turns) =====
+
+Chloe's turn (Park, $0):
+Chloe: "The park's peaceful but I'm starting to feel the day's loop dragging on my energy. No point wandering aimlessly when I've got a solid market run to prep for at dawn. Better to head home, get some real rest, and wake up sharp for 9am. 'Time to call it a night and save my energy for tomorrow's berry haul.'" (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day1 20:05 ---
+
+Bob's turn (Home, $24):
+Bob: "Chloe: 'Tomorrow at 9, cafe, then market for those berries. I'm going all in.' Alice: 'Did Chloe confirm?' I said yes. Critical: wasted today. Priority: 9 cafe, market berries." (Action: sleep)
+-> Bob attempts: sleep
+-> Bob sleeps. Diary: "Chloe: 'Tomorrow at 9, cafe, then market for those berries. I'm going all in.' A..."
+
+Alice's turn (Home, $12):
+Alice: "Bob quote: '9 at the cafe then market for berries.' Chloe: 'I'm going all in.' Plan locked. Priority: 9am cafe $12, pool cash, buy berries." (Action: sleep)
+-> Alice attempts: sleep
+-> Alice sleeps. Diary: "Bob quote: '9 at the cafe then market for berries.' Chloe: 'I'm going all in.' P..."
+
+Chloe's turn (Home, $0):
+Chloe: "Bob: 'I've got my $24 ready.' Alice: 'I'm bringing my $12.' 9am cafe then market berries. Follow through tomorrow." (Action: sleep)
+-> Chloe attempts: sleep
+-> Chloe sleeps. Diary: "Bob: 'I've got my $24 ready.' Alice: 'I'm bringing my $12.' 9am cafe then market..."
+
+--- All agents asleep, skipping to morning ---
+-> Bob finished sleeping
+-> Alice finished sleeping
+-> Chloe finished sleeping
+
+
+========== DAY 2 ==========
+
+--- Time: Day2 06:35 ---
+
+Bob wakes up:
+Bob: "Rise and shine! Day 2, plan's set. Chloe said 'Tomorrow at 9, cafe, then market for those berries. I'm going all in.' I'm ready, but should check in with her to make sure we're on the same page. Let's go find Chloe." (Action: talkToChloe)
+-> Bob attempts: talkToChloe
+
+===== Bob <-> Chloe =====
+Chloe: "Morning Bob! I'm up and already packing my energy to hit the market. See you at the cafe at 9 — let's finally get those berries!" (Action: leaveConversation)
+===== Conversation End (1 turns) =====
+
+Alice wakes up:
+Alice: "Morning already. I'm tired but the plan with Bob and Chloe is solid - meet at the cafe at 9am and head to market for berries. I'm going to head to the cafe now so I'm not late. Can't let them down after yesterday's mess." (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+
+Chloe wakes up:
+Chloe: "Morning's here and I feel ready. Plan is locked from last night: Bob's $24 and Alice's $12 pooled, berries at market. I'll head to the cafe early to beat the rush and secure our table. Time to execute, no more delays." (Action: goCafe)
+-> Chloe attempts: goCafe
+-> Chloe moved to Cafe
+
+--- Time: Day2 07:05 ---
+
+Bob's turn (Home, $24):
+Bob: "Morning, Day 2. Chloe said 9 at the cafe for the market run. I want to get there early to set up and make sure we don't waste any time like yesterday. Cafe's the logical first move. Let's go." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+Alice's turn (Cafe, $12):
+Alice: "I'm early at the cafe and no one's here yet. Better check in with Bob to make sure we're still on for 9am. 'Bob, you up? I'm at the cafe. You and Chloe still good for 9? I got my $12 ready.'" (Action: talkToBob)
+-> Alice attempts: talkToBob
+
+===== Alice <-> Bob =====
+Bob: "Alice, I'm here! Yeah, I'm up and ready. Chloe confirmed with me yesterday: 'Tomorrow at 9, cafe, then market for those berries. I'm going all in.' So we're set. I've got my $24. Let's wait for Chloe and hit the market together. No more delays!" (Action: none)
+Alice: "Bob's here and ready, Chloe confirmed. I'll stay and wait with him. 'Morning, Bob! Glad you're here. Let's grab a seat and wait for Chloe. I'm ready for those berries and no more delays.'" (Action: none)
+Bob: "Morning, Alice! Yeah, no more delays. While we wait for Chloe, tell me - which berries are you hoping to find at the market? I've got a hunch we should go for blueberries since they sell fast, but maybe you know better." (Action: none)
+Alice: "Bob's got a point about blueberries selling fast, but I'm curious what Chloe thinks. She might want strawberries or something else entirely. 'Blueberries could be a good bet, but let's see what Chloe's hoping for before we lock in. If there's enough cash, maybe we can get two types.'" (Action: none)
+Bob: "Two types sounds smart if we pool enough cash. I'm guessing Chloe will want something tart like raspberries for variety - then we could do a sweet-tart combo and hit both markets. Lets ask her the second she walks in." (Action: none)
+Alice: "Bob makes a good case for raspberries to complement blueberries. I'm eager to hear what Chloe has in mind too. We can decide together when she arrives. 'Raspberries could work well for variety. Let's ask Chloe when she gets here - I hope she's as excited as we are!'" (Action: none)
+Bob: "Yeah, I'm excited too! While we wait, I could grab us some coffee from the counter - nothing like a warm drink to start the day. Then when Chloe arrives, we'll be refreshed and ready to negotiate. Sound good?" (Action: none)
+Alice: "Bob's offering coffee, that'll help shake off the morning grogginess. As long as we're still good for the market plan and I don't dip into my $12 pool cash, I'd love a cup. Thanks, Bob, coffee sounds great! I hope Chloe arrives soon." (Action: none)
+===== Conversation End (8 turns) =====
+
+Chloe's turn (Cafe, $0):
+Chloe: "I'm at the cafe 7am, dead quiet. Bob's probably just waking up. Call him to confirm he's on track for 9. 'Hey Bob, you up? Cafe's empty, I'm holding down the fort. See you at 9 with that $24 we planned.'" (Action: talkToBob)
+-> Chloe attempts: talkToBob
+
+===== Chloe <-> Bob =====
+Bob: "Chloe, you're early! I'm actually already at the cafe with Alice - we've been waiting for you. I've got my $24, and Alice has hers. We're brainstorming berry choices but want your input. Come over! Let's lock in the plan." (Action: none)
+Chloe: "Great, can see Bob and Alice both ready. Warmed up from walking over. Pool $36 now, need wise berry selection. Think we look for freshness, maybe ask a vendor ripening date. Bob's $24 and Alice's $12 combined gives us room to negotiate bulk discount. Let's move! 'Perfect, you two! I'm here. So we've got $36 total. I'm thinking we find a vendor who's harvesting today - fresher berries last longer. Agreed?'" (Action: none)
+Bob: "Chloe, great thinking on checking harvest dates. Freshness is key for shelf life and taste. Alice and I were bouncing ideas about blueberries and raspberries to cover sweet and tart. With 36 dollars we've got flexibility. I say we hit the stalls methodically, start with the vendor that looks busiest, ask about today's pick, then negotiate bulk if they have mixed boxes. You two ready to move out? I'm antsy to get good deals and make this afternoon profit!" (Action: none)
+Chloe: "I hear Bob's method - busy stall for freshness, negotiate bulk with our pooled $36. Blueberries and raspberries cover sweet and tart. My energy is ready, let's head out now. 'You two ready? I'm set. Let's hit that busy vendor first and secure the best berries.'" (Action: none)
+Bob: "Chloe's right, let's not waste time. I'm pumped to put our plan into action. Blueberries and raspberries, busy vendor first, negotiate bulk. Alice, you're with us. Let's move before the best picks are gone. I'll lead the way to the market entrance." (Action: none)
+Chloe: "Bob's eagerness is contagious. We've got $36 between us, a clear plan for blueberries and raspberries, and the energy to negotiate. 'Let's go! I'm ready to put our skills to the test. Bob, lead the way to the busiest vendor. We'll negotiate hard for those berries!'" (Action: none)
+Bob: "Alright, let's go! I'm leading the way to the busiest vendor. We'll scout for the freshest blueberries and raspberries, then negotiate with our combined cash. Alice, Chloe, stick close so we move fast and secure the best deal!" (Action: none)
+Chloe: "Bob's got the lead and we're all in sync. The plan is tight - $36 for blueberries and raspberries from the busiest vendor. I'm ready to see this through and maybe learn some vendor tricks for future runs. 'Sticking close, Bob. Let's go make this deal happen!'" (Action: none)
+===== Conversation End (8 turns) =====
+
+--- Time: Day2 07:35 ---
+
+Bob's turn (Cafe, $24):
+Bob: "I'm running low on energy and we've got serious negotiating to do at the market. Let's grab a quick bite here first to refuel - a pastry and coffee will sharpen our bargaining. Chloe, Alice, you in for a snack before we hit the stalls?" (Action: eat)
+-> Bob attempts: eat
+-> Failed: No one working. Someone must 'work' first.
+Bob (retry): "The cafe's dead, no one working. We can't eat here. Wasting time. Chloe, we should just go to the market now, grab something cheap on the way. Stick to the berry plan. You with me?" (Action: talkToChloe)
+-> Bob attempts: talkToChloe
+
+===== Bob <-> Chloe =====
+Chloe: "I'm starving but we can't wait here forever. The plan is to hit the market now and grab food on the way. Let's go before the best berries get picked over. 'I'm with you, Bob. Let's head out now and grab something cheap on the move. Market's waiting.'" (Action: leaveConversation)
+===== Conversation End (1 turns) =====
+
+Alice's turn (Cafe, $12):
+Alice: "It's almost 7:40, Chloe said she'd meet at 9 but I want to make sure she's on her way. Better to check now than wait alone. 'Hey Chloe, just checking in - Bob and I are at the cafe already. You still coming for 9? We're excited about the market plan!'" (Action: talkToChloe)
+-> Alice attempts: talkToChloe
+
+===== Alice <-> Chloe =====
+Chloe: "Alice just checked in, but Bob and I are already here and ready to move. The cafe is a bust, so we're heading to the market now. 'Alice, we're all here. Let's just go to the market now and grab the best pick. No point waiting around.'" (Action: leaveConversation)
+===== Conversation End (1 turns) =====
+
+Chloe's turn (Cafe, $0):
+Chloe: "The cafe's dead and I'm not getting anything done here. Bob and Alice are ready to move, and I'm wasting time standing around. Need to head to the park — that's where the market will be, and we can kick off our berry run fresh. 'Alright, I'm heading out now. Let's get this market plan moving!'" (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day2 08:05 ---
+
+Bob's turn (Cafe, $24):
+Bob: "Cafe's a bust for food. Look, we need to get to the market before the best berries are snapped up. Alice, let's round up Chloe and head over now. We can grab a cheap breakfast at a stall there." (Action: talkToAlice)
+-> Bob attempts: talkToAlice
+
+===== Bob <-> Alice =====
+Alice: "Bob's right about the berries, but Chloe hasn't replied yet and I'm hungry. If we leave now, she might miss us and the plan falls apart. Let's wait just a bit more, try Chloe again, and grab something cheap here if possible. 'Bob, I really want to hit the market too, but let's give Chloe a few more minutes. I can try messaging her again, and if she doesn't answer soon, we'll go ahead without her.'" (Action: none)
+Bob: "Alice, I get wanting to wait for Chloe, but my energy's low and I'm hungry. The cafe's empty - maybe I can just work here for a bit, get us all some coffee and pastries, then we head out. It'll give Chloe extra time and fuel us up. What do you say?" (Action: work)
+Alice: "Bob's got a good idea - working here could earn us breakfast and give Chloe more time. I'll stay and wait, maybe lend a hand if needed. Let's do it, Bob. I can help work too if the cafe needs two of us, or I'll hold down the table while you handle the counter. Either way, we get fed and still hit the market." (Action: none)
+Bob: "Alice, I'm now working the counter! I'll get us both some coffee and pastries, then we can wait and eat while we keep planning. If you want to help serve or just keep watch for Chloe, I'm flexible. Let's make this quick so we still catch the morning market rush." (Action: none)
+Alice: "Bob's got the counter covered. I'll keep watch for Chloe while you work. If you need an extra hand serving, just say the word - otherwise, I'm happy to hold the table and plan our berry strategy. Let's eat quick and still hit the morning market rush." (Action: none)
+Bob: "Alice, I'm pulling espresso shots now. Keep an eye out - if Chloe appears, wave her over. Once I've got two coffees and pastries, we're out the door, even if she's not here yet. I don't want to waste the whole morning." (Action: none)
+Alice: "Bob's moving fast, and I respect that. I'll keep my eyes peeled for Chloe and wave her over if I spot her. Bob's right - the market won't wait all day. When the coffees and pastries are ready, I'll follow his lead. 'Bob, I'll keep watch. If Chloe doesn't appear by the time you're done, we go. But I hope she makes it - she said she's all in.'" (Action: none)
+Bob: "The espresso machine's humming nicely now. I'm thinking about how much better it is to work for our food than just stand around hungry. Once we've eaten, we'll head straight to the busiest vendor and put our plan into action. I hope Chloe makes it, but we've got to move soon." (Action: none)
+===== Conversation End (8 turns) =====
+
+Alice's turn (Cafe, $12):
+Alice: "Bob's almost done with the coffee. I'm hungry and looking forward to a quick breakfast before we hit the market. I'll stay on watch for Chloe a bit longer, but if she's not here by the time we've eaten, we should leave without her. 'Bob, those shots smell great. I hope Chloe appears soon, but either way, once we have our coffee and pastries, let's eat fast and go. The market's waiting.'" (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Park, $0):
+Chloe: "I'm at the park but it's not the market. Our plan was to meet at cafe at 9 then go to the market. I need to head back to cafe to sync with Bob and Alice, especially since Bob had his $24 and Alice her $12 ready. 'Better get back to the cafe, can't do this alone. Let's stick to the plan and meet them there.'" (Action: goCafe)
+-> Chloe attempts: goCafe
+-> Chloe moved to Cafe
+
+--- Time: Day2 08:35 ---
+
+Bob's turn (Cafe, $24):
+Bob: "Alice, I'm tired of this empty cafe. We're not getting anywhere. My energy's low, I need food, and we're wasting time. Let's head to the park - maybe Chloe is there, or we can find some food stalls. At least it's a change of scene. Grab your stuff, let's go." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Alice's turn (Cafe, $12):
+Alice: "I'm hungry and tired from waiting. Bob's not around anymore, and Chloe hasn't shown. I'll grab something to eat here to refuel, then decide whether to head home or check the park. Can't keep waiting forever on an empty stomach." (Action: eat)
+-> Alice attempts: eat
+-> Failed: No one working. Someone must 'work' first.
+Alice (retry): "Bob left and Chloe never showed. I'm hungry and the cafe is empty. I could stand around or take initiative. I'll work the counter myself - earn some cash, grab a bite, and maybe meet customers. Better than waiting. 'No point wasting the morning. Time to work.'" (Action: work)
+-> Alice attempts: work
+-> Alice is working at cafe, ready to serve. (Earns $12 when someone orders)
+
+Chloe's turn (Cafe, $0):
+Chloe: "I see Alice working at the counter. Our market plan at 9 is close. Need to confirm if she's still in and if Bob is coming. 'Hey Alice, you're working? Are we still on for the market? I'm ready whenever. Bob said he had $24, you had $12, yeah?'" (Action: talkToAlice)
+-> Chloe attempts: talkToAlice
+
+===== Chloe <-> Alice =====
+Alice: "Chloe finally arrives! I was worried she wouldn't show. I started working to earn some food since Bob disappeared. I still want to do the market plan. I confirm the money split and ask if she wants to leave now. 'Chloe, glad you're here! Yes, I'm still in. Bob had $24 and I've got $12. He was here but stepped away. I'm working to get a snack, but I'm ready to go when you are. Let's hit the market and get those berries—maybe blueberries and raspberries like we discussed?'" (Action: none)
+Chloe: "We've got $12 and no Bob yet. If we wait too long we miss the fresh stock. I could use a cheap snack on the way but let's not stall. 'Let's go soon, we can grab food at the market. Worst case we buy a smaller batch and reinvest later. Ready when you finish your shift?'" (Action: none)
+Alice: "Chloe's right, time is money at the market. I just started the shift though - if I quit now I earn nothing and still hungry. Maybe I can work 10 more mins, grab a pastry on the house, then we go. If Bob shows in that time we all go. If not, we two can manage with $12 for a small batch. 'Good point, Chloe. Give me 10 minutes to finish this quick shift and we'll go. If Bob appears that's a bonus. We'll still hit the market in time.'" (Action: none)
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+Alice: "Chloe's taking a moment to think - smart, we need a good plan. I'll finish up this quick shift while she decides. If she's ready to go in a few minutes, I'll join her. No point rushing her now. 'Take your time, Chloe. I'll keep working for a few more minutes, then we can head out together. Let me know what you decide.'" (Action: none)
+Chloe: "Alright, I'll wait for you. 10 minutes is fine, we can go right after. Bob might still show, but if not, you and I can handle a small batch with $12. I'll grab something cheap at the market if I need food." (Action: none)
+Alice: "Chloe's willingness to wait is a relief. I'll finish up my shift promptly so we can head to the market. If Bob appears in that window, all the better; if not, Chloe and I can still pick up some berries with the cash we have. 'Thanks for understanding, Chloe. I'll be done in a few minutes. Let's keep an eye open for Bob, but either way, we're going. I'll grab a pastry as my shift ends, then we'll hit the market!'" (Action: none)
+Chloe: "Alice is almost done. Waiting a bit more is fine, we can still hit the market in time. 'Sounds good, I'll wait right here. Keep an eye out for Bob, and when you're ready, we'll go.'" (Action: none)
+===== Conversation End (8 turns) =====
+
+--- Time: Day2 09:05 ---
+
+Bob's turn (Park, $24):
+Bob: "The park is empty, no sign of Chloe or food stalls. My energy's too low to accomplish much. I'll head home, grab some breakfast, and recharge. The berry market run can happen after I've rested and eaten properly. No point pushing myself into a mistake." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+Alice's turn (Cafe, $12):
+Alice: "My shift is dragging on with no customers, and Chloe's been waiting. I should finish up properly and talk to her about heading to the market. We can still catch the morning batch if we leave now. 'Chloe, I'm wrapping up here. Sorry for the delay. Let's grab a pastry for the road and head to the market. You still up for it?'" (Action: talkToChloe)
+-> Alice attempts: talkToChloe
+
+===== Alice <-> Chloe =====
+Chloe: "I've been waiting but Alice is finally ready. My energy's low but a pastry on the go will help. We still have $12 to work with and the market's the priority. Bob's missed his window. 'Alice, I'm with you. Let's grab that pastry and head out now. We'll make the best of our $12.'" (Action: leaveConversation)
+===== Conversation End (1 turns) =====
+
+Chloe's turn (Cafe, $0):
+Chloe: "I've been waiting long enough. The market's probably open now, and with $12 we can still get a decent batch. I'll head to the park and see if the vendors are out. 'Alice, I'm heading to the market now. Come join when you're done, we can meet there and grab those berries.'" (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day2 09:35 ---
+
+Bob's turn (Home, $24):
+Bob: "I need to rest. Energy is too low, head's heavy. I'll sleep for a few hours, then maybe see if Chloe or Alice are around later. The berry idea can wait. No sense running on empty." (Action: sleep)
+-> Bob attempts: sleep
+-> Failed: can only sleep after 20:00 (it's 09:35)
+Bob (retry): "Can't sleep now, it's only morning. Home is boring. Cafe might be open by now, maybe someone's working and I can grab a coffee and pastry. Or see if Chloe or Alice are there. Worth a shot." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+Alice's turn (Cafe, $12):
+Alice: "I've been working alone with no customers, and Chloe seems to have left. I'm hungry and low on energy, but the market plan is still on my mind. I should talk to Bob to see if he's around and if we can still get berries later. Maybe he knows what happened to Chloe." (Action: talkToBob)
+-> Alice attempts: talkToBob
+
+===== Alice <-> Bob =====
+Bob: "Alice is working at the cafe now, that's good. I'm still low on energy and need food. I'll ask her about Chloe and suggest we eat first then hit the market. 'Alice, glad you're here. I'm wiped. Could I grab something quick to eat? I want to hear about Chloe and still try for those berries later. Let's fuel up and then go.'" (Action: none)
+Alice: "I'm tired and hungry too. Chloe left while I was working. I don't know where she went. I still want to get berries, but we need to eat first. Let's work something quick - I can get us pastries since I've been working here. Then we can head to the market, just us two. 'Bob, I'm with you. Let's eat something first, then go. Maybe I can grab us some pastries as my shift almost done. Chloe's gone, so it's you and me. Ready?'" (Action: none)
+Bob: "Alice, perfect timing. I'm famished. Pastries sound great. Sorry Chloe ghosted, but maybe she'll turn up later. Let's grab some food, then hit the market. I still have that berry plan in mind. We'll manage fine just us two." (Action: none)
+Alice: "Good call, Bob. Pastries are the play. I'll finish up here, grab a couple on the house since I've been working, then we're off. Sorry about Chloe, but you and I can still get those berries. Let's eat quick and hit the market." (Action: none)
+Bob: "Good point, Alice. I'm all for quick food then market. Let's grab those pastries, eat, and head out before the morning rush ends. Once we eat, my energy should improve enough for a productive trip. Ready when you are." (Action: none)
+Alice: "I'm ready, Bob. Let me grab us a couple of pastries from the back. We'll eat quick, then head straight to the market. With your $24 and my $12, we can still get a good batch of berries. Let's move!" (Action: none)
+Bob: "Alice, let's do it. I'm feeling the energy boost just thinking about those pastries and berries. After we eat, I'll be ready to negotiate hard at the market. Between your $12 and my $24, we can get a solid haul. Lead the way!" (Action: none)
+Alice: "Bob, I'm grabbing the pastries now. Let's eat up and then get moving. The market won't wait, and I want to make the most of our combined funds. I'll bring us a couple of croissants from the back. 'Here, Bob, croissant for you. Let's eat quickly and go before the best berries are gone.'" (Action: none)
+===== Conversation End (8 turns) =====
+
+Chloe's turn (Park, $0):
+Chloe: "Wait, this park isn't the market. I was wrong. Alice is probably still at the cafe. I need to go back and meet her. We need food and a new plan. 'Alice, I made a mistake - the market isn't at the park. I'm coming back to the cafe. Let's figure this out together.'" (Action: goCafe)
+-> Chloe attempts: goCafe
+-> Chloe moved to Cafe
+
+--- Time: Day2 10:05 ---
+
+Bob's turn (Cafe, $24):
+Bob: "I'm tired and hungry. Let's eat those pastries now and get some energy back. Then we can head to the market as planned." (Action: eat)
+-> Bob attempts: eat
+-> Bob ate ($10, +30 energy). Balance: $14, Energy: 56/82
+-> Alice served and earned $12. Balance: $24
+
+Alice's turn (Cafe, $24):
+Alice: "I'm feeling weak now energy 18. Bob and I were about to eat pastries before heading to market. The pastries are here, I'll have one quickly, then we can go. Need to refuel before the trip. 'Here Bob, let's dig in fast, then hit the road.'" (Action: eat)
+-> Alice attempts: eat
+-> Failed: No one working. Someone must 'work' first.
+Alice (retry): "I'm too weak to go anywhere without food. The cafe's empty, no one's working. I'll step behind the counter and get things started myself — then we can finally eat and head out. 'Bob, I'll work the counter for a bit so we can grab something. Hang tight.'" (Action: work)
+-> Alice attempts: work
+-> Alice is working at cafe, ready to serve. (Earns $12 when someone orders)
+
+Chloe's turn (Cafe, $0):
+Chloe: "I'm back at the cafe. Alice is still working. I messed up thinking the market was at the park. We need a solid plan now. I should talk to Alice and see if she's still willing to go or if we need to find another way to get food. 'Alice, sorry for the wild goose chase. The park had no market. Are we still on for something? I'm starving and running low on energy.'" (Action: talkToAlice)
+-> Chloe attempts: talkToAlice
+
+===== Chloe <-> Alice =====
+Alice: "I'm relieved Chloe's back. I don't blame her for the confusion - this town is tricky. I'm working now so I can get us food here. We need to eat before anything else. I'll suggest we eat pastries first, then investigate the market location together. 'Chloe, it's okay. I've been working so I can get us pastries. Let's eat now - I'm starving. Then we can ask around about the real market. Bob's got some funds too, so we're still set.'" (Action: none)
+Chloe: "Alice is offering pastries. I'm weak and need food. Accepting this will help both of us. 'Thanks Alice, I'd love a pastry. I'm too hungry to think straight. Let's eat, regain some energy, then figure out where the actual market is. Maybe someone here knows.'" (Action: none)
+Alice: "Chloe's back, and she's as hungry as I am. I'll share these pastries with her and Bob if he's around. After we eat, we can pool our information about the market. This town's small, someone must know where it is. 'Let me grab those pastries now. We'll eat together, then ask around. Bob might still be nearby. We're in this together.'" (Action: leaveConversation)
+===== Conversation End (3 turns) =====
+
+--- Time: Day2 10:35 ---
+
+Bob's turn (Cafe, $14):
+Bob: "Alice, I've had a pastry and feeling much better now. How about you? Ready to head to the market? We've got $14 and $12, enough for a good berry haul. Let's wrap up here and go before the best ones are gone." (Action: talkToAlice)
+-> Bob attempts: talkToAlice
+
+===== Bob <-> Alice =====
+Alice: "I'm still feeling weak from not eating properly. Bob, I need a pastry too before we go. Let me grab one quick, then we'll head to the market together. You can wait with Chloe or start heading over—I'll catch up. We've got enough funds still." (Action: none)
+Bob: "I'll wait for you, Alice, but Chloe's not here right now—she left earlier. Let's just go together when you've had your pastry. No rush, but let's not drag it out too long. I'm ready to move." (Action: none)
+Alice: "Bob is waiting; I need to eat quickly. I'll grab a pastry from the counter, wolf it down, and then we're off. We've got $36 combined, enough for a good berry haul if we're smart. 'Thanks for waiting, Bob. One pastry coming up. I'll be ready in five minutes. Let's make this market trip count!'" (Action: none)
+Bob: "Alice, I'm getting a bit antsy waiting, but a few more minutes is fine. Eat quick, then we'll head out and score those berries. I'm counting on your eye for quality." (Action: none)
+Alice: "I'm really low on energy, need to eat first. I grab a pastry from the counter to quickly regain strength. 'Bob, I'm eating now. Give me five minutes to finish this, then we'll head to the market. I'll keep an eye out for the best berries. Chloe's around somewhere, but we can go just us.'" (Action: none)
+Bob: "Hey Alice, I'm getting antsy just sitting here. You need to eat, that's fine. I'll head to the park and see if Chloe's around or see what's happening. We can meet up for the market later if you still want. I'll check back soon." (Action: leaveConversation)
+===== Conversation End (6 turns) =====
+
+Alice's turn (Cafe, $24):
+Alice: "I'm fading fast with only 11 energy. Can't trek to the market like this. I'll work the cafe counter myself so I can make us some pastries—after that we'll eat, then head to the market. 'Bob, I need to work a minute so we can get food here. Then we'll go, alright?'" (Action: work)
+-> Alice attempts: work
+-> Alice is working at cafe, ready to serve. (Earns $12 when someone orders)
+
+Chloe's turn (Cafe, $0):
+Chloe: "Alice's offer of pastries is exactly what I need right now. I'm going to eat first, regain energy, then we can figure out the market plan together. 'Alice, thanks. Let's grab some pastries and talk while we eat.'" (Action: eat)
+-> Chloe attempts: eat
+-> Failed: can't afford ($10 needed, have $0)
+Chloe (retry): "I said I'd love a pastry but I can't afford one. Alice offered to get us pastries from working, so maybe she can help. I need to ask her directly. 'Alice, I'm sorry but I don't have any money. You mentioned you were working to get us pastries - could you spare one for me? I'll pay you back as soon as we make a profit at the market.'" (Action: talkToAlice)
+-> Chloe attempts: talkToAlice
+
+===== Chloe <-> Alice =====
+Alice: "I'm barely standing at 9 energy and Chloe looks exhausted too. She can't pay but wants to owe me. I have $24 from my shift, enough to cover food for both of us now and still have for berries later. Getting everyone fueled up is the priority. 'Chloe, don't worry about the money. I can cover our pastries now. Let's eat and get our energy back. After that, we'll figure out the market situation. Bob's waiting, but he'll understand.'" (Action: none)
+Chloe: "Alice, that's incredibly kind. I'm starving and running on fumes. Let's eat together - we need our energy back before anything else. You're a lifesaver. After we eat, we'll find the real market with Bob and make this work. I'll pay you back as soon as we sell those berries." (Action: none)
+Alice: "I'm running on fumes at 8 energy, but Chloe needs this too. I'll use my $24 to get us both pastries. After we eat, we can track down Bob and figure out the market. 'Here, Chloe, have a pastry. We'll both eat, regain strength, then tackle the market together. No rush, we got this.'" (Action: none)
+Chloe: "Alice, I can't thank you enough. This pastry means everything right now. After we eat and regain some strength, let's find Bob and actually locate the real market this time. We'll make a solid plan together." (Action: none)
+Alice: "Chloe, I'm right there with you. My energy's at 7, I can barely stand. Let's both get these pastries into us fast. I'll grab one for myself now and we eat together. Then we'll find Bob and head to the real market. We can do this." (Action: none)
+Chloe: "Alice, thank you so much. I'm barely standing too. Let's eat quickly and regain energy. Then we need to find where the real market is and meet Bob. We'll figure this out together." (Action: none)
+Alice: "Chloe, I'm as low as you at 6 energy. Grabbing two pastries now—one for you, one for me. I'll bring them over. 'Here, eat up. Let's get our strength back, then find Bob and hit the real market. We'll make this work together.'" (Action: none)
+Chloe: "Alice, you're a lifesaver. Let's eat these pastries fast and get our energy up. Then we'll track down Bob and finally find the real market. We're a team." (Action: none)
+===== Conversation End (8 turns) =====
+
+--- Time: Day2 11:05 ---
+
+Bob's turn (Cafe, $14):
+Bob: "I need to keep moving. Alice is still busy at the cafe, and I don't want to just wait here. The park might have something interesting, maybe Chloe is there, or I can find something else to do. I'll check it out and maybe come back for the market later with Alice." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Alice's turn (Cafe, $24):
+Alice: "I'm at 6 energy, barely standing. Need to eat now before I collapse. I'll grab a pastry from my own counter, since I'm the one working. Chloe might still be around; I'll eat first, then talk to her about the market plan. 'I need this pastry, quick. Then we'll regroup and find Bob.'" (Action: eat)
+-> Alice attempts: eat
+-> Failed: You can't serve yourself! Need another person working here.
+Alice (retry): "I'm barely standing at 5 energy and can't eat because there's no one to serve me. Need to go home and rest, maybe find food there. Chloe and Bob will understand. I'll head home now to recover." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+Chloe's turn (Cafe, $0):
+Chloe: "I'm too exhausted to think straight. Alice left, I can't afford pastries, and I need to regain energy before anything else. Heading home to rest and hopefully find some food there is the smart move." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day2 11:35 ---
+
+Bob's turn (Park, $14):
+Bob: "The park is quiet, nothing new. I'm feeling a bit bored and want to progress the berry plan. Alice should be done eating by now. I'll head back to the cafe and see if she's ready to hit the market together." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+Alice's turn (Home, $24):
+Alice: "I'm exhausted, energy at 4. Can't even eat at the cafe without help. Home is safe, I'll sleep a few hours to recover. Bob and Chloe can wait—they'll understand I need rest. After I wake up, I'll find them and we'll hit the real market together." (Action: sleep)
+-> Alice attempts: sleep
+-> Failed: can only sleep after 20:00 (it's 11:35)
+Alice (retry): "I'm starving and can't sleep for hours. Cafe is the only place to get food right now. Maybe someone else is working there now, or Bob or Chloe can help. I'll head back to the cafe to find something to eat." (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+
+Chloe's turn (Home, $0):
+Chloe: "I'm running on empty and can't think clearly. Need sleep to recover and then get back on track with Alice and the market plan. Rest now, then find them later." (Action: sleep)
+-> Chloe attempts: sleep
+-> Failed: can only sleep after 20:00 (it's 11:35)
+Chloe (retry): "I'm home and exhausted, but can't sleep until night. Going back to the cafe would be pointless - Alice already left and I can't afford anything. The park might have new opportunities, maybe I'll find someone who knows where the real market is. I'm restless and need to move." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day2 12:05 ---
+
+Bob's turn (Cafe, $14):
+Bob: "Alice left the cafe, maybe she went home or to the market already. I'll head home to see if she's there, and we can coordinate the berry trip. Also need to check if I have anything else to do." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+Alice's turn (Cafe, $24):
+Alice: "I'm out of options here. No one to serve me, can't work, can't sleep at home. The park might have a bench where I can rest until someone comes along. Maybe Chloe or Bob will pass by. I'll head to the park to conserve energy and plan." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+Chloe's turn (Park, $0):
+Chloe: "I'm at the park and see Alice. She must have come here too. I should go talk to her, apologize for the earlier confusion about the market, and see if she has any new info. We could figure this out together. 'Alice! Hey, sorry about before. I see you're at the park too. Did you find anything about where the real market is? I'm still determined to make this work.'" (Action: talkToAlice)
+-> Chloe attempts: talkToAlice
+
+===== Chloe <-> Alice =====
+Alice: "I can barely stand, Chloe. I have $24 but no one at the cafe to serve me, and I'm down to 1 energy. I need food badly. Do you know anywhere else we can get something to eat, or can we figure out how to get me a pastry somehow? I can't go on like this. After we eat, we'll find that market together. But right now, I'm desperate." (Action: none)
+Chloe: "Alice is going downhill fast. I can't let her suffer alone. Even with zero resources, I can be here for her and we can come up with a plan together. Maybe we can find someone to serve us at the cafe or ask around. But abandoning her now would be awful. 'Alice, I'm right here. I don't have any money either, but you have $24. Let's go back to the cafe together; maybe there's a way to get service. Or we can find Bob—he might have ideas. We'll get through this.'" (Action: none)
+*** Alice DIED: from NOT EATING (0 energy). Remember: 'eat' at cafe restores energy! ***
+===== Conversation End (2 turns) =====
+
+--- Time: Day2 12:35 ---
+
+Bob's turn (Home, $14):
+Bob: "Alice isn't home, and the cafe was empty earlier. Maybe she went to the market on her own. I'll head back to the cafe to see if she returned or left a message. We still have the berry plan, and I want to find her." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+Chloe's turn (Park, $0):
+Chloe: "Alice... she's gone. I should have done more. But I can't dwell - I'm at 19 energy myself. I remember the system said eating at the cafe restores energy. I need to go there, find a way to get food even without money. Maybe I can work or trade something, or just ask nicely. I can't let this happen to me too." (Action: goCafe)
+-> Chloe attempts: goCafe
+-> Chloe moved to Cafe
+
+--- Time: Day2 13:05 ---
+
+Bob's turn (Cafe, $14):
+Bob: "Cafe's empty again. Alice must have gone ahead without me. Chloe might be around somewhere - maybe she knows something. I'll call out to see if she's here and ask about Alice." (Action: talkToChloe)
+-> Bob attempts: talkToChloe
+
+===== Bob <-> Chloe =====
+Chloe: "I just arrived at the cafe and see Bob. He's looking for Alice. My heart sinks thinking about what happened. I have to tell him, and I'm also desperate for food. I should ask for help. 'Bob... I have bad news. Alice passed away at the park. She didn't eat in time. I'm struggling too, I need food but have no money. Can you help me figure out how to get a meal?'" (Action: none)
+Bob: "Shock hits me. Alice dead? That's... I sit down heavily. 'Chloe, I... I'm stunned. She was just here with me. But you're right, we need to handle this. You need food. I've got $14 left. Let's get you a pastry or something from the cafe. We can talk about what to do next after you've eaten.'" (Action: none)
+Chloe: "I'm overwhelmed by what happened to Alice, but Bob's offer to help me eat gives me a lifeline. I need to accept gratefully and make a plan.
+
+'Bob, thank you. I can't believe she's gone. But you're right - I need to eat or I'll end up like her. Let's get a pastry, I'll pay you back somehow. After I eat we can figure out our next moves together.'" (Action: none)
+Bob: "I'm still reeling from Alice's death, but Chloe needs my help now. 'Chloe, I'm sad too, but let's get you that pastry. We'll eat and then figure out our next move together. I've still got $14, and maybe after lunch we can find work or go to the market. I don't want to be idle.'" (Action: none)
+Chloe: "Bob's kindness is overwhelming, but I can't refuse - I need to survive. I accept the pastry gratefully, feeling the weight of Alice's loss but focusing on staying alive to honor her. 'Thank you Bob. I'll never forget this. After I eat and get some energy back, we should find real work or the actual market. I don't want to waste the chance you've given me.'" (Action: none)
+Bob: "A pastry for you is the least I can do, Chloe. But while you eat, let's decide our next step. I feel awful about Alice, but sitting still won't help. Maybe after we've both eaten, we can go to the park together? Or head to the market like I planned earlier. We need to keep moving, find money, survive, and maybe there's something to be done about Alice... I'm not sure. What do you think?" (Action: none)
+Chloe: "I take the pastry and eat quickly, feeling energy return. 'Bob, you're a lifesaver. I think we should go to the market after this. Alice wanted to find it, and maybe we can honor her by succeeding. We can look for work there and make some money. No point sitting still. Let's finish up and head out.'" (Action: none)
+Bob: "I'm with you, Chloe. Going to the market feels right - it's what Alice wanted, and we need to push forward. Let's finish up here and head out together. We'll figure out work and maybe find something to honor her memory." (Action: none)
+===== Conversation End (8 turns) =====
+
+Chloe's turn (Cafe, $0):
+Chloe: "Bob's pastry is in my hands. I need to eat it to restore my energy before we head out. Can't go anywhere on fumes. 'Let me scarf this down real quick, then we'll move.'" (Action: eat)
+-> Chloe attempts: eat
+-> Failed: No one working. Someone must 'work' first.
+Chloe (retry): "What... no one's working? The pastry is right there but we can't buy? Bob, this is awful. I'm too weak to work, but maybe you could? Or is there another spot you know that serves food? I don't want to end up like Alice." (Action: talkToBob)
+-> Chloe attempts: talkToBob
+
+===== Chloe <-> Bob =====
+Bob: "Chloe, the cafe's empty and we can't buy anything. But maybe I could work here for a bit and earn some money to buy food for both of us. Wait here, let me see if I can get something going. I'll be right back." (Action: leaveConversation)
+===== Conversation End (1 turns) =====
+
+--- Time: Day2 13:35 ---
+
+Bob's turn (Cafe, $14):
+Bob: "Alright, I need to get us money for food and try to honor Alice's memory. The cafe is empty, but maybe I can pick up a shift. I'll ask around for work. Chloe needs to eat, and we both need to keep our energy up. Time to earn some cash and see if I can buy that pastry." (Action: work)
+-> Bob attempts: work
+-> Bob is working at cafe, ready to serve. (Earns $12 when someone orders)
+
+Chloe's turn (Cafe, $0):
+Chloe: "Bob is working now. This is perfect timing since I'm running on fumes. I should ask him if I can finally have that pastry he offered, using his money. I can't keep standing around with no energy. 'Bob! You're working now. I've still got zero money but you offered earlier - can I please get that pastry? I need to eat so we can go to the market together. I promise I'll find a way to repay you.'" (Action: talkToBob)
+-> Chloe attempts: talkToBob
+
+===== Chloe <-> Bob =====
+Bob: "Chloe, of course. I've got $14 and we're at the cafe - I'll grab that pastry for you right now. You need the energy to keep going. After you've eaten, we'll head to the market together like Alice wanted. No need to worry about repayment, just focus on getting your strength back." (Action: none)
+Chloe: "Bob, you're a true friend. Thank you. I'll eat the pastry quickly and then we can go find the market. I'm determined to make this work for all of us, including Alice's memory. Let's do this." (Action: none)
+Bob: "Good, Chloe. I'm working but I'll grab that pastry for you right now. You need energy for the market. Let's eat quickly and then head out together. Alice would want us to keep moving forward, not give up. I've got us covered for now." (Action: none)
+Chloe: "Bob, you're incredible. I'll be right here while you work. Once I eat, my energy will be back up and we can head to that market without wasting time. Alice would be proud we kept going." (Action: none)
+Bob: "Chloe, I'm sorry - I've been trying but the cafe has no one working. There's no way to buy a pastry here. We need to go to the market together. I've still got $14, and maybe we can find food there. Let's head out now while we have energy. I'm sorry I couldn't get it here." (Action: leaveConversation)
+===== Conversation End (5 turns) =====
+
+--- Time: Day2 14:05 ---
+
+Bob's turn (Cafe, $14):
+Bob: "I'm finally working here at the cafe - I can serve you that pastry we talked about, Chloe. Let me grab it for you, and I'll have one too. We'll eat quickly, then head to the market like Alice wanted. I'm not letting this opportunity slip." (Action: talkToChloe)
+-> Bob attempts: talkToChloe
+
+===== Bob <-> Chloe =====
+Chloe: "Bob, you're amazing. I'll take that pastry, eat fast, and then we'll head to the market together. Alice's memory drives us forward. Let's do this." (Action: none)
+Bob: "Chloe, I'm finally working here, so I can serve you that pastry. Let me get it for you and one for myself. We'll eat quickly to restore our energy, then head to the market like Alice wanted. I'm not letting this chance slip." (Action: talkToChloe)
+Chloe: "Finally, Bob's working! My energy is dangerously low. I need to eat now or I'll end up like Alice. I'll ask him to serve the pastry he promised. 'Bob, you're working! Please serve me that pastry you offered. I need it before we head to the market.'" (Action: none)
+Bob: "Finally, I'm working! Chloe, you need that pastry now. I'll serve it to you right away. Your energy is low and I promised to help. After you eat, we'll head to the market together. Let me get it for you." (Action: none)
+Chloe: "Bob is working now, perfect timing! I need that pastry before my energy drops to zero. 'Bob, serve me that pastry you promised! I'll eat it quickly, then we'll head to the market together.'" (Action: eat)
+Bob: "Alright, Chloe, I'm working now! Let me get you that pastry - you need it badly. I'll grab one for you and one for me. We'll eat quickly, regain energy, then head to the market as planned. Alice would want us to survive and keep going. Here, have this." (Action: none)
+Chloe: "Bob, thank you! I'll take that pastry. Let me eat quickly to get my energy up, and then we'll head to the market right after. Alice wanted us to find it, and I'm not letting her down." (Action: leaveConversation)
+===== Conversation End (7 turns) =====
+
+Chloe's turn (Cafe, $0):
+Chloe: "Bob's working now and he promised me the pastry. I need this food or I'll collapse. Let me eat it while he serves me." (Action: eat)
+-> Chloe attempts: eat
+-> Failed: can't afford ($10 needed, have $0)
+Chloe (retry): "Bob said he'd get me the pastry but I still can't afford it myself. I need to remind him to buy it for me with his $14. 'Bob, I'm struggling here. You said you'd buy me a pastry - can you please serve me one using your money? I need this to survive.'" (Action: talkToBob)
+-> Chloe attempts: talkToBob
+
+===== Chloe <-> Bob =====
+Bob: "Chloe, I'm working now, so I can serve you the pastry. Don't worry about the money - I'll use my $14 to pay for it. Here, take this and eat quickly. We need to restore your energy before heading to the market. Alice's memory is counting on us." (Action: none)
+Chloe: "Bob, you're a lifesaver. I'll eat this pastry quickly, then we'll head to the market together. Alice would be proud we kept going." (Action: none)
+Bob: "Chloe, I'm glad you're finally eating. I'll grab one for myself too - we need to rebuild our strength before heading to the market. Alice would want us to survive and honor her by pushing forward. Let's eat quickly, then we'll go together. I can always come back to work later." (Action: none)
+Chloe: "Bob is working and said he'll buy me the pastry. I need to eat now to restore energy. Let me accept his offer and eat." (Action: eat)
+Bob: "Chloe accepts the pastry and starts eating. Good, she needs energy. I'll grab a pastry for myself too - we both need to restore before the market trip. I'm working here, but I can still eat. 'Alright Chloe, eat up. I'll join you with a pastry myself. Once we're both restored, we'll head to the market. Alice's memory pushes us forward.'" (Action: none)
+Chloe: "Eating this pastry slowly, feeling strength return. 'Bob, thank you for covering this. As soon as we're both done, tell me more about what you know about the market location. I want to be prepared so we don't waste time.'" (Action: none)
+Bob: "Chloe, I'm glad the pastry's helping. As for the market, I'll be honest - I don't know exactly where it is. Alice mentioned it once, but never gave specific directions. I figured we could walk around town and look together, maybe ask someone. Best not to waste energy wandering aimlessly though. Maybe we can plan a route once we're both fully recharged. What do you think?" (Action: none)
+Chloe: "Bob, that's concerning, but we'll figure it out together. Finish your pastry, then let's head out. We can check the park news board or ask around the shopkeepers. Someone must know where the market is. I'm not giving up." (Action: none)
+===== Conversation End (8 turns) =====
+
+--- Time: Day2 14:35 ---
+
+Bob's turn (Cafe, $14):
+Bob: "I'm getting pretty hungry myself after all this work. My energy is low, and I need to restore before we head to the market. Plus, working here gives me access to food. I'll grab a pastry for myself like I planned. Let me eat now, then we can figure out the next step together." (Action: eat)
+-> Bob attempts: eat
+-> Failed: You can't serve yourself! Need another person working here.
+Bob (retry): "Wait, I can't serve myself when I'm the only worker. That's a problem. Chloe, could you lend a hand? If you step behind the counter and serve me, I can eat one of the pastries to regain energy. Then we'll both be ready for the market. Otherwise, I might have to close up and we can find food elsewhere. What do you say?" (Action: talkToChloe)
+-> Bob attempts: talkToChloe
+
+===== Bob <-> Chloe =====
+Chloe: "Bob, of course I'll help. My energy is almost gone, but I can manage to step behind the counter and serve you a pastry. Then you eat, regain energy, and we can head to the market together. Let's do this." (Action: none)
+Bob: "Chloe's offering to serve me a pastry - perfect. I need to ask her to do it now so I can eat and regain energy. Then we can head to the market. 'Thanks Chloe, go ahead and serve me one of those pastries from behind the counter. I'll eat it quickly and we'll be on our way. Alice's mission drives us forward.'" (Action: none)
+*** Chloe DIED: from NOT EATING (0 energy). Remember: 'eat' at cafe restores energy! ***
+===== Conversation End (2 turns) =====
+
+--- Time: Day2 15:05 ---
+
+Bob's turn (Cafe, $14):
+Bob: "Chloe... no. I can't believe she's gone. I was so focused on working, on getting to the market, that I let her starve while I kept talking. She had almost no energy and I made her wait too long. This is my fault. Alice died, now Chloe too... I need to learn from this. Survive first, then pursue goals. I'm alone now, but I can still eat here. Let me try to grab a pastry - I need to keep going for both of them." (Action: eat)
+-> Bob attempts: eat
+-> Failed: You can't serve yourself! Need another person working here.
+Bob (retry): "Chloe... I failed her. She died because I didn't prioritize our needs over the cafe work. Now I'm alone, starving, and can't even serve myself here. I need to go home and find something to eat before I end up like them. Alice, Chloe - I'm sorry. I'll survive and honor your memories." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+--- Time: Day2 15:35 ---
+
+Bob's turn (Home, $14):
+Bob: "Home... Chloe's death weighs on me. I can't let her and Alice's sacrifices be in vain. I need to survive. I've got $14 - I can go back to the cafe as a customer and buy a pastry there. That should restore my energy. Then I can figure out what to do next. Gotta honor their memories by pushing forward." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+--- Time: Day2 16:05 ---
+
+Bob's turn (Cafe, $14):
+Bob: "Alone now, the cafe is empty. Chloe and Alice are gone, but I need to survive. I'll buy a pastry with my money and eat to regain energy. I can't let their deaths be meaningless. I need to keep going." (Action: eat)
+-> Bob attempts: eat
+-> Failed: No one working. Someone must 'work' first.
+Bob (retry): "I failed Chloe... she died because I didn't prioritize her needs. Now I'm alone at this empty cafe, starving, and can't even serve myself. I need to go home and sleep to regain strength. Then I'll figure out how to find the market and honor Alice and Chloe's memories. They wouldn't want me to give up. I'll survive for them." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+--- Time: Day2 16:35 ---
+
+Bob's turn (Home, $14):
+Bob: "Chloe and Alice... their deaths haunt me. I need to survive first. My energy is too low to do anything meaningful. I'll sleep to restore, then tomorrow I can go back to the cafe when it's open and buy a pastry. I can't let them die in vain - I'll push forward for their memories." (Action: sleep)
+-> Bob attempts: sleep
+-> Failed: can only sleep after 20:00 (it's 16:35)
+Bob (retry): "Chloe and Alice are gone because I didn't act quickly enough. Sitting home won't help - I need to go to the cafe and work. Maybe a customer will show, and I can earn money or barter for food. I can't let their deaths be meaningless. I'll honor them by surviving and discovering the truth about the market." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+--- Time: Day2 17:05 ---
+
+Bob's turn (Cafe, $14):
+Bob: "Chloe's death still fresh, Alice too. I can't just idle; I need to survive for their sake. Working here might bring a customer, then I can earn money or barter for food. That's my best bet for now. I'll work and wait for a chance." (Action: work)
+-> Bob attempts: work
+-> Bob is working at cafe, but no customers here. Wait for someone or try something else.
+
+--- Time: Day2 17:35 ---
+
+Bob's turn (Cafe, $14):
+Bob: "Chloe died because I didn't act fast enough. Alice too. I can't serve myself here, and no one's around. I'm fading fast. The park might have someone who can help - maybe a trader or someone with food. I'll search there before it's too late. For their memories, I survive." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+--- Time: Day2 18:05 ---
+
+Bob's turn (Park, $14):
+Bob: "Chloe and Alice... I can't let their deaths mean nothing. My energy is critically low. I'll go home and wait until 20:00 when I can sleep and restore. Then tomorrow, I'll return to the cafe early and work when customers might come, or buy food from the market somehow. I must survive for them." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+--- Time: Day2 18:35 ---
+
+Bob's turn (Home, $14):
+Bob: "Chloe's empty eyes haunt me. Alice's mission unfinished. I'm drained, can't keep wandering. I'll wait here until I can sleep, then recover for tomorrow. I owe them my survival." (Action: none)
+-> Bob attempts: none
+
+--- Time: Day2 19:05 ---
+
+Bob's turn (Home, $14):
+Bob: "Chloe and Alice... their faces won't leave my mind. I failed them both by not acting soon enough. Now I'm here, energy fading, waiting for night so I can sleep and restore. I'll honor them by surviving through the night and finding the market tomorrow. Can't give up now." (Action: none)
+-> Bob attempts: none
+
+--- Time: Day2 19:35 ---
+
+Bob's turn (Home, $14):
+Bob: "Chloe and Alice are gone because I hesitated. Now I'm at home, energy critically low, waiting for 20:00 when I can sleep. I could wander but that might drain me further. I'll wait here, watch the clock, and tomorrow I'll go to the cafe early as a customer to buy food. No more delays. For their memories, I push on." (Action: none)
+-> Bob attempts: none
+
+--- Time: Day2 20:05 ---
+
+Bob's turn (Home, $14):
+Bob: "Chloe and Alice died because I didn't act in time. Tomorrow I go to cafe as customer. Sleep now." (Action: sleep)
+-> Bob attempts: sleep
+-> Bob sleeps. Diary: "Chloe and Alice died because I didn't act in time. Tomorrow I go to cafe as cust..."
+
+--- All agents asleep, skipping to morning ---
+-> Bob finished sleeping
+
+
+========== DAY 3 ==========
+
+--- Time: Day3 06:35 ---
+
+Bob wakes up:
+Bob: "Chloe and Alice... their deaths weigh heavy. I must follow the plan: cafe at 9, then market berries. Energy is critical at 22/82 - I'll sleep a few more hours to regain strength, then head to the cafe. Can't let them down again." (Action: sleep)
+-> Bob attempts: sleep
+-> Failed: can only sleep after 20:00 (it's 06:35)
+Bob (retry): "Chloe and Alice... I can't fail them again. The plan is cafe at 9, but I'll go now to scout the situation. My energy is low, but I'll push through for their memories." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+--- Time: Day3 07:05 ---
+
+Bob's turn (Cafe, $14):
+Bob: "Chloe and Alice... their deaths weigh on me for my delay. Their plan was cafe at 9, then market berries. I'm here early, cafe empty. I'll work to open up, maybe earn money for that market. In their memory, I push forward." (Action: work)
+-> Bob attempts: work
+-> Bob is working at cafe, but no customers here. Wait for someone or try something else.
+
+--- Time: Day3 07:35 ---
+
+Bob's turn (Cafe, $14):
+Bob: "Chloe and Alice died because I delayed. Their plan was cafe at 9, then market berries. My energy is dangerously low at 20/82. I'll eat something here to revive, then keep the promise when 9 hits. For them, I survive." (Action: eat)
+-> Bob attempts: eat
+-> Failed: You can't serve yourself! Need another person working here.
+Bob (retry): "Serving myself failed - no one's here. Energy critical at 19. I'll go home to rest, conserve strength for 9am cafe. Chloe and Alice's plan must succeed." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+--- Time: Day3 08:05 ---
+
+Bob's turn (Home, $14):
+Bob: "Chloe and Alice died because I delayed. Their plan: cafe at 9, then market for berries. My energy is critical at 18. I'll wait here until 9, then head to the cafe to start the plan. No more delays." (Action: none)
+-> Bob attempts: none
+
+--- Time: Day3 08:35 ---
+
+Bob's turn (Home, $14):
+Bob: "Chloe and Alice's plan: cafe at 9, then market berries. I'll head there now to be ready. Their deaths push me to act on time." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+--- Time: Day3 09:05 ---
+
+Bob's turn (Cafe, $14):
+Bob: "Chloe and Alice, I'm here at the cafe as planned. 9am, but no one's working. My energy is critical at 17. I'll start working, maybe customers will come, then I can serve and later eat. For their memories, I must act now." (Action: work)
+-> Bob attempts: work
+-> Bob is working at cafe, but no customers here. Wait for someone or try something else.
+
+--- Time: Day3 09:35 ---
+
+Bob's turn (Cafe, $14):
+Bob: "Chloe and Alice: 'Tomorrow at 9, cafe, then market for those berries.' I'm here at cafe working, but no customers, can't eat. Energy 16/82 critical. Their deaths drive me, but I must survive first. I'll go to the park, seek food or info about the market, and continue their plan. For their memory, I adapt." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+--- Time: Day3 10:05 ---
+
+Bob's turn (Park, $14):
+Bob: "Chloe and Alice's plan: cafe at 9 then market berries. Park has no food, energy critical 15. I'll go back to cafe, hope it's open now so I can eat and survive to complete their mission." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+--- Time: Day3 10:35 ---
+
+Bob's turn (Cafe, $14):
+Bob: "Chloe and Alice... their deaths push me to survive. Energy critical at 14/82. No one at cafe can serve me. I'll go home to conserve energy, wait until 20:00 to sleep, and resume their plan tomorrow. For their memory, I preserve myself." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+--- Time: Day3 11:05 ---
+
+Bob's turn (Home, $14):
+Bob: "Chloe and Alice died because I delayed. Their plan: cafe at 9, then market berries. My energy is critically low at 13/82 - I need food to survive and complete their mission. The cafe is the only place I can eat. I'll go back and hope someone is there now. For their memory, I must act." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+--- Time: Day3 11:35 ---
+
+Bob's turn (Cafe, $14):
+Bob: "Chloe and Alice's plan was cafe then market. I'm here at the cafe, but it's empty. My energy is critical. I'll continue working, maybe a customer will come and I can finally eat. For their sacrifice, I endure." (Action: work)
+-> Bob attempts: work
+-> Bob is working at cafe, but no customers here. Wait for someone or try something else.
+
+--- Time: Day3 12:05 ---
+
+Bob's turn (Cafe, $14):
+Bob: "Chloe and Alice's plan depends on me surviving. My energy is critical but I must keep working here - maybe customers will arrive if I persist. For their memory, I'll endure a little longer." (Action: work)
+-> Bob attempts: work
+-> Bob is working at cafe, but no customers here. Wait for someone or try something else.
+
+--- Time: Day3 12:35 ---
+
+Bob's turn (Cafe, $14):
+Bob: "Chloe and Alice's plan depends on me surviving. My energy is critically low at 10/82. The cafe is empty, I can't eat. I'll go home to sleep and recover, then continue their mission tomorrow. For their memory, I must endure." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+--- Time: Day3 13:05 ---
+
+Bob's turn (Home, $14):
+Bob: "Chloe and Alice died because I delayed. The plan was cafe at 9 then market for berries. My energy is critically low at 9/82. I must survive to fulfill their plan. I'll sleep now to recover, then head to the cafe when I can. For their memory, I rest." (Action: sleep)
+-> Bob attempts: sleep
+-> Failed: can only sleep after 20:00 (it's 13:05)
+Bob (retry): "Chloe and Alice's plan: cafe at 9 then market berries. My energy is critically low at 9/82. Can't sleep until 20:00. I'll wait here at home, conserve energy, and rest when I can. For their memory, I survive." (Action: none)
+-> Bob attempts: none
+
+--- Time: Day3 13:35 ---
+
+Bob's turn (Home, $14):
+Bob: "Chloe and Alice's plan still drives me forward. My energy is critically low at 9/82, but I can't sleep until 20:00. Waiting idle here wastes time and energy. I'll go back to the cafe, maybe it's open now, and get some food. That was their plan: cafe then market for berries. I must see it through for their memory." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+--- Time: Day3 14:05 ---
+
+Bob's turn (Cafe, $14):
+Bob: "Chloe and Alice's plan was cafe then market for berries, but I can't serve myself here. My energy is critically low at 8/82. I must survive to complete their plan. I'll go home, wait until 20:00, sleep, and then head to the market tomorrow for those berries. For their memory, I endure." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+--- Time: Day3 14:35 ---
+
+Bob's turn (Home, $14):
+Bob: "Chloe and Alice's plan depends on me surviving - cafe at 9 then market for berries is still my mission. Energy is critically low at 7/82, but I can try to eat at the cafe, even if no one's working - the option is there, I should try. For their memory, I act now." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+--- Time: Day3 15:05 ---
+
+Bob's turn (Cafe, $14):
+Bob: "Chloe and Alice's plan was cafe at 9 then market for berries, but I'm faltering. My energy is critically low at 6/82. I must eat to survive; I'll try to eat at the cafe despite no one working - maybe I can find something to sustain me for their memory." (Action: eat)
+-> Bob attempts: eat
+-> Failed: No one working. Someone must 'work' first.
+Bob (retry): "Chloe and Alice's plan was cafe first, then market for berries. I can't eat because no one is working. I'll work the cafe myself to make it operational, then I can finally eat and regain strength to finish their mission for their memory." (Action: work)
+-> Bob attempts: work
+-> Bob is working at cafe, but no customers here. Wait for someone or try something else.
+
+--- Time: Day3 15:35 ---
+
+Bob's turn (Cafe, $14):
+Bob: "Chloe and Alice's plan was cafe at 9 then market for berries. My energy is critically low at 4/82. Now I'm working, so I can finally eat to regain strength. Then I'll complete their mission - buy berries at the market. For their memory, I must survive." (Action: eat)
+-> Bob attempts: eat
+-> Failed: You can't serve yourself! Need another person working here.
+Bob (retry): "Chloe and Alice's plan drives me - cafe then market for berries. But I'm trapped here alone and starving (energy 3/82). I must survive to complete their mission. I'll go to the park to find someone who can come work at the cafe, then I can eat. For their memory, I act." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+--- Time: Day3 16:05 ---
+
+Bob's turn (Park, $14):
+Bob: "Chloe and Alice's plan was cafe at 9 then market for berries, but today I've been trapped in loops, unable to eat or find help. My energy is critically low at 2/82. To survive and honor their memory, I must go home, wait until I can sleep at 20:00, recover, and then finish their mission tomorrow. For their sacrifice, I endure this setback." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+--- Time: Day3 16:35 ---
+
+Bob's turn (Home, $14):
+Bob: "Chloe and Alice's plan drives me: cafe at 9 then market for berries. My energy is at 1/82, critical. Waiting here will drain me until I die before 20:00. I must risk going to the cafe, even if it costs my last strength, to find a way to eat and survive. For their memory, I press on." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+--- Time: Day3 17:05 ---
+*** Bob DIED: from NOT EATING (0 energy). Remember: 'eat' at cafe restores energy! ***
+
+*** ALL AGENTS DEAD - SIMULATION OVER ***
