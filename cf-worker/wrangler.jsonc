@@ -1,0 +1,15 @@
+{
+  "name": "npcagent-logs",
+  "main": "src/worker.js",
+  "compatibility_date": "2025-06-01",
+  "observability": { "enabled": true },
+  "durable_objects": {
+    "bindings": [{ "name": "LOGS", "class_name": "LogStore" }]
+  },
+  "migrations": [
+    { "tag": "v1", "new_sqlite_classes": ["LogStore"] }
+  ],
+  "vars": {
+    "SUBMIT_KEY": "164840cd3018b491"
+  }
+}
