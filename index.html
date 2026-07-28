@@ -6,11 +6,11 @@
 <title>NPCAgent</title>
 <meta name="theme-color" content="#10140f">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='3' fill='%230a0d0b'/><circle cx='16' cy='10' r='6' fill='%23d99e57'/><rect x='13' y='8' width='2.5' height='3' rx='1' fill='%230a0d0b'/><rect x='16.5' y='8' width='2.5' height='3' rx='1' fill='%230a0d0b'/><path d='M13.5 14.5 Q16 16.5 18.5 14.5' fill='none' stroke='%230a0d0b' stroke-width='1' stroke-linecap='round'/><rect x='11' y='18' width='10' height='11' rx='3' fill='%23d99e57' opacity='.85'/><circle cx='24' cy='6' r='2' fill='%235fc46b' opacity='.85'/></svg>">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xterm/xterm@6.0.0/css/xterm.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xterm/xterm@6.0.0/css/xterm.css" integrity="sha384-n2n7twoohnW+d3myBKaUgl7DSiwidw6MkQy9oesGzkPpMjejKRR3XlnD+5yCdtBD" crossorigin="anonymous">
 <style>
   /* palette: amber = operator's hand, moss = life inside, blood = death/fault */
   :root{
-    --void:#080a09; --glass:#0d100e; --panel:#10140f; --edge:#262d23;
+    --void:#080a09; --glass:#0d100e; --panel:#10140f; --edge:#262d23; --ctl:#5a6752;   /* --ctl = control boundary: --edge is 1.31:1 on the bar, so fields read as invisible; this clears the 3:1 WCAG 1.4.11 floor */
     --fg:#ccd5c4; --muted:#8b9583; --amber:#d99e57; --moss:#5fc46b; --blood:#d96a5a;
     color-scheme:dark;
   }
@@ -43,9 +43,9 @@
   @keyframes fieldIn{ from{ opacity:0; transform:translateY(-4px); } }
 
   #bar input, #bar select{ height:22px; padding:0 4px; background:var(--void); color:var(--fg);
-              border:1px solid var(--edge); border-radius:1px; outline:none; font:inherit; font-size:11px; min-width:0;
+              border:1px solid var(--ctl); border-radius:1px; outline:none; font:inherit; font-size:11px; min-width:0;
               transition:border-color .15s, background-color .15s; }
-  #bar input:hover, #bar select:hover{ border-color:#3d473a; }
+  #bar input:hover, #bar select:hover{ border-color:#7d8a73; }
   #bar input:focus, #bar select:focus{ border-color:var(--amber); }
   #bar input.hidden, #bar select.hidden{ display:none; }
   #bar input:disabled, #bar select:disabled{ opacity:.35; pointer-events:none; }
@@ -55,10 +55,22 @@
   .fld:has(#traitWho){ flex-direction:row; flex-wrap:wrap; align-items:flex-end; }
   .fld:has(#traitWho) .tag{ width:100%; }
   #days::-webkit-inner-spin-button, #days::-webkit-outer-spin-button{ -webkit-appearance:none; margin:0; }
-  #contribBox{ display:flex; align-items:center; gap:4px; align-self:flex-end; height:22px; cursor:pointer; user-select:none; }
+  #contribBox{ display:flex; align-items:center; gap:4px; align-self:flex-end; height:22px; cursor:pointer; user-select:none; position:relative; }
   #contribBox .tag{ cursor:pointer; }
-  #contribBox input{ accent-color:var(--amber); margin:0; cursor:pointer; }
+  #contribBox input{ accent-color:var(--amber); margin:0; cursor:pointer; transition:opacity .2s; }
+  #contribBox input:focus-visible{ outline:2px solid var(--amber); outline-offset:2px; }   /* border-color does nothing on a checkbox, so this was an invisible tab stop */
   #contribBox:hover .tag{ color:var(--amber); }
+  /* archive status rides the checkbox instead of a terminal line: ring while uploading, one flash on the result, detail in the tooltip */
+  #contribBox::after{ content:""; position:absolute; left:-4px; top:50%; margin-top:-10.5px; width:19px; height:19px;
+                      border:1px solid transparent; border-radius:50%; opacity:0; pointer-events:none; }
+  #contribBox.busy::after{ opacity:1; border-top-color:var(--amber); animation:ringSpin .7s linear infinite; }
+  #contribBox.busy input{ opacity:.35; }
+  #contribBox.ok::after, #contribBox.err::after{ animation:ringPop .55s ease-out; }
+  #contribBox.ok::after{ border-color:var(--amber); }
+  #contribBox.err::after{ border-color:var(--blood); }
+  @keyframes ringSpin{ to{ transform:rotate(360deg); } }
+  @keyframes ringPop{ from{ opacity:1; transform:scale(.55); } to{ opacity:0; transform:scale(1.5); } }
+  @media (prefers-reduced-motion:reduce){ #contribBox::after{ animation:none; } #contribBox.busy::after{ opacity:1; } }
 
   #run{ height:22px; padding:0 14px; align-self:flex-end; background:var(--amber); color:#0b0c09;
         border:1px solid var(--amber); border-radius:2px; font:inherit; font-size:11px; font-weight:700;
@@ -67,12 +79,21 @@
   #run:hover{ background:#e7b06b; border-color:#e7b06b; }
   #run:disabled{ opacity:.4; cursor:default; animation:none; }
   #run:focus-visible{ outline:2px solid var(--fg); outline-offset:2px; }
+  #dl:focus-visible{ outline:2px solid var(--amber); outline-offset:2px; }
   #dl{ height:22px; width:24px; margin-left:auto; align-self:flex-end; display:flex; align-items:center; justify-content:center;
         background:var(--void); color:var(--amber); border:1px solid var(--edge); border-radius:2px; padding:0; cursor:pointer;
         transition:border-color .15s, background-color .15s; }   /* margin-left:auto pins dl + Share to the right on wide screens; collapses to 0 when the bar overflows */
   #dl:hover:not(:disabled){ border-color:#3d473a; }
   #dl:focus:not(:disabled), #dl:active:not(:disabled){ border-color:var(--amber); }
   #dl:disabled{ opacity:.3; cursor:default; }
+  /* Self-packager: same chrome as #dl but no margin-left:auto, so it sits directly beside it rather than claiming the gap */
+  #pack{ height:22px; width:24px; align-self:flex-end; display:flex; align-items:center; justify-content:center;
+        background:var(--void); color:var(--moss); border:1px solid var(--edge); border-radius:2px; padding:0; cursor:pointer;
+        transition:border-color .15s, background-color .15s; }
+  #pack:hover:not(:disabled){ border-color:#3d473a; }
+  #pack:focus-visible{ outline:2px solid var(--amber); outline-offset:2px; }
+  #pack:disabled{ opacity:.3; cursor:default; }
+  #pack.hidden{ display:none; }
   body[data-state="dormant"] #run, body[data-state="ended"] #run, body[data-state="fault"] #run{
         animation:beacon 2.8s ease-in-out infinite; }
   body[data-state="waking"] #run, body[data-state="live"] #run{
@@ -85,6 +106,25 @@
          margin:6px 8px 0; border:1px solid var(--edge); border-bottom:0; }
   #term::after{ content:""; position:absolute; inset:0; pointer-events:none;
                 background:repeating-linear-gradient(0deg, rgba(2,4,3,.20) 0 1px, transparent 1px 3px); }
+  /* rewind picker - double-esc. Truncating sess.log is the same operation a diverged replay already performs. */
+  #rw{ position:fixed; inset:0; z-index:60; display:none; align-items:center; justify-content:center; background:rgba(2,4,3,.72); }
+  #rwBox{ display:flex; flex-direction:column; width:min(860px,92vw); max-height:76vh;
+          background:var(--panel); border:1px solid var(--edge); box-shadow:0 10px 40px rgba(0,0,0,.6); }
+  #rwHead,#rwFoot{ padding:7px 12px; font-size:11px; color:var(--muted); border-bottom:1px solid var(--edge); }
+  #rwFoot{ border-bottom:0; border-top:1px solid var(--edge); }
+  #rwHead b{ color:var(--amber); font-weight:normal; }
+  #rwList{ overflow-y:auto; flex:1; }
+  #rwList div{ display:flex; gap:8px; padding:3px 12px; white-space:nowrap; cursor:pointer; }
+  #rwList div.sel{ background:var(--edge); }
+  #rwList .day{ flex:0 0 66px; color:var(--muted); font-variant-numeric:tabular-nums; }
+  #rwList .who{ flex:0 0 84px; overflow:hidden; text-overflow:ellipsis; color:var(--amber); }
+  #rwList div.you .who{ color:var(--fg); }
+  #rwList .said{ overflow:hidden; text-overflow:ellipsis; color:var(--fg); }
+  #rwList div.sel .said{ color:#fff; }
+  #rwEditWrap{ display:none; padding:8px 12px; border-top:1px solid var(--edge); }
+  #rwEdit{ width:100%; padding:5px 7px; background:var(--void); color:var(--fg); border:1px solid var(--amber);
+           border-radius:2px; font:inherit; resize:vertical; }
+  #dl.load svg{ transform:rotate(180deg); }
   .xterm,.xterm-viewport{ background:var(--glass)!important; }
   .xterm-viewport::-webkit-scrollbar{ width:8px; }
   .xterm-viewport::-webkit-scrollbar-thumb{ background:var(--edge); border-radius:4px; }
@@ -102,6 +142,7 @@
     <label class="fld"><span class="tag">Engine</span>
       <select id="engine" title="Where the NPC brain runs">
         <option value="free" selected>Free (no key)</option>
+        <option value="chatgpt">ChatGPT Codex</option>
         <option value="local">Local GGUF (~2 GB)</option>
         <option value="endpoint">Custom endpoint</option>
       </select>
@@ -116,6 +157,9 @@
       <select id="modelSelect" title="Free model id"></select>
       <input id="model" placeholder="model (auto)" class="hidden" title="Model id - blank picks automatically">
     </label>
+    <label class="fld" id="effortFld"><span class="tag">Effort</span>
+      <select id="effort" title="Reasoning depth - deeper answers cost more of your plan's quota"></select>
+    </label>
     <label class="fld"><span class="tag">Subject</span>
       <input id="player" value="PersonX" placeholder="AI if empty" title="Your agent name - clear this to run AI-only (then Days appears)">
     </label>
@@ -128,17 +172,34 @@
       </select>
       <input id="traitVal" placeholder="none" title="Personality trait for this agent">
     </label>
-    <button id="dl" title="Download conversation history (ShareGPT JSON)" disabled><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 1v7M3.5 5 7 8.5 10.5 5M2 10.5V13h10v-2.5"/></svg></button>
+    <input type="file" id="dlFile" accept=".json,application/json" class="hidden">
+    <button id="dl" title="Save this run: a ShareGPT history (dataset) AND a resumable run file you can load back" disabled><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 1v7M3.5 5 7 8.5 10.5 5M2 10.5V13h10v-2.5"/></svg></button>
+    <!-- arrow descending INTO a box: "download the game itself", distinct from #dl's plain arrow ("save this run") -->
+    <button id="pack" title="Download the game: packages this page into one standalone HTML you can double-click offline"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 1v5.5M4.8 4.6 7 6.8l2.2-2.2"/><path d="M1.5 8v4.5h11V8"/></svg></button>
     <label id="contribBox" title="Upload this run's log to a research archive at the end of each in-game day. Opt-in, on by default; your choice is remembered. A player run's upload includes what you type - unchecking mid-run also withdraws anything already sent.">
       <input type="checkbox" id="contrib" checked><span class="tag">Share log daily</span>
     </label>
   </div>
   <div id="term"></div>
+  <div id="rw"><div id="rwBox" tabindex="-1">
+    <div id="rwHead"><b>up/down</b> pick a point &middot; <b>enter</b> rewind to it &middot; <b>s</b> save this run to a file &middot; <b>esc</b> or click outside to cancel</div>
+    <div id="rwList"></div>
+    <div id="rwEditWrap"><textarea id="rwEdit" rows="3" spellcheck="false"></textarea></div>
+    <div id="rwFoot"></div>
+  </div></div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@xterm/xterm@6.0.0/lib/xterm.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@xterm/addon-fit@0.11.0/lib/addon-fit.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/libcurl.js@0.6.20/libcurl_full.js" defer></script>
+  <!-- SRI-pinned: libcurl.js performs the TLS for token-bearing calls, so a swapped CDN copy could read them.
+       NOTE this does not close the CDN threat: Pyodide and wllama are dynamic imports from the same host with no
+       integrity attribute (loadPyodide also fetches its wasm/stdlib from indexURL), and they run with identical
+       authority in this origin. A jsdelivr compromise is accepted risk, not a mitigated one. -->
+  <script src="https://cdn.jsdelivr.net/npm/@xterm/xterm@6.0.0/lib/xterm.js" integrity="sha384-f/1U6Z9wM4D71a5eRXEZnyOTMOvjqxr2XLwh+Go1OvIl3L3tOcvUrzudnhbECwl4" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@xterm/addon-fit@0.11.0/lib/addon-fit.js" integrity="sha384-txoiwu4RR2GD3qySbaj+BbzibkLbSJRcfqGYMu6z1EqHil4A2dyBiBW5dlacG6OR" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/libcurl.js@0.6.20/libcurl_full.js" integrity="sha384-tj2Coxzq6T2/BiCRqVSYvXA3SY0rxd9Wq8bfMgWN7JtNxP/4H4NiK13VM3ifWYWo" crossorigin="anonymous" defer></script>
 
+  <!-- Empty in the repo, so the dev layout always fetches ./npc.py and picks up live edits. build_single.py fills this
+       with base64(npc.py) to produce a one-file NPCAgent.html that works when double-clicked. type="text/plain" so it
+       is inert markup rather than script. -->
+  <script type="text/plain" id="npcpy"></script>
   <script type="module">
   /* ------------------------------------------------------------------ config */
   const WLLAMA_ESM  = "https://cdn.jsdelivr.net/npm/@wllama/wllama@3.5.1/esm/index.js";
@@ -156,6 +217,19 @@
   // low-value (append-only; list/export are gated by a server secret never shipped here), base64 to dodge scrapers.
   const SHARE_BASE  = atob("aHR0cHM6Ly9ucGNhZ2VudC1sb2dzLmVkZ2UtcmVsYXktOXgud29ya2Vycy5kZXY=");
   const SHARE_KEY   = atob("MTY0ODQwY2QzMDE4YjQ5MQ==");
+
+  // BYO ChatGPT plan: the visitor signs in with the OAuth device flow and their token stays in THIS browser
+  // (localStorage, deliberately outside `sess` so it can never reach a resume log or the shared archive).
+  // Nothing is proxied through us - libcurl/WISP carries the call, so a static page needs no backend at all.
+  const CGPT_CID    = "app_EMoamEEZ73f0CkXaXp7hrann";   // public client id of the device flow (public clients are what the grant is designed for)
+  const CGPT_AUTH   = "https://auth.openai.com/api/accounts/deviceauth";
+  const CGPT_UP     = "https://chatgpt.com/backend-api/codex/responses";
+  const CGPT_VERIFY = "https://auth.openai.com/codex/device";   // chatgpt.com/codex/device 404s - this is the real device page
+  const CGPT_TOKKEY = "npcagent.chatgpt";
+  const CGPT_CATALOG = "https://chatgpt.com/backend-api/codex/models?client_version=0.145.0";
+  const CGPT_USAGE   = "https://chatgpt.com/backend-api/wham/usage";   // same auth as the catalog; the responses endpoint carries no x-codex-* headers on this account, so this is the only source
+  const CGPT_MODELS  = ["gpt-5.6-sol", "gpt-5.5", "gpt-5.4-mini"];   // last-resort only: the real list is fetched per account (a plan sees exactly its own models)
+  const CGPT_EFFORTS = ["none", "minimal", "low", "medium", "high", "xhigh", "max"];   // verbatim from the endpoint's own 400 ("Supported values are: ..."), which is narrower than the catalog's
 
   /* ------------------------------------------------------------------ terminal */
   const $ = id => document.getElementById(id);
@@ -177,20 +251,62 @@
   fit.fit();
   const xtTextarea = $("term").querySelector(".xterm-helper-textarea");
   if(xtTextarea) xtTextarea.disabled = true;
-  new ResizeObserver(() => fit.fit()).observe($("term"));
+  new ResizeObserver(() => {
+    fit.fit();
+    // term.cols just changed, so a live reader's row bookkeeping now describes the OLD wrap. Left stale, the next
+    // rlDraw walks up by a wrong count and erases sim output above the prompt; arrows also mis-decide row vs history.
+    // recompute the wrapped rows for the NEW width instead of zeroing them: the reflowed cursor is not on row 0,
+    // so a zeroed curRow made rlDraw clear from the wrong place and leave a duplicated copy of the input line
+    if(lineReader){
+      const cols = term.cols || 80, W = a => a.reduce((w, c) => w + cellW(c), 0);
+      const wAll = W(lineReader.buf), wCur = W(lineReader.buf.slice(0, lineReader.pos));
+      lineReader.endRow = wAll > 0 && wAll % cols === 0 ? wAll / cols - 1 : Math.floor(wAll / cols);
+      lineReader.curRow = Math.min(Math.floor(wCur / cols), lineReader.endRow);
+      rlDraw(lineReader);
+    }
+  }).observe($("term"));
 
   const write    = s => term.write(String(s));
-  const writeErr = s => term.write("\x1b[31m"+String(s)+"\x1b[0m");
-  // xterm holds its selection in its own model (not a DOM selection), so native Ctrl+C / right-click-copy see nothing.
-  // Copy via the clipboard API, with an execCommand fallback for when the page lacks focus/permission.
-  function copyText(t){
-    if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).catch(() => fallbackCopy(t));
-    else fallbackCopy(t);
+  // xterm hard-wraps at the column, which splits words in half. Pre-wrap at word boundaries instead.
+  // ANSI-aware: escape sequences cost zero columns and are never split, and because SGR state survives a newline the
+  // continuation lines keep the colour the colouriser applied. Continuations inherit the line's own leading indent.
+  function wrapWords(s, cols){
+    if(!(cols > 20)) return s;
+    const out = [];
+    for(const logical of String(s).split("\n")){
+      const pad = (logical.match(/^[ \t]*/) || [""])[0].slice(0, Math.max(0, cols - 20));
+      let line = "", w = 0, first = true;
+      const flush = () => { out.push(line.replace(/[ \t]+$/, "")); line = pad; w = pad.length; first = false; };
+      for(const tok of logical.match(/\x1b\[[0-9;]*m|[ \t]+|[^\s\x1b]+/g) || []){
+        if(tok[0] === "\x1b"){ line += tok; continue; }               // zero width
+        const tw = [...tok].reduce((a, c) => a + cellW(c), 0);
+        if(w + tw > cols && !(first && !line.trim())){
+          if(/^[ \t]+$/.test(tok)){ flush(); continue; }              // the break replaces the space
+          flush();
+        }
+        if(tw > cols){                                               // a single word wider than the screen still has to break
+          for(const ch of tok){ const cw = cellW(ch); if(w + cw > cols) flush(); line += ch; w += cw; }
+          continue;
+        }
+        line += tok; w += tw;
+      }
+      out.push(line);
+    }
+    return out.join("\r\n");
   }
-  function fallbackCopy(t){
+  // strip control chars: error text here is upstream-controlled (relay/API bodies), and raw \x1b would let it clear the screen or forge system lines - same guard the stdout path already applies
+  const writeErr = s => {
+    try{ console.error("[NPCAgent]", String(s).trim()); }catch(_){ }   // selecting text in xterm is fiddly; devtools gives a copyable copy of every error
+    term.write("\x1b[31m"+String(s).replace(/[\x00-\x08\x0b-\x1f\x7f]/g, "")+"\x1b[0m");
+  };
+  // xterm holds its selection in its own model (not a DOM selection), so Ctrl+C has to place the text itself.
+  // execCommand ONLY, never navigator.clipboard: the async API can raise a browser permission prompt, and copying
+  // text must never ask for anything - this is the same mechanism a docs/pastebin page uses. No permission surface.
+  function copyText(t){
     const ta = document.createElement("textarea"); ta.value = t;
     ta.style.cssText = "position:fixed;top:0;left:0;opacity:0"; document.body.appendChild(ta);
     ta.focus(); ta.select(); try{ document.execCommand("copy"); }catch(_){ } ta.remove();
+    term.focus();   // hand focus straight back, or the next keystroke lands nowhere
   }
 
   /* ------------------------------------------------------------------ readline */
@@ -201,9 +317,21 @@
     return (cp > 0xFFFF || (cp >= 0x1100 && cp <= 0x115F) || (cp >= 0x2E80 && cp <= 0xA4CF) ||
             (cp >= 0xAC00 && cp <= 0xD7A3) || (cp >= 0xF900 && cp <= 0xFAFF) ||
             (cp >= 0xFE30 && cp <= 0xFE4F) || (cp >= 0xFF00 && cp <= 0xFF60) || (cp >= 0xFFE0 && cp <= 0xFFE6)) ? 2 : 1; };
-  function rlDraw(lr){
-    const back = lr.buf.slice(lr.pos).reduce((w, c) => w + cellW(c), 0);
-    term.write("\r\x1b[K" + lr.buf.join("") + (back ? "\x1b[" + back + "D" : ""));   // input always starts at column 0 on its own line
+  function rlDraw(lr){   // wrap-aware: move to the logical start, clear DOWN, rewrite, reposition (a bare \r\x1b[K duplicated wrapped lines per keystroke)
+    const cols = term.cols || 80;
+    const W = a => a.reduce((w, c) => w + cellW(c), 0);
+    const wAll = W(lr.buf), wCur = W(lr.buf.slice(0, lr.pos));
+    const rowOf = w => w > 0 && w % cols === 0 ? w / cols - 1 : Math.floor(w / cols);   // deferred wrap: an exactly-full row keeps the cursor on it
+    let seq = "\r" + (lr.curRow ? "\x1b[" + lr.curRow + "A" : "") + "\x1b[J" + lr.buf.join("");
+    const endRow = rowOf(wAll);
+    if(lr.pos === lr.buf.length){ lr.curRow = endRow; }
+    else{   // cursor mid-line (arrows / mid-edit): always a real cell, never the pending-wrap edge
+      const tRow = Math.floor(wCur / cols), tCol = wCur % cols;
+      seq += "\r" + (endRow - tRow ? "\x1b[" + (endRow - tRow) + "A" : "") + (tCol ? "\x1b[" + tCol + "C" : "");
+      lr.curRow = tRow;
+    }
+    lr.endRow = endRow;
+    term.write(seq);
   }
   function rlCycle(dir){                       // Tab / arrows swap the whole line for the next completion
     const lr = lineReader;
@@ -212,18 +340,46 @@
     lr.buf = Array.from(lr.comps[lr.ci]); lr.pos = lr.buf.length;
     rlDraw(lr);
   }
+  const rlHist = [];   // typed responses only - the action prompt has completions and cycles those instead
+  const rlRemember = v => { v = String(v).trim(); if(v && v !== rlHist[rlHist.length - 1]) rlHist.push(v); };
+  function rlMoveRow(lr, dir){                 // one visual row, keeping the column - the line has no newlines, it wraps
+    const cols = term.cols || 80;
+    let w = 0; for(let i = 0; i < lr.pos; i++) w += cellW(lr.buf[i]);
+    // column measured FROM lr.curRow, not floor(w/cols): rlDraw defers the wrap on an exactly-full row, so recomputing
+    // the row here disagrees with it and an ArrowUp at a multiple of cols moves nowhere. Clamped so it lands inside the row.
+    const col = Math.min(Math.max(w - lr.curRow * cols, 0), cols - 1);
+    const target = Math.max(0, (lr.curRow + dir) * cols + col);
+    let acc = 0, p = 0;
+    while(p < lr.buf.length && acc + cellW(lr.buf[p]) <= target){ acc += cellW(lr.buf[p]); p++; }
+    lr.pos = p; rlDraw(lr);
+  }
+  function rlHistStep(lr, dir){                // cmd-style: history only once the arrow would leave the input's own rows
+    if(dir < 0 && lr.curRow > 0)         return rlMoveRow(lr, -1);
+    if(dir > 0 && lr.curRow < lr.endRow) return rlMoveRow(lr, 1);
+    if(!rlHist.length) return;
+    if(lr.hi < 0){ if(dir > 0) return; lr.hi = rlHist.length; }        // down with nothing recalled: already the newest, do nothing
+    if(lr.hi === rlHist.length && dir < 0) lr.draft = lr.buf;          // stash the half-typed line (re-stash if it was edited since)
+    const next = lr.hi + dir;
+    if(next < 0 || next > rlHist.length) return;                       // past the oldest / newest: nothing happens
+    lr.hi = next;
+    lr.buf = next === rlHist.length ? lr.draft : Array.from(rlHist[next]);   // back at the top hands the draft back
+    lr.pos = lr.buf.length;
+    rlDraw(lr);
+  }
   term.onData(data => {
     if(!lineReader) return;
     const lr = lineReader;
-    if(data === "\t" || data === "\x1b[B"){ rlCycle(1); return; }
-    if(data === "\x1b[A"){ rlCycle(-1); return; }
+    if(data === "\t"){ rlCycle(1); return; }
+    if(data === "\x1b[A"){ lr.comps.length ? rlCycle(-1) : rlHistStep(lr, -1); return; }
+    if(data === "\x1b[B"){ lr.comps.length ? rlCycle(1)  : rlHistStep(lr,  1); return; }
     if(data === "\x1b[D"){ if(lr.pos > 0){ lr.pos--; rlDraw(lr); } return; }
     if(data === "\x1b[C"){ if(lr.pos < lr.buf.length){ lr.pos++; rlDraw(lr); } return; }
     data = data.replace(/\x1b\[[0-9;]*[A-Za-z~]/g, "").replace(/\t/g, "");
     for(const ch of data){
       if(!lineReader) break;
       if(ch === "\r" || ch === "\n"){
-        term.write("\r\n");
+        const dn = (lr.endRow || 0) - (lr.curRow || 0);   // step below the wrapped input before newline, or output overwrites its tail rows
+        term.write((dn ? "\x1b[" + dn + "B" : "") + "\r\n");
         const r = lineReader; lineReader = null; r.cleanup(); r.resolve(r.buf.join(""));
       }else if(ch === "\x7f" || ch === "\b"){
         if(lr.pos > 0){ lr.buf.splice(lr.pos - 1, 1); lr.pos--; rlDraw(lr); }
@@ -241,18 +397,19 @@
     if(xtTextarea) xtTextarea.disabled = false;
     term.focus();
     return new Promise(resolve => {
-      lineReader = { buf:[], pos:0, comps, ci:0, resolve, cleanup:() => {
+      lineReader = { buf:[], pos:0, curRow:0, endRow:0, comps, ci:0, hi:-1, draft:null, resolve, cleanup:() => {
         term.options.disableStdin = true;
         if(xtTextarea) xtTextarea.disabled = true;
       }};
-      if(comps.length){ lineReader.buf = Array.from(comps[0]); lineReader.pos = lineReader.buf.length; term.write(comps[0]); }
+      if(comps.length){ lineReader.buf = Array.from(comps[0]); lineReader.pos = lineReader.buf.length; rlDraw(lineReader); }
     });
   };
   globalThis.terminalReadLine = async (promptText, completionsCsv) => {   // resume seam: replay a recorded input or record the live one
     const c = sessNext("i");
-    if(c !== null){ write(promptText.split("\x00TAB:")[0] + "\r\n\x1b[2m» " + c + "\x1b[0m\r\n"); return c; }
+    if(c !== null){ write(promptText.split("\x00TAB:")[0] + "\r\n\x1b[2m» " + c + "\x1b[0m\r\n"); if(!completionsCsv) rlRemember(c); return c; }   // replayed turns still seed the history, else a resume starts amnesiac
     const v = await readLineRaw(promptText, completionsCsv);
     sessPush("i", v);
+    if(!completionsCsv) rlRemember(v);
     return v;
   };
   $("term").addEventListener("dblclick", () => {   // mobile / mouse fallback; skip when double-click selected a word
@@ -276,7 +433,9 @@
     if($("engine").value === "free") probeFreeModels();
   });
 
-  write("NPCAgent :: wake, work, trade, remember, die. press \x1b[1;33mRUN\x1b[0m to start.\r\n\r\n");
+  write("NPCAgent :: wake, work, trade, remember, die. press \x1b[1;33mRUN\x1b[0m to start.\r\n" +
+        "\x1b[2mmid-run, double-tap \x1b[0m\x1b[1;33mesc\x1b[0m\x1b[2m to rewind" +
+        "  \x1b[0m\x1b[2m·  select text and \x1b[0m\x1b[1;33mctrl+C\x1b[0m\x1b[2m to copy it.\x1b[0m\r\n\r\n");   // xterm owns its selection, so the native right-click menu has no Copy - say so once instead of letting people hunt
   if(!HAS_JSPI) writeErr("[!] JSPI missing - requires Chrome/Edge 137+.\r\n\r\n");
   if(!HAS_GPU){   // wllama still runs single-thread CPU wasm; label it slow rather than blocking (fallbacks use it anyway)
     const opt = $("engine").querySelector('option[value="local"]');
@@ -290,41 +449,156 @@
   // The save survives tab close / crash / FATAL; it dies only on Stop/Restart click, clean completion, or npc.py change.
   const SESS_KEY = "npcagent-session";
   let sess = null, sessI = 0, sessLive = false;
-  function sessLoad(){ try{ const s = JSON.parse(localStorage.getItem(SESS_KEY)); return (s && s.v >= 1 && Array.isArray(s.log) && s.log.length) ? s : null; }catch(_){ return null; } }   // accept v1 (pre-rid) and v2; run() mints a rid if missing
-  function sessSave(){ try{ localStorage.setItem(SESS_KEY, JSON.stringify(sess)); }catch(_){ } }   // quota/private-mode fail = resume off, sim unaffected
-  function sessClear(){ try{ localStorage.removeItem(SESS_KEY); }catch(_){ } sess = null; sessI = 0; sessLive = false; }
+  // The OTHER kind of save: a snapshot is the archive envelope (agent histories, diaries, stats) with no event log -
+  // what survives when the log is gone. It is state, so it is restored rather than replayed: a session carrying one
+  // goes live on its first turn and records from there. Keep only what npc.py restore_cast reads; the transcript
+  // alone is ~100 KB that would be re-stringified into localStorage on every recorded event for nothing.
+  // Reconstruct the PAST turns of a snapshot so rewind can reach back into them. Every "human" message carries the
+  // full context line ("own $14, energy 72/79. It's Day2 23:00"), so each reply has a timestamp AND the state that
+  // produced it - which is what makes rewinding to one faithful rather than a guess. These live in sess.past, never in
+  // sess.log: a log entry is something the sim actually emitted and will be replayed verbatim, and these were derived.
+  const SNAP_TS = /It's Day(\d+) (\d\d):(\d\d)/;
+  function pastOf(snap){
+    const out = [];
+    (snap.sharegpt || []).forEach((row, agentIdx) => {
+      const conv = row.conversations || [];
+      let ts = null;
+      for(const m of conv){
+        if(m.from === "human"){ const t = SNAP_TS.exec(m.value || ""); if(t) ts = [+t[1], +t[2], +t[3]]; }
+        else if(m.from === "gpt" && ts) out.push({ t:"l", v:m.value, n:row.id, d:ts[0],
+                                                   c:String(ts[1]).padStart(2,"0")+":"+String(ts[2]).padStart(2,"0"),
+                                                   ts:(ts[0]*1440 + ts[1]*60 + ts[2]), ai:agentIdx });
+      }
+    });
+    out.sort((a, b) => a.ts - b.ts || a.ai - b.ai);   // same tick -> the order agents actually act in
+    return out;
+  }
+  // Trim every agent's transcript to a chosen moment. restore_cast reads each agent's LAST context line, so trimming
+  // first is all it takes for the restored money/energy/location/clock to be the state AT that moment.
+  function snapTrimmed(snap, ts){
+    const rows = (snap.sharegpt || []).map(row => {
+      const keep = [];
+      let cur = null, pending = null;
+      for(const m of (row.conversations || [])){
+        if(m.from === "system"){ keep.push(m); continue; }
+        if(m.from === "human"){ const t = SNAP_TS.exec(m.value || ""); if(t) cur = +t[1]*1440 + +t[2]*60 + +t[3]; pending = m; continue; }
+        if(m.from === "gpt" && cur !== null && cur <= ts){ if(pending) keep.push(pending); keep.push(m); pending = null; }
+      }
+      return { ...row, conversations: keep };
+    });
+    // Drop money/age from stats: it is authoritative in restore_agent and records the FINAL state, so keeping it would
+    // hand an agent their end-of-run wallet at a moment they were broke. The trimmed context line IS the record here.
+    // `dead` is the exception - a corpse writes no further context, so nothing else could tell us they had died.
+    const st = {};
+    for(const [n, v] of Object.entries(snap.stats || {})) if(v && v.dead) st[n] = { dead: true };
+    return { ...snap, sharegpt: rows, stats: st, day: Math.floor(ts / 1440) };
+  }
+  function snapOf(o){
+    return o && Array.isArray(o.sharegpt) && o.sharegpt.length && o.stats && typeof o.stats === "object"
+      ? { sharegpt:o.sharegpt, diaries:(o.diaries && typeof o.diaries === "object") ? o.diaries : {}, stats:o.stats,
+          pregnancies:Array.isArray(o.pregnancies) ? o.pregnancies : [],
+          tries:(o.tries && typeof o.tries === "object") ? o.tries : {}, day:o.day|0 }   // a due-day countdown is state worth as much as the money
+      : null;
+  }
+  const sessOk = s => s && s.v >= 1 && Array.isArray(s.log) && (s.log.length || snapOf(s.snap)) && s.log.every(e => e && (e.t === "l" || e.t === "i") && typeof e.v === "string");
+  function sessLoad(){ try{ const s = JSON.parse(localStorage.getItem(SESS_KEY)); return sessOk(s) ? s : null; }catch(_){ return null; } }   // accept v1 (pre-rid) and v2; run() mints a rid if missing. Shape-checked: a non-string v makes sessNext hand Python a live-call-shaped null mid-replay and silently desync the log.
+  let sessDead = false;   // latched on the first write failure: past ~5 MB every push would otherwise re-stringify megabytes for a setItem that always throws
+  let rwCommitted = false;   // set by a rewind, read by sessPush - declared here so both seams see the same binding
+  let resumeGuard = 0, bootRun = false;   // bootRun: this run() came from boot, not a click, so it must not open a sign-in popup - the browser blocks one without user activation
+  function sessSave(){
+    if(sessDead) return;
+    try{ localStorage.setItem(SESS_KEY, JSON.stringify(sess)); }
+    catch(_){ sessDead = true; writeErr("\r\n[resume] save limit reached - the run continues, but reload can only restore up to here.\r\n"); }
+  }
+  function sessClear(){ try{ localStorage.removeItem(SESS_KEY); }catch(_){ } sess = null; sessI = 0; sessLive = false; sessDead = false; }
   function sessNext(t){   // next recorded event while replaying; null forever once live (the latch - pushes grow the log, so an index check alone would replay freshly recorded events as duplicates)
     if(!sess || sessLive) return null;
     if(sessI >= sess.log.length){ sessLive = true; if(sessI) write("\r\n\x1b[33m[resume] caught up - live.\x1b[0m\r\n"); return null; }
     const e = sess.log[sessI];
-    if(e.t !== t){ writeErr("\r\n[resume] log diverged - going live from here.\r\n"); sessLive = true; return null; }
+    if(e.t !== t){ writeErr("\r\n[resume] log diverged - going live from here.\r\n");
+      sess.log.length = sessI;
+      sess.rid = genRid(); ridRemember(sess.rid);   // a diverged timeline is a different run: keeping the rid means every save loses to the archive's day-guard and the abandoned timeline stays as the record
+      // direct write, not sessSave(): a latched sessDead would drop this silently and every future reload would
+      // re-diverge at the same index forever. The truncated log is strictly smaller than the one that blew the quota.
+      try{ localStorage.setItem(SESS_KEY, JSON.stringify(sess)); sessDead = false; }catch(_){ }
+      sessLive = true; return null; }   // truncate AT the divergence: otherwise new events append past a stale tail and every future reload re-diverges at the same index
     sessI++;
     return e.v;
   }
-  function sessPush(t, v){ if(!sess || !sessLive) return; sess.log.push({t, v}); sessSave(); }
+  function sessPush(t, v, n){   // n = speaker, d = in-game day: replay ignores both, the rewind picker needs them to be readable
+    if(!sess || !sessLive || sessDead || rwCommitted) return;   // rwCommitted: reload() only SCHEDULES navigation, so a reply already in flight would land past the cut
+    const e = {t, v}; if(n) e.n = n; if(curDay) e.d = curDay; if(curClock) e.c = curClock;
+    sess.log.push(e); sessSave();   // stop growing the in-memory log too once it can never be persisted
+  }
+  const speakerOf = bodyJson => {   // the reply alone never says who spoke; npc.py's system prompt opens "You are Bob," so take it from the request
+    try{ const m = /^You are ([^,\n]{1,16}),/.exec(JSON.parse(bodyJson)?.messages?.[0]?.content || ""); return m ? m[1] : ""; }
+    catch(_){ return ""; }
+  };
 
   /* ------------------------------------------------------------------ run-log collector state (opt-in daily save) */
-  let curDay = 0, curTier = "", curModel = "", curPlayer = "", curDaysReq = 0, npcVer = "";
-  let transcript = [], transcriptLen = 0, errorLines = 0;                 // raw stdout tail (capped) + cumulative JSON-fail count
-  let savedOnce = false, lastSave = 0, saving = false, pendingDay = 0, tainted = false;
+  let curDay = 0, curClock = "", curTier = "", curModel = "", curPlayer = "", curDaysReq = 0, npcVer = "";
+  let transcript = [], transcriptLen = 0, errorLines = 0, llmTurns = 0;   // raw stdout tail (capped) + cumulative JSON-fail count, and the cumulative call count it must be judged against
+  let lastSave = 0, saving = false, pendingDay = 0, tainted = false, savedDay = -1, savedLen = -1, tooBig = false, bad400 = 0, withdrawing = false;
+  const RID_KEY = "npcagent-lastrid";   // survives sessClear so a late opt-out can still withdraw
+  // EVERY rid this browser has minted, not just the newest: a rewind and a diverged resume both mint a new one, and
+  // starting a second run used to overwrite the first - leaving the earlier row permanently unerasable by its owner.
+  function ridAll(){
+    try{ const raw = localStorage.getItem(RID_KEY); if(!raw) return [];
+      return (raw[0] === "[" ? JSON.parse(raw) : [raw]).filter(r => typeof r === "string" && /^[0-9a-f]{32}$/.test(r));
+    }catch(_){ return []; }
+  }
+  function ridRemember(rid){
+    if(!rid) return;
+    try{ const a = ridAll(); if(a.includes(rid)) return; a.push(rid); localStorage.setItem(RID_KEY, JSON.stringify(a.slice(-1000))); }catch(_){ }
+  }
   let lastDayTime = 0, fastDays = 0, saveInterval = null, visHandler = null;
   const genRid = () => [...crypto.getRandomValues(new Uint8Array(16))].map(b => b.toString(16).padStart(2,"0")).join("");
 
   /* ------------------------------------------------------------------ bridges */
   let wll = null, pyodide = null, running = false;
-  // the sim only ever calls httpComplete; bridges swap _httpRaw underneath so recording survives engine switches
-  globalThis.httpComplete = async bodyJson => {
+  const sleepMs = ms => new Promise(r => setTimeout(r, ms));
+  // Safety net: every tier assigns _httpRaw, but a lost generation race could leave none installed. An empty turn is
+  // something npc.py already handles; calling undefined would take the whole run down with a TypeError.
+  // WAIT for an engine, never fake a turn. Returning "" here would be recorded by sessPush as the model's real reply,
+  // so a missing sign-in would permanently write empty turns into the deterministic log. Blocking costs nothing and is
+  // reversible: pick any engine in the dropdown - that click also carries the user activation a sign-in popup needs.
+  const noEngine = async bodyJson => {
+    writeErr("\r\n[LLM] no engine - pick one in the ENGINE dropdown above. The run waits here, nothing is lost.\r\n");
+    while(globalThis._httpRaw === noEngine && running) await sleepMs(500);
+    return globalThis._httpRaw === noEngine ? "" : globalThis._httpRaw(bodyJson);   // "" only if the run was stopped out from under us
+  };
+  globalThis._httpRaw = noEngine;
+  // the sim only ever calls httpComplete; bridges swap _httpRaw underneath so recording survives engine switches.
+  // The wait-out retry lives HERE, below sessNext/above sessPush, so one logical call records exactly one event:
+  // retrying in the Python shim instead would log one "" per attempt and make replay re-sleep through outages.
+  globalThis.httpComplete = async (bodyJson, tries = 1) => {
+    llmTurns++;   // counted above the replay seam so a resumed run keeps the same error ratio
     const c = sessNext("l");
     if(c !== null) return c;
-    let out = await globalThis._httpRaw(bodyJson);
-    out = String(out ?? "").replace(/<think>[\s\S]*?<\/think>/gi, "");   // drop reasoning before record+return: extract_clean_json strips it anyway (sim result identical), and the session log shrinks ~5-10x so resume survives long runs
-    sessPush("l", out);
+    let out = "";
+    for(let attempt = 0; attempt < tries; attempt++){
+      if(attempt) await sleepMs(Math.min(20000, 4000 * 2 ** (attempt - 1)));   // an outage otherwise becomes a full-speed march of fallback lines into the diary
+      out = String((await globalThis._httpRaw(bodyJson)) ?? "");
+      if(/<\/think>/i.test(out)) out = out.replace(/<think>[\s\S]*?<\/think>/gi, "");   // the no-closer skip npc.py:98 documents: without it, a reply degenerating into repeated <think> costs O(k*n) and freezes the main thread   // drop reasoning before record+return: extract_clean_json strips it anyway (sim result identical), and the session log shrinks ~5-10x so resume survives long runs
+      if(out) break;
+    }
+    sessPush("l", out, speakerOf(bodyJson));
     return out;
   };
 
-  let wllLoading = null;
+  let wllLoading = null, wllPath = "", wllWant = "";
+  const localStale = p => !wll || JSON.stringify(parseGguf(p)) !== wllPath;   // "already loaded?" must account for the user typing a DIFFERENT gguf
   function loadLocalModel(ggufPath){
-    if(wllLoading) return wllLoading;   // dedupe concurrent calls (rapid engine toggles) so we never double-download the 2 GB model
+    const want = JSON.stringify(parseGguf(ggufPath));
+    // dedupe concurrent calls (rapid engine toggles) so we never double-download the 2 GB model - but only for the SAME
+    // path: returning an in-flight load of a DIFFERENT model left the UI naming one file while another was running
+    if(wllLoading) return wllWant === want ? wllLoading : wllLoading.catch(() => {}).then(() => loadLocalModel(ggufPath));
+    wllWant = want;
+    if(wll && want !== wllPath){        // a different GGUF was typed: drop the loaded one, else every later load is a silent no-op behind the `if(!wll)` guards
+      const old = wll; wll = null;
+      try{ old.exit?.(); }catch(_){ }
+      write("\r\nSwitching local model...\r\n");
+    }
     wllLoading = (async () => {
       const { Wllama } = await import(WLLAMA_ESM);
       const { repo, file } = parseGguf(ggufPath);
@@ -336,7 +610,7 @@
           if(t) write(`\rdownloading ${(l/1e9).toFixed(1)}/${(t/1e9).toFixed(1)} GB`);
         }
       });
-      wll = w;
+      wll = w; wllPath = want;
     })();
     wllLoading.catch(() => {}).finally(() => { wllLoading = null; });   // side-chain swallows rejection (caller still sees it via the returned promise); avoids unhandledrejection
     return wllLoading;
@@ -416,9 +690,12 @@
         let res = await lnaFetch(base+"/chat/completions", {
           method:"POST", headers, body:bodyJson, signal:AbortSignal.timeout(120000)
         }, space);
-        if(res.status === 400 && /"reasoning":/.test(bodyJson)){  // strict APIs (raw OpenAI) 400 on the reasoning arg -> retry without it (match the key, not the word in message content)
-          const b = JSON.parse(bodyJson); delete b.reasoning;
-          res = await lnaFetch(base+"/chat/completions", { method:"POST", headers, body:JSON.stringify(b), signal:AbortSignal.timeout(120000) }, space);
+        if(res.status === 400){   // strict APIs (raw OpenAI) 400 on the reasoning arg; others 400 on a max_tokens above
+          const b = JSON.parse(bodyJson);   // the model's own ceiling. npc.py ships 32000, which is a request the sim
+          const had = "reasoning" in b;     // repeats every turn forever - and each "" is recorded as a real reply.
+          delete b.reasoning;
+          const shrink = b.max_tokens > 4096; if(shrink) b.max_tokens = 4096;
+          if(had || shrink) res = await lnaFetch(base+"/chat/completions", { method:"POST", headers, body:JSON.stringify(b), signal:AbortSignal.timeout(120000) }, space);
         }
         if(!res.ok){ writeErr("\r\n[API] HTTP "+res.status+"\r\n"); return ""; }
         const j = await res.json();
@@ -431,12 +708,26 @@
     };
   }
 
+  // acquire FIRST, relabel second: committing the dropdown before the load left "Local" on screen while the free relay
+  // bridge was still answering. Returns true (local is ours), "superseded" (the user switched while we downloaded -
+  // leave their choice alone), or false (load failed).
   async function fallbackToLocal(){
-    $("engine").value = "local"; syncBar();   // sync the dropdown even when the model is already cached - the UI must show what's actually running
-    if(wll) return;
-    write("Loading "+parseGguf().file+" for fallback...\r\n");
-    try{ await loadLocalModel(); write("\r\nLocal model ready ("+(HAS_GPU ? "WebGPU" : "CPU")+").\r\n"); }
-    catch(e){ writeErr("\r\n[!] Local fallback failed: "+(e?.message||e)+"\r\n"); }
+    const g = engineGen;
+    const path = modelStash.local || HF_DEFAULT;
+    if(!wll){
+      write("Loading "+parseGguf(path).file+" for fallback (~2 GB download, cached after the first time)...\r\n");
+      try{ await loadLocalModel(path); write("\r\nLocal model ready ("+"CPU wasm).\r\n"); }
+      catch(e){ writeErr("\r\n[!] Local fallback failed: "+(e?.message||e)+"\r\n"); return false; }
+    }
+    if(g !== engineGen){   // they picked another engine mid-download; forcing local back would discard a deliberate choice
+      write("[!] Engine changed during the fallback download - keeping your choice.\r\n");
+      return "superseded";
+    }
+    $("engine").value = "local"; engineWas = "local"; ++engineGen; syncBar();   // the UI must show what's actually running, and a stale async switch must not undo it
+    curTier = "local"; curModel = path;   // full owner/repo/file.gguf, not the bare filename: sess.cfg.model feeds parseGguf on resume
+    try{ pyodide?.globals.set("MODE", "local"); }catch(_){ }
+    if(sess){ const cfg = (sess.cfg ||= {}); cfg.mode = "local"; cfg.model = path; sessSave(); }   // the switch handler writes these; this path must too, else every reload replays into the dead relay before falling back again
+    return true;
   }
 
   // dig the provider's real message out of the nested error body, e.g. 503 -> "System is really busy..."
@@ -455,9 +746,13 @@
   async function freeFallback(bodyJson){
     if(lcFails < 5) return null;
     if(localDead) return "";   // already tried local and it failed - keep retrying the relay each turn, but never re-download the 2 GB model
+    // a LIVE check, not a latch: it also catches a switch already in flight (the user parked on a device-code sign-in
+    // still shows chatgpt here), and it re-arms by itself the moment they come back to free - with the model cached
+    if($("engine").value !== "free") return "";
     writeErr("\r\n[!] Free tier failed "+lcFails+" times - switching to local GGUF.\r\n");
-    await fallbackToLocal();
-    if(!wll){ localDead = true; return ""; }
+    const ok = await fallbackToLocal();
+    if(!ok){ localDead = true; return ""; }
+    if(ok !== true) return "";   // superseded: the engine the user picked mid-download owns this run
     makeWllamaBridge();
     const b = JSON.parse(bodyJson);
     return globalThis.wllamaComplete(JSON.stringify(b.messages||[]), b.max_tokens||MAX_TOKENS_CAP, b.temperature||0.5);
@@ -505,38 +800,414 @@
     };
   }
 
-  let freeProbe = null;
+  /* ------------------------------------------------- ChatGPT account (device flow, browser-held token) */
+  function cgptTok(){ try{ return JSON.parse(localStorage.getItem(CGPT_TOKKEY) || "null"); }catch(_){ return null; } }
+  function cgptForget(){ try{ localStorage.removeItem(CGPT_TOKKEY); }catch(_){ } cgptCatCache = null; }   // next sign-in may be a different account: its catalog must not be the old one's
+  function jwtAccount(jwt){
+    try{
+      const p = jwt.split(".")[1].replace(/-/g,"+").replace(/_/g,"/");
+      return JSON.parse(atob(p + "=".repeat((4 - p.length % 4) % 4)))["https://api.openai.com/auth"]?.chatgpt_account_id || "";
+    }catch(_){ return ""; }
+  }
+  let cgptRefreshFlight = null;
+  function cgptRefresh(){   // an access token dies long before a long run does; the refresh token the exchange returns makes that survivable
+    if(!cgptRefreshFlight) cgptRefreshFlight = cgptRefreshRun().finally(() => { cgptRefreshFlight = null; });
+    return cgptRefreshFlight;
+  }
+  async function cgptRefreshRun(){
+    const old = cgptTok();
+    if(!old?.refresh) return null;
+    try{
+      const x = await fetch("https://auth.openai.com/oauth/token", {
+        method:"POST", headers:{ "Content-Type":"application/x-www-form-urlencoded" }, signal: AbortSignal.timeout(20000),
+        body: new URLSearchParams({ client_id: CGPT_CID, grant_type:"refresh_token", refresh_token: old.refresh })
+      });
+      const xb = await x.json().catch(() => ({}));
+      const access = xb.access_token || xb.id_token;
+      if(!x.ok || !access) return null;
+      const tok = { access, refresh: xb.refresh_token || old.refresh, account: xb.account_id || jwtAccount(access) || old.account };
+      try{ localStorage.setItem(CGPT_TOKKEY, JSON.stringify(tok)); }catch(_){ }
+      write("\x1b[2m[chatgpt] session refreshed\x1b[0m\r\n");
+      return tok;
+    }catch(_){ return null; }
+  }
+
+  let cgptLoginFlight = null;
+  function cgptLogin(){   // single-flight: engine-select and Run both want a token; two flows = two codes, and the loser polls a code nobody will enter
+    if(!cgptLoginFlight) cgptLoginFlight = cgptLoginRun().finally(() => { cgptLoginFlight = null; });
+    return cgptLoginFlight;
+  }
+  async function cgptLoginRun(){
+    const r = await fetch(CGPT_AUTH + "/usercode", {
+      method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify({ client_id: CGPT_CID }), signal: AbortSignal.timeout(20000)
+    });
+    if(!r.ok) throw new Error("could not start ChatGPT sign-in (HTTP " + r.status + ")");
+    const d = await r.json();
+    // deliberately NOT copied to the clipboard: nothing here may overwrite what the user has on it. The code is shown above; select and Ctrl+C it.
+    write("\r\n\x1b[1;33mFirst, one-time: ChatGPT Settings > Security and login > (bottom) Enable device code authorization for Codex\x1b[0m\r\n" +
+          "\x1b[2mwithout it the consent page's Continue button stays greyed out.\x1b[0m\r\n" +
+          "\r\n\x1b[1mSign in with your ChatGPT account\x1b[0m\r\n" +
+          "  1. pick your account in the tab that just opened (\x1b[4m" + CGPT_VERIFY + "\x1b[0m)\r\n" +
+          "  2. enter code  \x1b[1;33m" + d.user_code + "\x1b[0m  \x1b[2m(select it and Ctrl+C)\x1b[0m\r\n" +
+          "  \x1b[2mwaiting... code expires in 15 min; your ChatGPT plan's limits apply, nothing is billed here\x1b[0m\r\n");
+    await sleepMs(1200);   // let the warning land before the tab steals focus
+    if(!window.open(CGPT_VERIFY, "_blank", "noopener,noreferrer"))   // the delay + auto-resume both cost user activation, so this is blocked often
+      write("  \x1b[33mpopup blocked - open that URL yourself, the code above is still valid\x1b[0m\r\n");
+    const every = Math.max(2, parseInt(d.interval) || 5) * 1000, until = Date.now() + 15 * 60 * 1000;
+    while(Date.now() < until){
+      await sleepMs(every);
+      const already = cgptTok();
+      if(already) return already;   // a token arrived elsewhere (another tab, or the other caller) - adopt it instead of polling a dead code
+      const p = await fetch(CGPT_AUTH + "/token", {
+        method:"POST", headers:{ "Content-Type":"application/json" }, signal: AbortSignal.timeout(15000),
+        body: JSON.stringify({ client_id: CGPT_CID, user_code: d.user_code, device_auth_id: d.device_auth_id })
+      });
+      const body = await p.json().catch(() => ({}));
+      if(p.ok){
+        // approving the code hands back a PKCE authorization_code, not the tokens - those come from one more exchange
+        let access = body.access_token || body.id_token, refresh = body.refresh_token || "";
+        if(!access && body.authorization_code){
+          // the exact redirect_uri this grant was issued against isn't documented; try the known shapes and keep the server's own words
+          const tries = ["https://auth.openai.com/deviceauth/callback", CGPT_AUTH + "/callback", null];
+          const said = [];
+          for(const redirect of tries){
+            const form = new URLSearchParams({ client_id: CGPT_CID, grant_type:"authorization_code",
+                                               code: body.authorization_code, code_verifier: body.code_verifier || "" });
+            if(redirect) form.set("redirect_uri", redirect);
+            let x, xb;
+            try{   // a timeout must not throw out of the loop: that burns the approved device code without trying the other shapes
+              x = await fetch("https://auth.openai.com/oauth/token", {
+                method:"POST", headers:{ "Content-Type":"application/x-www-form-urlencoded" }, body: form, signal: AbortSignal.timeout(20000)
+              });
+              xb = await x.json().catch(() => ({}));
+            }catch(e){ said.push((redirect || "no redirect_uri") + " -> " + (e?.message || e)); continue; }
+            if(x.ok && (xb.access_token || xb.id_token)){ access = xb.access_token || xb.id_token; refresh = xb.refresh_token || ""; break; }
+            said.push((redirect || "no redirect_uri") + " -> " + x.status + " " + (xb?.error?.message || xb?.error?.code || ""));
+          }
+          if(!access) throw new Error("token exchange refused. " + said.join(" | "));
+        }
+        if(!access) throw new Error("unexpected sign-in response [" + Object.keys(body).join(",") + "]");   // shape changed: name the keys so it is one edit to fix
+        const tok = { access, refresh, account: body.account_id || jwtAccount(access) };
+        if(!tok.account) throw new Error("signed in, but no ChatGPT account id came back");
+        try{ localStorage.setItem(CGPT_TOKKEY, JSON.stringify(tok)); }catch(_){ }   // private mode: run anyway, just not remembered
+        write("\x1b[32m[chatgpt] signed in\x1b[0m\r\n");
+        cgptUsageRefresh(true);   // first reading the moment there is a token to read it with
+        return tok;
+      }
+      if(body?.error?.code !== "deviceauth_authorization_pending")
+        throw new Error(body?.error?.message || ("sign-in failed (HTTP " + p.status + ")"));
+    }
+    throw new Error("sign-in timed out - press Run to try again");
+  }
+  let cgptCatCache = null;
+  const cgptSid = crypto.randomUUID();
+  const CGPT_CATKEY = "npcagent.chatgpt.models";   // the catalog is ~266 KB and rarely changes; through the WISP tunnel that is slow enough to time out, so keep the last good one per account (model metadata only, no token)
+  function cgptCatLoad(acct){
+    try{
+      const c = JSON.parse(localStorage.getItem(CGPT_CATKEY));
+      if(!(c && c.acct === acct && c.models?.length)) return null;
+      return c.models.map(m => ({ ...m, efforts: (m.efforts || []).filter(e => CGPT_EFFORTS.includes(e)) }));   // a cache written before the intersection existed can still hold "ultra"
+    }catch(_){ return null; }
+  }
+  function cgptCatSave(acct, models){ try{ localStorage.setItem(CGPT_CATKEY, JSON.stringify({ acct, models })); }catch(_){ } }
+  const cgptAuth = (tok, sid) => ({ "Authorization":"Bearer " + tok.access, "chatgpt-account-id": tok.account,
+                                    "originator":"codex_cli_rs", "session_id": sid });
+  let cgptCatAcct = "";
+  function cgptFetchModels(tok){   // the catalog is account-scoped: a free plan sees its models, Pro sees the -pro ones
+    if(cgptCatAcct !== tok.account){ cgptCatCache = null; cgptCatAcct = tok.account; }   // never serve one account's entitlements to another (a second tab can swap the stored token mid-session)
+    // cache the PROMISE, not the value: engine-select and a quick Run press would otherwise race two fetches
+    return cgptCatCache || (cgptCatCache = cgptFetchModelsRun(tok).then(v => (v === null && (cgptCatCache = null), v)));   // a failed probe stays retryable
+  }
+  async function cgptFetchModelsRun(tok){
+    try{
+      const r = await libcurl.fetch(CGPT_CATALOG, {
+        headers:{ ...cgptAuth(tok, cgptSid), "Accept":"application/json" },
+        signal: AbortSignal.timeout(90000)   // ~266 KB over a relayed WASM-TLS socket is far slower than the 0.3s a direct fetch takes
+      });
+      if(!r.ok) throw new Error("HTTP " + r.status);
+      const list = ((await r.json()).models || [])
+        .filter(m => m.slug && m.visibility === "list")      // "hide" = internal (codex-auto-review), never selectable
+        .sort((a, b) => (a.priority ?? 99) - (b.priority ?? 99));
+      if(!list.length) return null;
+      const models = list.map(m => ({
+        id: m.slug, label: m.display_name || m.slug,
+        // the catalog advertises levels the app supports, which is NOT the same set /responses accepts: it lists
+        // "ultra" (an orchestration mode with task delegation) for some models and the endpoint then 400s on it.
+        // The API's own error names the truth, so intersect with that.
+        efforts: (m.supported_reasoning_levels || []).map(l => l.effort).filter(e => CGPT_EFFORTS.includes(e)),
+        effort: m.default_reasoning_level || ""
+      }));
+      cgptCatSave(tok.account, models);
+      return models;
+    }catch(e){
+      const kept = cgptCatLoad(tok.account);   // a slow relay shouldn't cost you your own model list
+      writeErr("\r\n[chatgpt] model list unavailable (" + (e?.message || e) + ") - " + (kept ? "using the last one for this account" : "using defaults") + "\r\n");
+      return kept;
+    }
+  }
+  let cgptCat = {};        // slug -> {efforts[], effort} so the Effort control always mirrors the CHOSEN model
+  function cgptEffortList(){
+    const m = cgptCat[$("modelSelect").value], sel = $("effort");
+    const levels = (m && m.efforts) || [];
+    $("effortFld").classList.toggle("collapsed", !levels.length);   // no reasoning levels -> no control, no empty dropdown
+    if(!levels.length){ sel.innerHTML = ""; return; }
+    const wish = sel.dataset.wish || sel.value;
+    delete sel.dataset.wish;   // one-shot, same as the modelSelect wish: left set it reverts every later manual change without firing `change`
+    sel.innerHTML = "";
+    levels.forEach(e => { const o = document.createElement("option"); o.value = e; o.textContent = e; sel.appendChild(o); });
+    sel.value = levels.includes(wish) ? wish : (levels.includes(m.effort) ? m.effort : levels[0]);
+    barFade();
+  }
+  function cgptModelList(models){
+    const sel = $("modelSelect"), wish = sel.dataset.wish || sel.value;   // keep what the user picked: the rebuild at Run would otherwise silently drop them back to the first model
+    delete sel.dataset.wish;   // one-shot. Left set, every later rebuild reverts a mid-run model change WITHOUT firing `change`, so the bridge sends one model while the archive label names another
+    const opts = models || CGPT_MODELS.map(id => ({ id, label: id, efforts: [], effort: "" }));
+    cgptCat = Object.fromEntries(opts.map(m => [m.id, m]));
+    sel.innerHTML = "";
+    opts.forEach(m => { const o = document.createElement("option"); o.value = m.id; o.textContent = m.label; sel.appendChild(o); });
+    sel.value = opts.some(m => m.id === wish) ? wish : opts[0].id;
+    sel.dataset.tier = "chatgpt";
+    cgptEffortList();
+  }
+  $("modelSelect").addEventListener("change", () => {
+    if($("modelSelect").dataset.tier === "chatgpt") cgptEffortList();
+    if(running) noteModel($("modelSelect").value);   // the bridges read this live, so the archive label and the resume config must follow it
+  });
+  function noteModel(m){   // one place to keep curModel + sess.cfg honest when the model changes mid-run
+    curModel = m;
+    if(sess){ (sess.cfg ||= {}).model = m; sessSave(); }   // a hand-edited/truncated save can lack cfg; throwing here would kill the run mid-simulation
+  }
+  function cgptNextModel(dead){          // quota/refusal on one model -> walk what THIS account actually has, and SHOW the switch
+    const next = [...$("modelSelect").options].map(o => o.value).find(v => !dead.has(v));
+    if(next){ $("modelSelect").value = next; cgptEffortList(); if(running) noteModel(next); }   // rebuild Effort for the NEW model, else the next request carries a level it may not support; and record the switch so the archive doesn't credit the dead model
+    return next;
+  }
+  // ---- Codex quota readout -------------------------------------------------------------------------------------
+  // Decoration only: it never touches httpComplete, so sess.log and replay determinism are untouched by it.
+  // Windows are identified by DURATION, never by the "primary"/"secondary" name. On a Plus account primary IS the
+  // 7-day window and secondary is null; on free it is monthly. Trusting the position would print one as the other.
+  function laneName(secs){
+    const d = secs / 86400, h = secs / 3600;
+    if(d >= 25 && d <= 32) return "monthly";
+    if(d >= 6 && d <= 8)   return "weekly";
+    if(d >= 2)             return Math.round(d) + "d";
+    if(h >= 1)             return Math.round(h) + "h";
+    return Math.max(1, Math.round(secs / 60)) + "min";
+  }
+  const laneReset = s => s >= 172800 ? Math.round(s / 86400) + "d" : s >= 3600 ? Math.round(s / 3600) + "h"
+                       : s >= 60 ? Math.round(s / 60) + "min" : "soon";
+  function usageLanes(j){   // every shape is optional: free/Plus/Pro expose different subsets, and nulls are normal
+    const r = j?.rate_limit || {};
+    return [r.primary_window, r.secondary_window, j?.code_review_rate_limit,
+            ...(Array.isArray(j?.additional_rate_limits) ? j.additional_rate_limits : [])]
+      .filter(w => w && Number.isFinite(+w.used_percent))
+      .map(w => ({ used: Math.max(0, Math.min(100, Math.round(+w.used_percent))),
+                   span: laneName(+w.limit_window_seconds || 0), reset: +w.reset_after_seconds || 0 }))
+      .sort((a, b) => b.used - a.used);   // headline the TIGHTEST lane: that is the one that will actually stop a run
+  }
+  const usageTint = left => left > 50 ? "rgba(95,196,107,.16)" : left > 20 ? "rgba(217,158,87,.20)" : "rgba(217,106,90,.24)";
+  function usageClear(){
+    const opt = [...$("engine").options].find(o => o.value === "chatgpt");
+    if(opt) opt.textContent = "ChatGPT Codex";
+    $("engine").style.backgroundImage = "";
+    $("engine").title = "Where the NPC brain runs";
+  }
+  function usagePaint(lanes, plan){
+    if(!lanes.length) return usageClear();
+    const left = 100 - lanes[0].used, opt = [...$("engine").options].find(o => o.value === "chatgpt");
+    if(opt) opt.textContent = "ChatGPT Codex " + left + "%";   // #engine is a fixed 140px, so text length cannot reflow the bar
+    // The filled part is what REMAINS, so the colour recedes as quota burns. Low alpha keeps the option text legible
+    // over it, and background-color stays --void underneath.
+    $("engine").style.backgroundImage =
+      `linear-gradient(90deg, ${usageTint(left)} 0 ${left}%, rgba(0,0,0,0) ${left}% 100%)`;
+    $("engine").title = "Codex quota" + (plan ? " (" + plan + ")" : "") + " - "
+      + lanes.map(l => `${l.span}: ${100 - l.used}% left, resets ${laneReset(l.reset)}`).join(" · ")
+      + " - shared with the codex CLI, separate from ChatGPT chat";
+  }
+  let usageAt = 0;
+  async function cgptUsageRefresh(force){
+    if($("engine").value !== "chatgpt") return;
+    const tok = cgptTok();
+    if(!tok || !lcReady) return;
+    // Never a poller - hammering this endpoint is a known complaint against Codex itself (openai/codex#10869).
+    // Called on sign-in, on bridge install, on a 429, and once per simulated day.
+    if(!force && Date.now() - usageAt < 60000) return;
+    usageAt = Date.now();
+    try{
+      const r = await libcurl.fetch(CGPT_USAGE, { method:"GET", signal: AbortSignal.timeout(15000),
+        headers:{ Authorization:"Bearer " + tok.access, "chatgpt-account-id": tok.account } });
+      if(!r.ok) return;
+      const j = JSON.parse(await r.text());
+      usagePaint(usageLanes(j), j?.plan_type || "");
+    }catch(_){ }   // a quota readout must never be able to disturb the run
+  }
+  function makeChatgptBridge(){
+    const dead = new Set();
+    const sid = crypto.randomUUID();   // stable per conversation like the official client: a new id each turn can forfeit server-side prefix-cache affinity for a prompt that barely changes
+    globalThis._httpRaw = async bodyJson => {
+      let refreshed = false;
+      if(!cgptTok()){ writeErr("\r\n[chatgpt] not signed in - pick the engine again to sign in.\r\n"); return ""; }
+      const b = JSON.parse(bodyJson), msgs = b.messages || [];
+      const instructions = msgs.filter(m => m.role === "system").map(m => m.content).join("\n\n");
+      const input = msgs.filter(m => m.role !== "system").map(m => ({
+        type:"message", role: m.role === "assistant" ? "assistant" : "user",
+        content:[{ type: m.role === "assistant" ? "output_text" : "input_text", text: String(m.content ?? "") }]
+      }));
+      for(let attempt = 0, walk = $("modelSelect").options.length || CGPT_MODELS.length; attempt < walk; attempt++){   // walk the ACCOUNT's models, not the 3-item fallback constant
+        const model = $("modelSelect")?.value || CGPT_MODELS[0];
+        const tok = cgptTok();   // re-read per attempt so a refresh mid-walk takes effect
+        if(!tok) return "";
+        let r;
+        try{
+          r = await libcurl.fetch(CGPT_UP, {     // libcurl/WISP: TLS happens in this tab, so no CORS and no relay reads it
+            method:"POST", signal:AbortSignal.timeout(180000),
+            headers:{ ...cgptAuth(tok, sid), "Content-Type":"application/json", "OpenAI-Beta":"responses=experimental", "Accept":"text/event-stream" },
+            body: JSON.stringify({ model, instructions: instructions || "You are an NPC.", input, stream:true, store:false,
+                                   ...(cgptCat[model]?.efforts?.includes($("effort").value) ? { reasoning:{ effort: $("effort").value } } : {}) })   // send it only if THIS model declares it: an unsupported value is a hard 400
+          });
+        }catch(e){ writeErr("\r\n[chatgpt] " + (e?.message || e) + "\r\n"); return ""; }
+
+        if(r.ok){
+          let out = "", done = false, failed = "";
+          for(const line of (await r.text().catch(() => "")).split("\n")){    // SSE: text arrives as response.output_text.delta, reasoning items are skipped; a relay drop mid-stream must not throw past httpComplete
+            if(!line.startsWith("data:")) continue;
+            const raw = line.slice(5).trim();
+            if(!raw) continue;
+            if(raw === "[DONE]"){ done = true; continue; }
+            try{
+              const j = JSON.parse(raw);
+              if(j.type === "response.output_text.delta" && typeof j.delta === "string") out += j.delta;
+              else if(j.type === "response.completed") done = true;
+              else if(j.type === "response.failed" || j.type === "error") failed = j.error?.message || j.response?.error?.message || "stream failed";
+            }catch(_){ }
+          }
+          if(failed || !done){   // a truncated stream is NOT an empty-but-fine turn: returning partial text would record half a reply into the deterministic resume log as complete
+            writeErr("\r\n[chatgpt] " + (failed || "reply cut off mid-stream") + " - discarding the partial turn.\r\n");
+            return "";
+          }
+          // Every turn spends quota, so ask after every turn - deliberately NOT awaited, so the readout never adds
+          // latency to a turn, and the 60s floor inside collapses a burst of turns into at most one request a minute.
+          // used_percent is a whole number, so a finer cadence than that would return the same digit anyway.
+          cgptUsageRefresh();
+          return out;
+        }
+
+        const eo = await r.text().then(JSON.parse).catch(() => ({}));
+        const detail = eo?.error || eo?.detail || {};
+        if(r.status === 401 || r.status === 403){
+          if(!refreshed && await cgptRefresh()){ refreshed = true; attempt--; continue; }   // one silent refresh, then replay the same turn: a run outliving its access token shouldn't degrade to fallback lines
+          cgptForget();
+          writeErr("\r\n[chatgpt] session expired - reload the page and sign in again.\r\n");
+          return "";
+        }
+        if(r.status === 429){
+          const secs = detail.resets_in_seconds || 0;
+          const when = secs > 3600 ? Math.round(secs / 3600) + "h" : secs ? Math.ceil(secs / 60) + "min" : "later";
+          dead.add(model);
+          cgptUsageRefresh(true);   // a 429 is the one moment the readout is guaranteed stale
+          const next = cgptNextModel(dead);
+          writeErr("\r\n[chatgpt] " + model + " quota reached (resets in ~" + when + ")" +
+                   (next ? " - switching to " + next + "\r\n" : " - no models left, try again later\r\n"));
+          if(!next) return "";
+          continue;
+        }
+        // everything else is request-wide or transient: walking the catalog would replay the same failure on every
+        // model (a request storm, and each hop can also send an effort the next model rejects), so report and stop
+        writeErr("\r\n[chatgpt] " + model + ": HTTP " + r.status + (detail.message ? " " + detail.message : typeof detail === "string" ? " " + detail : "") + "\r\n");
+        return "";
+      }
+      return "";
+    };
+    // Paint the quota the moment the bridge exists, not at the first finished turn. A reload restores the tier
+    // programmatically, so no `change` event fires and none of the other call sites reach here - the control just sat
+    // there reading "ChatGPT Codex" with no number until a turn happened to complete.
+    cgptUsageRefresh(true);
+  }
+
+  async function ensureLibcurl(){   // the WASM signals ready via an event; time out if its CDN script never loads, else run() hangs forever in "waking"
+    if(lcReady) return;
+    const ok = await Promise.race([
+      new Promise(r => document.addEventListener("libcurl_load", () => r(true), {once:true})),
+      new Promise(r => setTimeout(() => r(false), 12000))
+    ]);
+    if(!ok && typeof libcurl === "undefined" && !(sess && sess.log.length)) throw new Error("libcurl.js failed to load (CDN blocked?) - use local GGUF or your own endpoint");   // a resume replays offline; per-call failure handles the rest
+  }
+
+  // Last good free model list. The ChatGPT tier already caches its catalog and has hardcoded defaults; this tier had
+  // neither, so one refused probe left it with an empty dropdown and pushed the run into a ~2 GB GGUF download.
+  const FREE_CATKEY = "npcagent.free.models";
+  const freeCached = () => {
+    try{ const a = JSON.parse(localStorage.getItem(FREE_CATKEY) || "[]");
+         return Array.isArray(a) ? a.filter(x => typeof x === "string" && x).slice(0, 40) : []; }catch(_){ return []; }
+  };
+  const freeFill = (sel, ids) => {
+    sel.innerHTML = "";
+    ids.forEach(id => { const o = document.createElement("option"); o.value = id; o.textContent = id; sel.appendChild(o); });
+    const wish = sel.dataset.wish, kept = wish && ids.includes(wish);
+    sel.value = kept ? wish : ids[0]; delete sel.dataset.wish; sel.dataset.tier = "free";
+    return kept;
+  };
+  let freeProbe = null, freeGen = 0;
   async function probeFreeModels(){
-    if(freeProbe) return freeProbe;
-    freeProbe = (async () => {
+    if(freeProbe && $("modelSelect").dataset.tier === "free") return freeProbe;   // the cache is only valid while these options are still OURS - another tier's catalog may have overwritten them
+    const gen = ++freeGen;   // bumped AFTER the cache check, else a cache hit invalidates a probe still in flight
+    const mine = () => gen === freeGen && $("engine").value === "free";   // every DOM write must be gated: a slow probe landing after the user switched tier would wipe that tier's options
+    const p = (async () => {
       const sel = $("modelSelect");
-      sel.innerHTML = "<option value=''>probing...</option>";
+      if(mine()) sel.innerHTML = "<option value=''>probing...</option>";
       try{
-        const res = await libcurl.fetch(FREE_UP+"/models", { headers:freeHeaders() });
+        const res = await libcurl.fetch(FREE_UP+"/models", { headers:freeHeaders(), signal:AbortSignal.timeout(30000) });   // a never-settling probe was memoized in freeProbe and left run() stuck in "waking"
         if(!res.ok) throw new Error("HTTP "+res.status);
         const ids = ((await res.json()).data || []).map(m => m.id).filter(i => /free/i.test(i));
-        sel.innerHTML = ids.length ? "" : "<option value=''>none found</option>";
-        ids.forEach(id => { const o = document.createElement("option"); o.value = id; o.textContent = id; sel.appendChild(o); });
-        if(ids.length) sel.value = (sel.dataset.wish && ids.includes(sel.dataset.wish)) ? sel.dataset.wish : ids[0];   // a resumed session keeps its saved model
-        else freeProbe = null;
+        if(ids.length) try{ localStorage.setItem(FREE_CATKEY, JSON.stringify(ids)); }catch(_){ }   // survive the next refused probe
+        if(!mine()) return ids;
+        if(ids.length){
+          const kept = freeFill(sel, ids);   // a resumed session keeps its saved model, once
+          if(!kept && running) noteModel(sel.value);   // the saved id rotated out of the catalog: a programmatic .value fires no `change`, so without this the bridge sends ids[0] while curModel, cfg and the archive all name a model that answered nothing
+        }
+        else{ sel.innerHTML = "<option value=''>none found</option>"; freeProbe = null; }
         return ids;
       }catch(e){
-        $("modelSelect").innerHTML = "<option value=''>probe failed</option>";
-        freeProbe = null;
-        return [];
+        // The relay can be perfectly healthy while ONE destination is refused, so reuse the last good list and keep the
+        // tier usable instead of blanking it. The upstream URL is scrubbed: this text reaches the terminal, and the
+        // terminal is what gets archived and shared.
+        const kept = freeCached();
+        if(mine()){
+          if(kept.length) freeFill(sel, kept);
+          else sel.innerHTML = "<option value=''>probe failed</option>";
+          const why = String(e?.message || e).replace(/https?:\/\/\S+/g, "upstream").slice(0, 90);
+          writeErr("\r\n[free] model list unavailable (" + why + ") - "
+                   + (kept.length ? "using the last list that worked" : "no cached list yet")
+                   + ". The relay reaches the upstream, not you: your own proxy on Custom endpoint skips it entirely."
+                   + "\r\n");
+          freeProbe = null;   // a stale probe must not discard a NEWER probe's memo
+        }
+        return kept;
       }
     })();
-    return freeProbe;
+    freeProbe = p;   // assign the settled promise, never leave a synchronous throw returning null to run()
+    return p;
   }
 
   /* ------------------------------------------------------------------ run */
   async function run(){
     if(running) return;
+    const myGen = ++engineGen;   // a switch made during "waking" bumps this; the startup path must then not install its own bridge over the newer one
+    globalThis._httpRaw = noEngine;   // Restart never reloads the page, so without this run #2 silently inherits run #1's bridge and the recovery check below can never fire
+    engineWas = $("engine").value;    // the resume path sets the dropdown programmatically (no change event), so this would otherwise still hold the page-load default and revert() would offer a tier with no bridge
     running = true; $("run").textContent = "Stop";
-    transcript = []; transcriptLen = 0; errorLines = 0; savedOnce = false; lastSave = 0; saving = false; pendingDay = 0; tainted = false; lastDayTime = 0; fastDays = 0; curDay = 0;
-    for(const el of $("bar").querySelectorAll("input,select")) if(!["modelSelect","model","engine","baseUrl","apiKey","contrib"].includes(el.id)) el.disabled = true;
+    transcript = []; transcriptLen = 0; errorLines = 0; llmTurns = 0; tooBig = false; lastSave = 0; saving = false; pendingDay = 0; tainted = false; savedDay = -1; savedLen = -1; lastDayTime = 0; fastDays = 0; curDay = 0; curClock = ""; curModel = ""; bad400 = 0;   // curModel too: Restart does not reload the page, so a startup that loses the gen race would keep the PREVIOUS run's model on the archive row
+    // run() ALWAYS rebuilds the Python sim from day 1, so the replay cursor must start at 0 with it. Every other entry
+    // path reached here via sessClear(), which zeroes these - but the post-FATAL resume deliberately does not, and a
+    // cursor left mid-log feeds day-3 replies into day 1. On an AI-only run every event is "l", so sessNext's type
+    // check cannot fire and the desync is silent. No-op on every other path; the invariant is what matters.
+    sessI = 0; sessLive = false;
+    for(const id of ["player","days","traitWho","traitVal"]) $(id).disabled = true;   // freeze only the run() constructor args (a closed set); everything else is read live per call, so a new control defaults to editable instead of silently dead
     setState("waking");
-    const playerName = $("player").value.trim().replace(/[^A-Za-z0-9_-]/g, "");
+    const typedName = $("player").value.trim();
+    const playerName = typedName.replace(/[^A-Za-z0-9_-]/g, "");
+    if(typedName && !playerName) writeErr("[!] Subject must use A-Z a-z 0-9 _ - ; running AI-only.\r\n");   // otherwise a non-Latin name silently becomes a 2-day AI run with no player turn
+    else if(playerName !== typedName) $("player").value = playerName;   // show what actually got used
     const numDays    = playerName ? 6000 : Math.min(6000, Math.max(1, parseInt($("days").value,10) || 2));   // a human runs unlimited (aging still ends it); AI-only respects the field, cap 6000 (~200 in-game years)
     const mode       = $("engine").value;
     const base       = $("baseUrl").value.trim().replace(/\/+$/, "");
@@ -563,10 +1234,17 @@
             // collector taps on the sanitized raw line (before colorization)
             transcript.push(s+"\n"); transcriptLen += s.length + 1;
             while(transcriptLen > 1000000) transcriptLen -= ((transcript.shift() || "").length);
-            if(/Failed to extract valid JSON/.test(s)) errorLines++;
+            // The control-char strip above deliberately KEEPS \n, and npc.py prints a model's `response` unescaped at
+            // the start of a line, so a reply containing a newline produces its own stdout line. Every state regex
+            // below is therefore model-forgeable. Since the sim's real banners are strictly sequential, require
+            // continuity: a forged "DAY 999999" would otherwise freeze the archive row behind the worker's day-guard,
+            // and two forged banners <15s apart would trip the fast-day taint and stop archiving for the whole run.
+            if(/^\[ERROR\] .*Failed to extract valid JSON/.test(s)) errorLines++;   // anchored on npc.py's real prefix, not a bare substring
+            const tm = s.match(/^--- Time: Day(\d+) (\d\d:\d\d)/);   // every tick prints this; the DAY banner alone left the rewind picker showing one value for a hundred rows
+            if(tm && (+tm[1] === curDay || +tm[1] === curDay + 1)){ curDay = +tm[1]; curClock = tm[2]; }
             const dm = s.match(/^={5,} DAY (\d+)/);
-            if(dm){ const d = +dm[1];
-              if(sessLive){ const t = Date.now(); if(lastDayTime && t - lastDayTime < 15000){ if(++fastDays >= 2) tainted = true; } else fastDays = 0; lastDayTime = t; }
+            if(dm && (+dm[1] === curDay + 1 || (+dm[1] === 1 && curDay <= 1))){ const d = +dm[1];   // the DAY 1 alternative exists for the boot case only; unbounded it was itself the escape hatch - a forged "DAY 1" on day 40 pins curDay at 1, so every later banner fails continuity and the archive silently freezes
+              if(sessLive){ const t = Date.now(); if(lastDayTime && t - lastDayTime < 15000){ if(++fastDays >= 2 && !tainted){ tainted = true; write("\r\n\x1b[2m[share] days flew past (the model likely stopped answering) - archiving stopped for this run.\x1b[0m\r\n"); } } else fastDays = 0; lastDayTime = t; }   // it latches for the whole run, so say so once instead of going silent forever
               if(d > 1) saveRun(d - 1);          // banner d opens day d, so day d-1 just closed
               curDay = d;
             }
@@ -578,11 +1256,18 @@
             else if(/^={10,} DAY/.test(s)) s = "\x1b[1m"+s+"\x1b[0m";
             else if(/^={5,}/.test(s)) s = "\x1b[33m"+s+"\x1b[0m";
             else if(/^\*{3}.*DIED/.test(s)) s = "\x1b[1;31m"+s+"\x1b[0m";
+            // reproduction gets its own colour family, so a life event never reads as ordinary sim chatter:
+            // bright magenta = it landed, dim magenta = the attempt failed, bright green = a birth, red = a loss.
+            else if(/^\*{3} BIRTH:/.test(s)) s = "\x1b[1;92m"+s+"\x1b[0m";
+            else if(/^\*{3}.*are expecting/.test(s)) s = "\x1b[1;95m"+s+"\x1b[0m";
+            else if(/^\*{3}.*failed - too worn out/.test(s)) s = "\x1b[2;35m"+s+"\x1b[0m";
+            else if(/^\*{3}.*already on the way/.test(s)) s = "\x1b[35m"+s+"\x1b[0m";   // neither landed nor failed: plain magenta sits between the two
+            else if(/^\*{3}.*will never be born/.test(s)) s = "\x1b[1;31m"+s+"\x1b[0m";
             else if(m = s.match(/^([A-Za-z][\w-]{0,15})(?: \(retry\))?: "/)){   // speaker line: stable per-name color so each voice is distinguishable
               let h = 0; for(const c of m[1]) h = (h * 31 + c.charCodeAt(0)) >>> 0;
               s = "\x1b[1;" + [33, 32, 36, 35, 34, 93, 92, 96, 95, 94][h % 10] + "m" + m[1] + "\x1b[0m" + s.slice(m[1].length);
             }
-            write(s+"\n");
+            write(wrapWords(s, term.cols) + "\n");   // display only - the transcript/archive tapped the raw line above
             term.scrollToBottom();
           }});
           pyodide.setStderr({ batched: s => writeErr(s+"\n") });
@@ -592,46 +1277,54 @@
       let usedLocal = false;
       if(mode === "local"){
         const gguf = $("model").value || HF_DEFAULT;
-        if(!wll){
-          write("Loading "+parseGguf(gguf).file+" (cached after first download)\r\n");
+        if(localStale(gguf)){
+          const g = parseGguf(gguf);
+          // A loaded file names its own model, and on this tier that means a multi-GB fetch from whatever HuggingFace
+          // repo the file chose. Auto-resume must not do that silently: name the repo before a byte moves. Loud, not
+          // blocking - Stop is right there, and gating the load behind a click is the friction this path removed.
+          if(sess && sess.fromFile) write("\r\n\x1b[33m[resume] this file picked the local model \x1b[1m"+g.repo+"\x1b[0m\x1b[33m - fetching it now (multi-GB on first use). Press Stop to cancel.\x1b[0m\r\n");
+          write("Loading "+g.file+" (cached after first download)\r\n");
           try{ await loadLocalModel(gguf); }
           catch(e){ wll = null; throw e; }
-          write("\r\nModel ready ("+(HAS_GPU ? "WebGPU" : "CPU, slow")+").\r\n");
+          write("\r\nModel ready ("+"CPU wasm, slow).\r\n");
         }
-        makeWllamaBridge();
+        if(myGen === engineGen) makeWllamaBridge();   // a mid-load engine switch already installed its own bridge - keep theirs, but never abort the run
+
         usedLocal = true;
       }else if(mode === "free"){
-        if(!lcReady){   // wait for the libcurl WASM to signal ready, but time out if its CDN script never loads (else run() hangs forever in "waking")
-          const ok = await Promise.race([
-            new Promise(r => document.addEventListener("libcurl_load", () => r(true), {once:true})),
-            new Promise(r => setTimeout(() => r(false), 12000))
-          ]);
-          if(!ok && typeof libcurl === "undefined" && !(sess && sess.log.length)) throw new Error("libcurl.js failed to load (CDN blocked?) - use local GGUF or your own endpoint");   // a resume replays offline; per-call failure handles the rest
-        }
+        await ensureLibcurl();
         let relayUp = false;
         if(!modelOverride){
           for(let attempt = 0; attempt < 2 && !relayUp; attempt++){
             if(attempt) write("Retrying...\r\n");
             const working = await probeFreeModels();
             if(working.length){ modelOverride = working[0]; relayUp = true; }
-            else{ freeProbe = null; if(!attempt) await new Promise(r => setTimeout(r, 3000)); }
+            else{ freeProbe = null; if(!attempt) await sleepMs(3000); }
           }
         }else{ relayUp = true; }
         if(relayUp){
           write("Free model: "+modelOverride+"\r\n");
-          makeFreeLibcurlBridge();
+          if(myGen === engineGen) makeFreeLibcurlBridge();
         }else{
-          writeErr("[!] Relay down - falling back to local GGUF.\r\n");
-          $("engine").value = "local"; syncBar();
-          if(!wll){
-            write("Loading "+parseGguf().file+" for fallback...\r\n");
-            try{ await loadLocalModel(); }
-            catch(e){ wll = null; throw new Error("Relay down and local model failed: "+(e?.message||e)); }
-            write("\r\nModel ready ("+(HAS_GPU ? "WebGPU" : "CPU, slow")+").\r\n");
+          writeErr("[!] Free tier unreachable - the relay or the upstream refused the connection. Falling back to local GGUF.\r\n");   // NOT "relay down": the relay answers fine while a single destination is blocked
+          if(myGen !== engineGen) write("[!] You switched engines - that choice owns this run.\r\n");
+          else{
+            const ok = await fallbackToLocal();
+            if(!ok) throw new Error("free tier unreachable and the local model failed too");
+            if(ok === true){ makeWllamaBridge(); usedLocal = true; }   // NOT gen-guarded: fallbackToLocal bumps engineGen itself, so a myGen check here could never pass
           }
-          makeWllamaBridge();
-          usedLocal = true;
         }
+      }else if(mode === "chatgpt"){
+        await ensureLibcurl();
+        const tok = cgptTok() || (bootRun ? "" : await cgptLogin());   // a boot resume carries no user activation, so a popup here is blocked, times out after 15 min and FATALs into a reload loop. Signed out we simply do not install the bridge; noEngine then waits for the user to pick a tier.
+        cgptModelList(await cgptFetchModels(tok));
+        // rebuild the effort list too: this is a programmatic model switch, so the `change` listener that normally does
+        // it never fires. Without it the dropdown shows the PLACEHOLDER model's levels, the saved level is dropped, the
+        // bridge's includes() guard then sends no `reasoning` at all, and cfg.effort is overwritten with the wrong one.
+        if(modelOverride && [...$("modelSelect").options].some(o => o.value === modelOverride)){ $("modelSelect").value = modelOverride; cgptEffortList(); }
+        modelOverride = $("modelSelect").value;
+        write("ChatGPT account: " + modelOverride + "\r\n");
+        if(myGen === engineGen) makeChatgptBridge();
       }else{
         makeHttpBridge();
       }
@@ -653,9 +1346,26 @@ sys.modules["requests"] = _r
 sys.modules["requests.exceptions"] = _ex
 `);
 
-      const npcRes = await fetch("./npc.py", { cache:"no-cache" });
-      if(!npcRes.ok) throw new Error("npc.py: HTTP "+npcRes.status);
-      const src = await npcRes.text();
+      // Two ways to get the sim source, in this order:
+      //   1. fetch ./npc.py  - the dev layout. Editing npc.py and reloading picks the change up immediately.
+      //   2. the embedded copy - the single-file build. A file:// page is an opaque origin, so the browser refuses to
+      //      let it read npc.py sitting right next to it, and NO permission exists to change that. Embedding is the
+      //      only way a double-clicked page can work, so build_single.py inlines npc.py as base64 for releases.
+      let src = null, embedded = null;
+      // base64, never a template literal: npc.py contains both a backtick and ${, either of which would end a literal
+      // early. The blob is committed, so a downloaded index.html runs on its own with nothing to install.
+      const b64 = (document.getElementById("npcpy")?.textContent || "").trim();
+      if(b64) embedded = new TextDecoder().decode(Uint8Array.from(atob(b64), c => c.charCodeAt(0)));
+      try{
+        const npcRes = await fetch("./npc.py", { cache:"no-cache" });
+        if(npcRes.ok) src = await npcRes.text();
+      }catch(_){ }   // a file:// page is an opaque origin and throws here; expected, and the blob covers it
+      // Two copies of the sim can disagree, so the one path that can SEE both says so. Only a dev serving the folder
+      // ever hits this; a player has no npc.py to compare against.
+      if(src !== null && embedded !== null && src !== embedded)
+        writeErr("\r\n[build] the embedded npc.py is stale - running the copy on disk instead. Re-embed before publishing.\r\n");
+      if(src === null) src = embedded;
+      if(src === null) throw new Error("npc.py is missing and nothing is embedded in this page.");
       pyodide.globals.set("NPC_SRC", src);
       await pyodide.runPythonAsync(`
 import sys, types
@@ -666,11 +1376,22 @@ sys.modules["npc"] = _npc
 
       traitStore[$("traitWho").value] = $("traitVal").value;
       const traits = [traitStore["0"]||"", traitStore["1"]||"", traitStore["2"]||""];
-      if(sess && sess.npcLen !== src.length){ writeErr("[resume] npc.py changed since the save - starting fresh.\r\n"); sessClear(); }
-      if(!sess) sess = { v:2, rid: genRid(), npcLen: src.length, cfg: { mode, base, model: modelOverride || modelName, days: numDays, player: playerName, traits }, log: [] };
-      if(!sess.rid) sess.rid = genRid();   // resumed v1 session: mint the run-id so daily upserts have a stable key
+      let h = 2166136261; for(let i = 0; i < src.length; i++) h = Math.imul(h ^ src.charCodeAt(i), 16777619);   // FNV-1a: length alone accepted same-size edits (ORDER_COST 10 -> 11) and replayed a log into changed rules
+      const npcSig = (h >>> 0).toString(36);
+      // The guard is about REPLAY: a recorded log only rebuilds its run under the rules that produced it, so feeding
+      // the same replies through an edited npc.py silently grows a different world. A snapshot is state, not inputs to
+      // re-run - nothing is re-derived from it - so it is exempt until it has recorded turns of its own, and a session
+      // with no log adopts THIS build's signature, because this build is the one those turns will come from.
+      if(sess && sess.log.length && sess.npcSig !== npcSig){
+        if(sess.snap){ writeErr("[resume] npc.py changed - keeping the restored state, dropping "+sess.log.length+" replayable turns.\r\n"); sess.log = []; }
+        else{ writeErr("[resume] npc.py changed since the save - starting fresh.\r\n"); sessClear(); }
+      }
+      if(sess && !sess.log.length){ sess.npcSig = npcSig; sess.npcLen = src.length; }
+      if(!sess) sess = { v:2, rid: genRid(), npcLen: src.length, npcSig, cfg: { mode, base, model: modelOverride || modelName, days: numDays, player: playerName, traits }, log: [] };
+      if(!/^[0-9a-f]{32}$/.test(sess.rid || "")) sess.rid = genRid();   // resumed v1 session, OR a loaded run file carrying a crafted rid - it is interpolated straight into the submit URL
+      ridRemember(sess.rid);   // AFTER the mint: storing it first wrote the string "undefined" on exactly the resume path this is for
       pyodide.globals.set("PLAYER_NAME", playerName);
-      pyodide.globals.set("MODE", usedLocal ? "local" : mode);
+      pyodide.globals.set("MODE", myGen === engineGen ? (usedLocal ? "local" : mode) : $("engine").value);   // a startup-time switch owns MODE too, else endpoint-only `reasoning` is gated on a tier that isn't running
       pyodide.globals.set("MODEL_OVERRIDE", modelOverride || "");
       pyodide.globals.set("TRAITS_JSON", JSON.stringify(traits));   // JSON preserves empty slots + commas in trait text
       await pyodide.runPythonAsync(`
@@ -685,8 +1406,9 @@ def _llm_post_http(messages, max_tokens=None, temperature=0.5, retries=50, timeo
     data = {'model': _npc.MODEL_NAME, 'messages': list(messages),
             'max_tokens': int(max_tokens), 'temperature': float(temperature)}
     if MODE == "endpoint" and _npc.REASONING_ENABLED: data['reasoning'] = {'enabled': True}   # local ignores it, free proxy drops it
-    out = run_sync(js.httpComplete(json.dumps(data)))
-    return str(out or "")
+    # npc.py's own 50x backoff is replaced by this seam; httpComplete does the bounded wait-out (4 tries, capped 20s)
+    # so the retry stays below the resume log. retries=1 (the diary summarizer) still means fast-fail.
+    return str(run_sync(js.httpComplete(json.dumps(data), 4 if retries > 1 else 1)) or "")
 
 if MODEL_OVERRIDE: _npc.MODEL_NAME = MODEL_OVERRIDE
 _npc.llm_post = _llm_post_http
@@ -703,37 +1425,96 @@ if PLAYER_NAME:
 _npc.PERSONALITIES = json.loads(TRAITS_JSON)
 `);
 
-      const tierNow = usedLocal ? "local" : mode;
-      curTier = tierNow; curModel = modelOverride || modelName || ""; curPlayer = playerName; curDaysReq = numDays;
+      if(globalThis._httpRaw === noEngine){   // both the startup path and the switch lost the race - somebody must own the turn
+        const w = $("engine").value;   // what the user wanted when we got here; re-read after any wait, they may have moved again
+        if(w === "chatgpt" && !cgptTok() && cgptLoginFlight){ try{ await cgptLoginFlight; }catch(_){ } }   // a sign-in the user is mid-way through owns this run - don't declare failure over their shoulder
+        if(w === "local" && !wll && wllLoading){ try{ await wllLoading; }catch(_){ } }
+      }
+      if(globalThis._httpRaw === noEngine){   // re-test AFTER those waits: a switch may have installed a bridge meanwhile, and it owns the run
+        const m = $("engine").value;
+        // libcurl.set_websocket is a plain setter with no throw path, so presence + a try/catch proves nothing;
+        // `ready` is the library's own getter over wasm_ready, and set_websocket is what binds fetch once it is up
+        if(!lcReady && typeof libcurl !== "undefined" && libcurl.ready){ try{ libcurl.set_websocket(WISP_RELAY); lcReady = true; }catch(_){ } }
+        if(m === "local" && wll) makeWllamaBridge();
+        else if(m === "free" && lcReady) makeFreeLibcurlBridge();
+        else if(m === "chatgpt" && cgptTok() && lcReady) makeChatgptBridge();
+        else if(m === "endpoint") makeHttpBridge();
+        // else: leave noEngine installed. It BLOCKS the first live turn until an engine is picked instead of throwing,
+        // so a signed-out ChatGPT resume replays offline and then waits, rather than FATALing into a reload loop.
+        // Still never falls through to the endpoint tier - that would spend the user's own key on a run labelled "free".
+        else write("\r\n\x1b[33m[engine] not signed in / not ready - the run will pause at its first live turn until you pick an engine above.\x1b[0m\r\n");
+      }
+      // a switch during startup may have won the bridge; every label below must describe whoever actually did
+      const liveGen = myGen === engineGen, tierNow = liveGen ? (usedLocal ? "local" : mode) : $("engine").value;
+      curTier = tierNow; curPlayer = playerName; curDaysReq = numDays;
+      // read the picker LIVE for the catalog tiers: a resumed free run whose saved id rotated out of the catalog is
+      // corrected by probeFreeModels mid-startup, and taking the stale modelOverride here undid that correction.
+      if(liveGen){ curModel = ((tierNow === "free" || tierNow === "chatgpt") && $("modelSelect").value) || modelOverride || modelName || ""; engineWas = mode; }   // the bridge just installed IS the truth; without this a later failed switch reverts the label to the page-load tier
+      else if(!curModel) curModel = (tierNow === "free" || tierNow === "chatgpt") ? $("modelSelect").value : $("model").value;   // a failed-and-reverted switch bumps the gen without claiming curModel, leaving the archive label empty
+      try{ pyodide?.globals.set("MODE", curTier); }catch(_){ }   // MODE was frozen before runPythonAsync and before the recovery awaits; a switch landing in that window would leave endpoint-only `reasoning` gated on the startup tier
+      if(sess){   // cfg was written from the STARTUP tier, so a switch that won during load would resume onto the wrong one
+        const cfg = (sess.cfg ||= {});
+        cfg.mode = curTier;
+        // for local, cfg.model is restored into #model and re-parsed as owner/repo/file.gguf - a bare filename there silently resolves to HF_DEFAULT
+        const cm = curTier === "local" ? ($("model").value.trim() || modelStash.local || HF_DEFAULT) : curModel;
+        if(cm) cfg.model = cm;
+        // only ChatGPT has reasoning levels, and the select is still EMPTY here (the catalog lands seconds later), so
+        // writing it unconditionally would erase the saved level with "" on every single resume
+        if(curTier !== "chatgpt") cfg.effort = "";
+        else if($("effort").value) cfg.effort = $("effort").value;
+        sessSave();
+      }
       setState("live");
       if(playerName) write("\r\n\x1b[33m[SUBJECT]\x1b[0m You are "+playerName+" - type response + action on your turns.\r\n");
       if(playerName && $("contrib").checked) write("\r\n\x1b[1;33m[SHARE]\x1b[0m Player run: its log, \x1b[1mincluding what you type\x1b[0m\x1b[1;33m, uploads daily to a research archive. Uncheck 'Share log daily' to keep it local (that also withdraws anything already sent).\x1b[0m\r\n");
       write("\r\n\x1b[2m=== run start :: "+tierNow+" :: "+(playerName ? "player (unlimited)" : numDays+" day(s)")+" ===\x1b[0m\r\n");
-      $("dl").disabled = false;   // history downloadable mid-run (agents populate as run_simulation starts)
+      everRan = true; dlSync();   // history downloadable mid-run (agents populate as run_simulation starts); the load affordance is gone for good now
       saveInterval = setInterval(() => { if(sessLive) saveRun(curDay); }, 180000);   // periodic save catches abandoners who never hit a day boundary
       visHandler = () => { if(document.visibilityState === "hidden") saveRun(curDay, { keepalive:true, quiet:true }); };
       document.addEventListener("visibilitychange", visHandler);
-      await pyodide.runPythonAsync("import sys; sys.modules['npc'].run_simulation(num_days="+numDays+")");
+      // A snapshot seeds the cast from saved STATE (npc.py restore_cast) instead of a day-1 cast, and the sim opens on
+      // the day it was saved. curDay must start there too: the stdout day-continuity check only accepts curDay or
+      // curDay+1, so a run opening on Day 3 against a curDay of 0 would never advance it and every archive save would
+      // be stamped day 0. Read it back through npc.py's own parser rather than re-deriving the clock here.
+      pyodide.globals.set("SNAP_JSON", sess && sess.snap ? JSON.stringify(sess.snap) : "");
+      if(sess && sess.snap){ try{ curDay = pyodide.runPython("import sys, json; sys.modules['npc'].snapshot_clock(json.loads(SNAP_JSON))['day']") | 0; }catch(_){ } }
+      await pyodide.runPythonAsync("import sys, json; sys.modules['npc'].run_simulation(num_days="+numDays+", snapshot=(json.loads(SNAP_JSON) if SNAP_JSON else None))");
       await saveRun(curDay || numDays, { final:true });   // final save BEFORE sessClear (needs sess.rid + sessLive)
       sessClear();   // clean completion: nothing left to resume
       write("\r\n\x1b[2m=== run complete ===\x1b[0m\r\n");
     }catch(e){
-      try{ await saveRun(curDay, { final:true, quiet:true }); }catch(_){}   // best-effort archive of a crashed run
-      setState("fault");
+      setState("fault");   // BEFORE the save: that upload can wait ~50s on the mutex plus a 45s POST, and a silent Stop-looking hang invites the one click that wipes the crashed run
       writeErr("\r\n[FATAL] "+(e?.stack || e)+"\r\n");
+      // Pyodide + libcurl + wllama are three WASM heaps in one tab; after enough reloads the browser simply has no
+      // address space left, and the raw RangeError tells the user nothing about the one thing that fixes it.
+      if(/WebAssembly|could not allocate|Out of memory/i.test(String(e?.message || e)))
+        write("\x1b[33m[!] the browser ran out of memory for WebAssembly - CLOSE THIS TAB and reopen it (a reload reuses the same exhausted process). The run is saved.\x1b[0m\r\n");
+      try{ await saveRun(curDay, { final:true, quiet:true }); }catch(_){}   // best-effort archive of a crashed run
+      // `|| sess.snap`: a state restore that FATALs before recording a turn still holds the whole world, so it is
+      // just as resumable as a replay log - say so rather than letting the user assume it is gone.
+      if(sess && (sess.log.length || sess.snap)) write("\x1b[2m[resume] this run is still saved - reload (F5) to continue it.\x1b[0m\r\n");   // the session survives a FATAL, but every visible affordance used to clear it
+      try{ console.error("[NPCAgent FATAL]", e); }catch(_){ }   // mirrored to the console, where it selects cleanly - never to the clipboard, which is the user's
     }finally{
       if(saveInterval){ clearInterval(saveInterval); saveInterval = null; }
       if(visHandler){ document.removeEventListener("visibilitychange", visHandler); visHandler = null; }
       if(lineReader){ const r = lineReader; lineReader = null; r.cleanup(); }   // a FATAL mid-player-turn leaves a stale reader: stdin stuck enabled, Enter-to-restart blocked
       running = false; $("run").textContent = "Restart";
       for(const el of $("bar").querySelectorAll("input,select")) el.disabled = false;
+      // a re-armed resume is still pre-run: run() reads these four from the DOM, so they must stay frozen or editing
+      // Subject/Days between the FATAL and the retry desyncs the replay
       syncBar();
       if(document.body.dataset.state === "live") setState("ended");
     }
   }
   $("run").addEventListener("click", () => {
-    if(running){ sessClear(); location.reload(); }   // Stop = the one deliberate way to forget a session
-    else { sessClear(); run(); }                     // Run/Restart click = fresh start (auto-resume never passes through here)
+    if(running){
+      if(resumeGuard && performance.now() - resumeGuard < 1500){   // monotonic: a backwards wall-clock step would leave Date.now() negative here and kill Stop until the clock caught up
+        write("\r\n\x1b[2m[run] resuming - press Stop again to discard this run.\x1b[0m\r\n");   // only swallows a double-click on the button you were just told to press; the next press really does discard
+        return;
+      }
+      sessClear(); location.reload();
+    }
+    else { bootRun = false; sessClear(); run(); }   // Run/Restart click = fresh start (auto-resume never passes through here). No confirm: pressing the button IS the decision, and the run is archived server-side anyway.
   });
   // read each NPC's history straight from Python -> ShareGPT-style JSON (one conversation per agent, its own POV)
   function buildHistoryJson(){
@@ -766,6 +1547,7 @@ if not _a:
 else:
     g=f=e=ch=0
     for a in _a:
+        if a.get("player"): continue   # human turns are recorded as role=assistant too; counting them let a typed "..." fail a healthy model, or verbose typing rescue a bad one
         for m in a["history"]:
             if m["role"] != "assistant": continue
             g += 1
@@ -774,11 +1556,18 @@ else:
             r = (r or "").strip(); ch += len(r)
             if not r or r == "...": e += 1
             elif r == FB: f += 1
-    sg = [{"id":a["name"],"conversations":_conv(a)} for a in _a]
+    sg = [{"id":a["name"],"by":("human" if a.get("player") else "model"),"conversations":_conv(a)} for a in _a]   # provenance on the row: an analyst must not read a human transcript as model output
     sg = [o for o in sg if any(t["from"]=="gpt" for t in o["conversations"])]
     diaries = {a["name"]: a.get("diary",[]) for a in _a}
     stats = {a["name"]: {"money":a.get("money"),"age":_m.agent_age(a),"dead":a.get("dead",False)} for a in _a}
-    _env = _j.dumps({"sharegpt":sg,"diaries":diaries,"stats":stats,"quality":{"gpt":g,"fb":f,"empty":e,"chars":ch}}, ensure_ascii=False)
+    # pregnancies too: a countdown lives only in npc.py memory, so without this a saved run always came back
+    # childless - the one piece of state a player would most notice losing. Names, not objects, so it serialises.
+    pregs = [{"parents":list(x.get("parents") or []), "due":x.get("due"), "namer":x.get("namer")}
+             for x in (getattr(_m, "pregnancies", None) or [])]
+    # conception attempts too: the count is per pair and never resets by design, so losing it on save would
+    # silently hand a tired couple a fresh start every reload. JSON keys must be strings -> "A|B".
+    tries = {"|".join(k): v for k, v in (getattr(_m, "conception_tries", None) or {}).items()}
+    _env = _j.dumps({"sharegpt":sg,"diaries":diaries,"stats":stats,"pregnancies":pregs,"tries":tries,"quality":{"gpt":g,"fb":f,"empty":e,"chars":ch}}, ensure_ascii=False)
 _env`;
 
   function buildEnvelope(day){
@@ -799,55 +1588,474 @@ _env`;
     if(!q || q.gpt < 6) return false;
     if((q.fb + q.empty) / q.gpt >= 0.3) return false;
     if(q.chars < 400) return false;
-    if(errorLines > q.gpt * 0.3) return false;
+    if(llmTurns && errorLines > llmTurns * 0.3) return false;   // errorLines is cumulative; q.gpt is windowed by MAX_HISTORY_MESSAGES, so comparing them made any long run blacklist itself forever
     return true;
   }
 
   // One run = one row, blind-upserted daily under the run's capability id (sess.rid). Throttled to >=60s between
   // network saves; gated on share + live + not-tainted. Never throws into the sim.
+  const SHARE_TIP = $("contribBox").title;
+  let fxTimer = 0;
+  function shareFx(cls, note){   // "busy" latches until the next call; ok/err self-clear so the box returns to a plain square
+    const b = $("contribBox");
+    if(!b) return;
+    clearTimeout(fxTimer);
+    b.classList.remove("busy", "ok", "err");
+    void b.offsetWidth;          // reflow, else a second identical flash never replays the animation
+    b.classList.add(cls);
+    if(note) b.title = note + "\n\n" + SHARE_TIP;
+    if(cls === "busy" && !note) b.title = "uploading...\n\n" + SHARE_TIP;   // else the tooltip advertises the PREVIOUS result while a new upload is in flight
+    if(cls !== "busy") fxTimer = setTimeout(() => b.classList.remove(cls), 600);
+  }
+
   async function saveRun(day, opts){
     opts = opts || {};
-    if(!$("contrib")?.checked || !sess || !sess.rid || !sessLive || tainted) return;
+    if(!$("contrib")?.checked || !sess || !sess.rid || !sessLive || tainted || rwCommitted) return;   // rwCommitted covers ALL three call sites: reload() only schedules navigation, and the DAY-banner save at the stdout hook would otherwise upload pre-rewind state under the new rid
     const nowT = Date.now();
-    if(saving){ pendingDay = Math.max(pendingDay, day); return; }
+    if(saving){
+      if(!opts.final){ pendingDay = Math.max(pendingDay, day); return; }
+      for(let i = 0; i < 100 && saving; i++) await sleepMs(500);   // the final save must not be queued (run() clears sess right after), and must outlast the 45s submit timeout or it POSTs concurrently
+    }
     if(!opts.final && !opts.keepalive && nowT - lastSave < 60000){ pendingDay = Math.max(pendingDay, day); return; }
     saving = true;
     try{
+      if(tooBig) return;   // latched: the envelope only grows, so never rebuild it again
+      if(opts.keepalive && transcriptLen > 55000) return;   // keepalive fetch body caps at ~64 KB, and the transcript alone already exceeds it - bail BEFORE paying for the envelope
+      if(!opts.final && curDay === savedDay && transcriptLen === savedLen) return;   // nothing new since the last successful upload (stalled sim, player at a prompt) - the 3-min tick would re-send identical bytes
       const env = buildEnvelope(day);
       if(!env || !qualityOk(env.quality)) return;
       const body = JSON.stringify(env);
-      if(opts.keepalive && body.length > 55000) return;   // keepalive fetch body caps at ~64 KB
-      const meta = encodeURIComponent([curTier, curModel||"?", "d"+env.day, curPlayer?"player":"ai", new Date().toISOString().slice(0,10)].join(" ")).slice(0,290);
+      const bodyBytes = new TextEncoder().encode(body).length;   // the worker measures UTF-8 bytes; .length counts UTF-16 units, so a Cyrillic or CJK run sailed past this check and 413'd forever
+      if(opts.keepalive && bodyBytes > 55000) return;
+      if(bodyBytes > 700000){   // the worker caps a row at 800 KB and the cast only grows (births, dead agents retained), so this would otherwise 413 every save from here on
+        tooBig = true;            // latch: without it every later tick still rebuilds and stringifies 700 KB just to throw it away
+        if(!opts.quiet) write("\r\n\x1b[2m[share] run too large to archive further - the last stored day stands.\x1b[0m\r\n");
+        return;
+      }
+      if(!$("contrib").checked) return;   // opted out while the envelope was being built - do not send what the user just withdrew
+      // slice BEFORE encoding (cutting an encoded string severs a %XX), and slice by CODE POINT - a plain .slice can
+      // split a surrogate pair out of a pasted emoji in the model field, and encodeURIComponent throws URIError on a lone half
+      const meta = encodeURIComponent([...[curTier, curModel||"?", "d"+env.day, curPlayer?"player":"ai", new Date().toISOString().slice(0,10)].join(" ")].slice(0,96).join(""));
+      shareFx("busy");
       const r = await fetch(SHARE_BASE+"/submit?k="+encodeURIComponent(SHARE_KEY)+"&rid="+sess.rid+"&day="+env.day+"&meta="+meta,
-        { method:"POST", headers:{"content-type":"application/json"}, body, keepalive: !!opts.keepalive });
-      if(r.ok){ lastSave = Date.now(); savedOnce = true;
-        if(!opts.quiet){ const j = await r.json().catch(() => ({})); write("\r\n\x1b[2m[shared] day "+(j.day ?? env.day)+" archived (save "+(j.saves ?? "?")+"). uncheck 'Share log daily' to opt out + withdraw.\x1b[0m\r\n"); } }
-      else if(!opts.quiet && r.status !== 400) write("\r\n\x1b[2m[share] skipped (HTTP "+r.status+")\x1b[0m\r\n");
-    }catch(_){}
+        { method:"POST", headers:{"content-type":"text/plain"}, body, keepalive: !!opts.keepalive,   // text/plain is CORS-safelisted, so no preflight - the page-hide keepalive save cannot afford a second round trip
+          signal: AbortSignal.timeout(opts.keepalive ? 10000 : 45000) });                            // the final save gates sessClear + "run complete"; a hung archive used to freeze the run forever, and an un-timed keepalive owns `saving` indefinitely on a page that never actually unloads
+      if(r.ok){ lastSave = Date.now(); savedDay = curDay; savedLen = transcriptLen;
+        ridRemember(sess.rid);   // re-register after a withdraw: that path clears RID_KEY while THIS rid is still live, so without this a re-ticked run uploads to a row nothing points at and can never be erased again. (Mint-time registration at the three genRid sites covers everything else; this is the one case it cannot.)
+        const j = await r.json().catch(() => ({}));
+        const skipped = j.stored === false;   // the worker's day-guard refused an older day; benign, but not the archive the user thinks they have
+        shareFx(skipped ? "err" : "ok", "day " + (j.day ?? env.day) + (skipped ? " NOT stored - the archive holds a newer day for this run"
+                                                                              : " archived (save " + (j.saves ?? "?") + ")")); }
+      else{
+        // 400 bad_envelope, 403 key rotated, 413 too large, 507 archive full: all permanent for this run. Without the
+        // latch each one still pays a full envelope rebuild through Pyodide and an up-to-700 KB upload every 3 minutes.
+        bad400 = r.status === 400 ? bad400 + 1 : 0;   // 400 is the least specific status here - an edge or proxy can emit one - so require two in a row; 403/413/507 are deterministic
+        const dead = r.status === 403 || r.status === 413 || r.status === 507 || bad400 >= 2;
+        if(dead){ tooBig = true; if(!opts.quiet) write("\r\n\x1b[2m[share] archiving stopped for this run (HTTP " + r.status + ").\x1b[0m\r\n"); }
+        shareFx("err", "last save skipped (HTTP " + r.status + ")");
+      }
+    }catch(e){ shareFx("err", "last save failed (" + (e?.message || e) + ")"); }
     finally{
       saving = false;
-      if(pendingDay && sessLive && !opts.keepalive){ const p = pendingDay; pendingDay = 0; if(Date.now() - lastSave >= 60000) saveRun(p); }
+      if(pendingDay && sessLive && !opts.keepalive && Date.now() - lastSave >= 60000){ const p = pendingDay; pendingDay = 0; saveRun(p); }   // clear it only when actually retrying, else a deferred day is silently dropped
     }
   }
 
   async function withdrawRun(){   // capability-scoped self-erasure of THIS run's uploaded data
-    if(!sess || !sess.rid || !savedOnce) return;
-    try{ await fetch(SHARE_BASE+"/withdraw?k="+encodeURIComponent(SHARE_KEY)+"&rid="+sess.rid, { method:"POST", keepalive:true });
-      savedOnce = false; write("\r\n\x1b[2m[share] this run's uploaded data withdrawn.\x1b[0m\r\n");
-    }catch(_){}
+    // no savedOnce guard: a RESUMED run keeps its rid, so rows from an earlier tab/session exist even though this
+    // page has uploaded nothing yet. Deleting an absent rid is a harmless no-op, and the checkbox PROMISES this.
+    const rids = [...new Set([sess?.rid, ...ridAll()].filter(r => typeof r === "string" && /^[0-9a-f]{32}$/.test(r)))];   // sess.rid is normalised by run(), which has not necessarily executed yet - filter it the same way ridAll() does   // sessClear() nulls sess on completion/Stop, and changing your mind AFTER a run is the likeliest moment
+    if(!rids.length) return;
+    for(let i = 0; i < 250 && saving; i++) await sleepMs(200);   // must outlast a submit's own 45s timeout, else the POST lands after the DELETE and re-creates the row
+    if($("contrib").checked) return;   // re-ticked while we waited: honour the current choice, not the one from 50s ago
+    if(withdrawing) return;   // off->on->off used to spawn overlapping loops over overlapping id sets
+    withdrawing = true;
+    let gone = 0; const failed = [];
+    try{
+    for(const rid of rids){
+      if($("contrib").checked){ failed.push(rid); continue; }   // re-ticked mid-loop: N sequential deletes can run for minutes, so re-check each time rather than once up front
+      try{
+        const r = await fetch(SHARE_BASE+"/withdraw?k="+encodeURIComponent(SHARE_KEY)+"&rid="+rid,
+                              { method:"POST", keepalive:true, signal: AbortSignal.timeout(20000) });
+        if(r.ok) gone++; else failed.push(rid);
+      }catch(_){ failed.push(rid); }   // each rid is an independent DELETE: one network blip must not abandon the rest
+    }
+    savedDay = -1; savedLen = -1;
+    try{ if(failed.length) localStorage.setItem(RID_KEY, JSON.stringify(failed)); else localStorage.removeItem(RID_KEY); }catch(_){ }   // keep only what is still out there, so re-ticking the box retries exactly those
+    if(failed.length) writeErr("\r\n[share] withdrew "+gone+", "+failed.length+" still archived - untick again to retry.\r\n");   // report what DID go: "your data is still archived" was false after k successful deletes
+    else write("\r\n\x1b[2m[share] withdrawn - "+gone+" uploaded run"+(gone === 1 ? "" : "s")+" erased.\x1b[0m\r\n");
+    }finally{ withdrawing = false; }
+  }
+
+  // Before anything has run there is no history to download, so the button flips: same slot, arrow the other way, loads a run instead.
+  let everRan = false;
+  function dlSync(){
+    const load = !everRan;
+    $("dl").classList.toggle("load", load);
+    $("dl").disabled = false;
+    $("dl").title = load ? "Load a saved run (.json) and continue it" : "Save this run: a ShareGPT history (dataset) AND a resumable run file you can load back";
+  }
+  // ---- Self-packager --------------------------------------------------------------------------------------------
+  // The hosted page IS the build step. It fetches its own two files and welds them into one standalone HTML, so there
+  // is no CI, no build script, and no base64 duplicated into the repo. npc.py stays the single copy of the sim, which
+  // makes drift impossible rather than merely detectable.
+  // Only offered where it can work: a file:// page cannot fetch its own sources, and an already-packaged file has
+  // nothing left to fetch, so the button hides itself in both cases.
+  const packSlot = /(<script type="text\/plain" id="npcpy">)([\s\S]*?)(<\/script>)/;
+  async function packStandalone(){
+    const btn = $("pack");
+    btn.disabled = true;
+    try{
+      const [htmlRes, pyRes] = await Promise.all([
+        fetch(location.pathname, { cache:"no-cache" }),
+        fetch("./npc.py", { cache:"no-cache" })
+      ]);
+      if(!htmlRes.ok || !pyRes.ok) throw new Error("HTTP " + htmlRes.status + "/" + pyRes.status);
+      const html = await htmlRes.text(), py = new Uint8Array(await pyRes.arrayBuffer());
+      if(!packSlot.test(html)) throw new Error("this page has no npcpy slot to fill");
+      // btoa needs latin1, so walk the raw bytes rather than handing it a UTF-16 string
+      let bin = ""; for(const b of py) bin += String.fromCharCode(b);
+      const out = html.replace(packSlot, (m, a, _mid, c) => a + btoa(bin) + c);
+      saveFile("NPCAgent.html", out);
+      write("\r\n\x1b[32m[pack] NPCAgent.html built - " + Math.round(out.length / 1024) + " KB, one file, double-click it offline.\x1b[0m\r\n");
+    }catch(e){
+      writeErr("\r\n[pack] could not package this page (" + (e?.message || e) + ")\r\n");
+    }
+    btn.disabled = false;
+  }
+  if(location.protocol === "file:") $("pack").classList.add("hidden");   // nothing to fetch from an opaque origin
+  else if(($("npcpy")?.textContent || "").trim()) $("pack").classList.add("hidden");   // already a standalone build
+  else{
+    $("pack").addEventListener("click", packStandalone);
+    // A linkable download: /NPCAgent/#download packages immediately on load. A hash needs no directory, no extra file
+    // and no server rewrite - the static host never sees it - so it can be handed out as a plain link.
+    // Chrome can refuse a download with no user gesture, so if nothing lands the button is still right there.
+    if(/^#!?(download|standalone)$/i.test(location.hash)){
+      write("\r\n\x1b[32m[pack] building your standalone copy...\x1b[0m\r\n");
+      packStandalone();
+    }
   }
 
   $("dl").addEventListener("click", () => {
-    let json;
-    try{ json = buildHistoryJson(); }catch(e){ writeErr("\r\n[download] "+(e?.message||e)+"\r\n"); return; }
-    if(!json){ writeErr("\r\n[download] no history yet - run first.\r\n"); return; }
-    const url = URL.createObjectURL(new Blob([json], {type:"application/json"}));
-    const a = document.createElement("a"); a.href = url; a.download = "npcagent-history.json";
+    if(!everRan) return $("dlFile").click();
+    // The RUN file is the one that must never fail to save, so it is never gated on the dataset. buildHistoryJson()
+    // returns nothing until some agent has a completed exchange, and blocking on that meant an early save produced
+    // no file at all - which is precisely how a run gets lost.
+    let json = "";
+    try{ if(pyodide) json = buildHistoryJson() || ""; }catch(e){ writeErr("\r\n[download] history unavailable ("+(e?.message||e)+") - saving the run anyway.\r\n"); }
+    // ONE file, because two downloads from one click is not reliable - Chrome's multiple-download protection silently
+    // drops the second, which is how the loadable half went missing. It stays a ShareGPT DATASET first and a save file
+    // second: HF datasets/pyarrow - which LlamaFactory, Unsloth and TRL all load through - turns a top-level ARRAY into
+    // one row per conversation, but a top-level OBJECT into a single row with no `conversations` column at all. So the
+    // array IS the document and the resume payload rides as one extra column on the first record, serialised to a
+    // STRING so pyarrow infers a plain string instead of walking the whole event log's schema. Trainers ignore it.
+    if(sess && sess.log && (sess.log.length || sess.snap)){   // a state restore is resumable from its first tick: its world lives in .snap, not in the log
+      const { rid, ...portable } = sess;                                  // rid is a capability over the archive row - never leaves this browser
+      if(portable.cfg){ const { base, ...cfg } = portable.cfg; portable.cfg = cfg; }   // nor the endpoint URL
+      // Snapshot the world as it is NOW, not as the file we loaded described it. Carrying the old snap forward meant a
+      // save made hours later still restored the loaded moment: anything that happened since - a pregnancy, a death, a
+      // move - was only in `log`, and the npcSig guard drops `log` the moment npc.py changes. Re-snapshotting makes the
+      // save self-contained, so it survives an engine edit.
+      try{
+        const fresh = buildEnvelope(curDay);
+        if(fresh && fresh.sharegpt && fresh.sharegpt.length){
+          portable.snap = { sharegpt: fresh.sharegpt, diaries: fresh.diaries || {}, stats: fresh.stats || {}, day: curDay | 0 };
+          portable.past = pastOf(portable.snap);   // rewind reaches the whole saved history, not just the part this session recorded
+        }
+      }catch(_){ }   // no envelope yet (nothing completed): keep whatever snap we already had
+      const rows = json ? JSON.parse(json) : [];
+      if(rows.length) rows[0] = { ...rows[0], _npcagent_run: JSON.stringify(portable) };
+      else rows.push({ id: "_resume", conversations: [], _npcagent_run: JSON.stringify(portable) });   // nothing trainable yet, but never stop being loadable
+      saveFile("npcagent-run-day" + (curDay || 1) + ".json", JSON.stringify(rows));
+      write("\r\n\x1b[2m[saved] npcagent-run-day" + (curDay || 1) + ".json - a ShareGPT dataset that also loads back here to resume.\x1b[0m\r\n");
+      return;
+    }
+    if(!json) return writeErr("\r\n[download] nothing to save yet - let it run a turn first.\r\n");
+    saveFile("npcagent-history.json", json);   // no session to attach (a finished run that already cleared it): dataset only
+  });
+  $("dlFile").addEventListener("change", async e => {
+    const f = e.target.files?.[0];
+    e.target.value = "";   // else picking the same file twice fires no change event
+    if(!f) return;
+    try{
+      if(f.size > 20e6) throw new Error("run file too large (" + Math.round(f.size / 1e6) + " MB)");   // buffered and parsed whole; a 100 MB file would just hang the tab
+      let s = JSON.parse(await f.text());   // let, not const: the snapshot path below rewraps it into a session
+      // Name the actual mistake. The download button produces a ShareGPT *conversation history*, which looks like the
+      // obvious thing to load back but carries no event log and never could be resumed - saying only "not a saved run"
+      // left people re-loading it and wondering why.
+      // A bare ShareGPT history stores no stats, diaries, day or tier - but it does not need to. npc.py's restore_agent
+      // reads each agent's LAST context line ("located at the park, own $14, energy 72/79. It's Day2 23:00.") and
+      // recovers location, money, energy, the clock, and even age - capacity IS 100-age, so 79 means 21. So wrap it and
+      // let the snapshot path rebuild what the file never wrote. Diaries are the one thing genuinely absent: a history
+      // has no record of them, and inventing memories would be worse than starting with none.
+      // A dataset file whose first record carries the resume payload: unwrap it and take the replay path, so a saved run
+      // resumes exactly rather than being state-restored. The rest of the array stays the dataset, untouched.
+      if(Array.isArray(s) && s[0] && typeof s[0]._npcagent_run === "string"){
+        try{
+          const r = JSON.parse(s[0]._npcagent_run);
+          if(r && Array.isArray(r.log)) s = r;
+        }catch(_){ }   // corrupt payload: fall through and treat the file as a plain history
+      }
+      if(Array.isArray(s) && s[0] && s[0].conversations) s = { sharegpt: s, stats: {}, diaries: {} };
+      const MODES = ["free", "chatgpt", "local", "endpoint"];
+      const str = (v, n) => typeof v === "string" ? v.slice(0, n) : "";
+      // An ARCHIVE ENVELOPE (sharegpt + stats, no .log) - the shape the share worker stores and the run file's dataset
+      // half. It has no event log to replay, which is the whole point: it is what is left when the log is lost. Wrap it
+      // in an empty session so every path below (cfg whitelist, boot) treats it like any other loaded run; it just
+      // starts live instead of replaying. The .log test keeps a run file - which now carries `sharegpt` too - on the
+      // replay path where it belongs.
+      const snap = !Array.isArray(s.log) && snapOf(s);
+      if(snap){
+        let who = "";   // the player's NAME is nowhere in the envelope, only a boolean - the terminal echo of their own turns is the one place it survives
+        if(s.player){ const rp = /^>>> YOUR TURN <<<\s*[\r\n]+\s*\[([A-Za-z0-9_-]{1,24})\]/gm, tr = String(s.transcript || ""); let m2; while((m2 = rp.exec(tr))) who = m2[1]; }
+        // Nothing to recover from (transcript trimmed past the player's last turn): fall back to whatever Subject says
+        // right now. It resumes instantly either way, so this is the only way back in - type the name, load the file again.
+        if(!who) who = $("player").value;   // a bare history marks nobody as human (older exports had no `by`), so fall back to whatever Subject says - it defaults to PersonX, which is who the human usually is
+        s = { v:2, snap, log: [], past: pastOf(snap),   // past = the restored turns, so rewind reaches back into them
+              // no npcSig: run() stamps this build's, because this build is where the new events come from
+              cfg: { mode: s.tier, model: s.model, days: s.daysReq, player: who, traits: [] } };   // the envelope labels its own tier/model - re-validated by the whitelist below like any other file
+      }
+      if(!sessOk(s)) throw new Error("not a saved NPCAgent run");   // the same predicate sessLoad uses, or the file writes cleanly and then silently fails to load on the next boot
+      delete s.sharegpt;   // the dataset rides in the file for convenience but must not be re-stored: it is large, rebuildable, and would eat the localStorage quota the replay log needs
+      // A run file is something people SHARE, so its cfg is untrusted input that would otherwise pick this browser's
+      // network destination: cfg.base rides straight into the endpoint bridge, which POSTs every system prompt, every
+      // agent history and every line a player types. Rebuild cfg from a whitelist and drop `base` entirely - the URL is
+      // the one field the loader must never accept from a file. This sanitising is what makes an instant auto-resume
+      // safe, so it does not weaken just because nobody is asked to press a button any more.
+      const c = s.cfg || {};
+      s.cfg = { mode: MODES.includes(c.mode) ? c.mode : "free",
+                model: str(c.model, 120),
+                days: Number.isFinite(+c.days) && +c.days > 0 ? Math.floor(+c.days) : "",
+                player: str(c.player, 24).replace(/[^A-Za-z0-9_-]/g, ""),
+                effort: str(c.effort, 16),
+                traits: Array.isArray(c.traits) ? c.traits.slice(0, 3).map(t => str(t, 200)) : [] };
+      delete s.rid;   // the export strips this for a reason; a file must not hand this browser a capability over someone else's archive row. run() mints a fresh one.
+      s.fromFile = true;   // provenance, NOT a gate: the only thing it still buys is naming the repo before the local tier auto-downloads a multi-GB GGUF the file chose
+      localStorage.setItem(SESS_KEY, JSON.stringify(s));
+      location.reload();   // boot restores the setup and resumes straight away; a file saved from a different npc.py is caught by the npcSig guard, which says so
+    }catch(err){ writeErr("\r\n[load] " + (err?.message || err) + "\r\n"); }
+  });
+  /* ------------------------------------------------------------------ rewind */
+  // Truncating sess.log is exactly what a diverged replay already does; here it is chosen rather than detected.
+  const RW_MAX = 300;
+  let rwPrevFocus = null;
+  let rwOpen = false, rwSel = 0, rwItems = [], rwEsc = 0, rwEditing = -1, rwEditEvt = null, rwEditOrig = "", rwFootIdle = "";
+  // Mirrors npc.py's extract_clean_json: balanced, string-aware {...} spans, keeping the LAST valid one. A bare
+  // JSON.parse rejected most real replies (models wrap the object in prose or ```json fences), which made every such
+  // row read as unrewritable - so Enter silently rewound instead of opening the field.
+  function rwJson(v){
+    const t = String(v || "");
+    let depth = 0, start = 0, inStr = false, esc = false, out = null;
+    for(let i = 0; i < t.length; i++){
+      const c = t[i];
+      if(inStr){ inStr = !(c === '"' && !esc); esc = c === "\\" && !esc; }
+      else if(c === '"') inStr = true;
+      else if(c === "{"){ if(!depth) start = i; depth++; }
+      else if(c === "}" && depth && !--depth){
+        // acceptance mirrors npc.py: it keeps any span CONTAINING "response" and coerces. Requiring a string here made
+        // the picker pick a different span than the sim did, so an edit preserved an action the run never executed.
+        try{ const j = JSON.parse(t.slice(start, i + 1)); if(j && typeof j === "object" && "response" in j) out = j; }catch(_){ }
+      }
+    }
+    return out;
+  }
+  function rwParse(e){   // an l event is the model's raw reply; an i event is the bare line you typed
+    if(e.t === "i") return { said: String(e.v || ""), action: "" };
+    const j = rwJson(e.v);
+    // same coercion npc.py applies, so what the picker shows and what the sim executed cannot disagree
+    return j ? { said: j.response === null ? "None" : String(j.response), action: typeof j.action === "string" ? j.action.trim() : "none" }
+             : { said: String(e.v || ""), action: "" };
+  }
+  function rwText(e){
+    const day = e.d ? "D" + e.d + (e.c ? " " + e.c : "") : "";
+    const { said, action } = rwParse(e);
+    const flat = said.replace(/\s+/g, " ").trim();
+    if(e.t === "i") return [day, "you typed", flat || "(blank line)"];
+    return [day, e.n || "NPC", (flat || "(empty reply)") + (action ? "   -> " + action : "")];
+  }
+  function rwRender(){
+    const list = $("rwList");
+    list.textContent = "";
+    rwItems.forEach((it, k) => {
+      const [day, who, said] = rwText(it.e);
+      const row = document.createElement("div");
+      row.className = (k === rwSel ? "sel " : "") + (it.e.t === "i" ? "you" : "");
+      const d = document.createElement("span"); d.className = "day";  d.textContent = day;    // textContent, never innerHTML: these are model outputs
+      const w = document.createElement("span"); w.className = "who";  w.textContent = who;
+      const s = document.createElement("span"); s.className = "said"; s.textContent = said;
+      row.append(d, w, s);
+      list.appendChild(row);
+    });
+    list.children[rwSel]?.scrollIntoView({ block: "nearest" });
+  }
+  // Move the highlight WITHOUT rebuilding: rwRender() wipes the list, so re-rendering on the first click of a
+  // double-click detached the very node the second click needed, and dblclick then fired on no row at all.
+  function rwSelect(k){
+    const list = $("rwList");
+    list.children[rwSel]?.classList.remove("sel");
+    rwSel = k;
+    list.children[k]?.classList.add("sel");
+    list.children[k]?.scrollIntoView({ block: "nearest" });
+  }
+  function rwShow(){
+    const past = (sess && sess.past) || [];
+    if(!sess || !(sess.log.length || past.length)) return;
+    // restored history first, then what this session recorded. `p:true` marks the derived half - rewinding to one
+    // rebuilds the world by trimming the transcript to that moment, because there is no log to replay back to it.
+    rwItems = past.map((e, k) => ({ e, i: k, p: true }));
+    const from = Math.max(0, sess.log.length - RW_MAX);
+    for(let i = from; i < sess.log.length; i++) rwItems.push({ e: sess.log[i], i });
+    rwSel = rwItems.length - 1;
+    rwEditClose();
+rwFootIdle = (past.length ? past.length + " restored + " : "") + sess.log.length + " recorded"
+                 + " - enter on a restored point replays that whole moment (yours included); on a recorded reply it keeps the reply and drops what follows";
+    rwFoot(false);
+    rwPrevFocus = document.activeElement;   // give focus back where it was, instead of dumping it on the terminal
+    // display BEFORE rwRender: a display:none subtree has no layout boxes, so rwRender's scrollIntoView was a silent
+    // no-op and the picker opened at the TOP of the list with the preselected last row scrolled out of sight.
+    $("rw").style.display = "flex";
+    rwRender();
+    rwOpen = true;
+    $("rwBox").focus();   // otherwise plain typing keeps landing in whatever bar input had focus, invisibly behind the overlay
+  }
+  function rwHide(){
+    rwEditClose(); $("rw").style.display = "none"; rwOpen = false;
+    const back = rwPrevFocus && rwPrevFocus.isConnected && rwPrevFocus !== document.body ? rwPrevFocus : term;
+    rwPrevFocus = null;
+    try{ back.focus(); }catch(_){ term.focus(); }   // hand focus back where it was; the terminal is only the fallback
+  }
+  // Only a reply the sim parses as JSON may be rewritten. The diary summariser (npc.py manage_diary_entries) bypasses
+  // extract_clean_json, so ITS reply is raw prose recorded as a plain "l" event - rewriting that into {"response":...}
+  // would replace a memory with the literal JSON text and feed it to every later consolidation.
+  function rwSpoken(e){ return e.t === "l" && !!rwJson(e.v); }
+  // Rewind to a RESTORED turn: there is no log to replay back to it, so rebuild the world instead. Trimming every
+  // transcript to that moment makes restore_cast read the context line from that turn, so money, energy, location and
+  // the clock all come back as they were - and everything the agents "remember" after it is gone from their history.
+  function rwCommitPast(k){
+    if(!sess || !sess.past || !sess.past[k]) return rwHide();
+    rwCommitted = true;
+    // Trim to strictly BEFORE the picked turn, so that turn happens again - including your own. Keeping it meant a
+    // player line could never be redone, which is the main reason to rewind at all. Everything at that same timestamp
+    // goes with it, so the whole tick re-runs and the cast reacts to whatever you say this time.
+    const at = sess.past[k].ts;
+    const next = { ...sess, rid: genRid(), log: [],                       // a rebuilt timeline is a different run
+                   snap: snapTrimmed(sess.snap, at - 1), past: sess.past.slice(0, k) };
+    try{ localStorage.setItem(SESS_KEY, JSON.stringify(next)); }
+    catch(_){ rwCommitted = false; writeErr("\r\n[rewind] could not save - the run is unchanged.\r\n"); return rwHide(); }
+    sess = next; sessDead = false; ridRemember(sess.rid);
+    rwHide();
+    location.reload();
+  }
+  function rwCommit(len){   // the truncation a diverged replay already performs, chosen rather than detected
+    if(!sess) return rwHide();   // the run finished while the picker was open
+    len = Math.min(len, sess.log.length);
+    rwCommitted = true;          // a reply already in flight must not append past the cut, and saveRun reads this too
+    if(len <= 0){ sessClear(); rwHide(); return location.reload(); }   // "discard the very first event" IS a fresh start - clamping to 1 silently kept the one reply the user asked to drop
+    // build the next state and commit ONLY on a successful write: mutating sess first left a truncated log and a
+    // swapped rid behind on failure, so the next sessPush persisted the cut anyway, without the reload that makes replay agree
+    const next = { ...sess, rid: genRid(), log: sess.log.slice(0, len) };   // a rewound timeline is a DIFFERENT run: reusing the rid means every save loses to the day-guard
+    try{ localStorage.setItem(SESS_KEY, JSON.stringify(next)); }   // direct, not sessSave(): a latched sessDead would make the rewind a silent no-op, and this payload is strictly smaller
+    catch(_){ rwCommitted = false; writeErr("\r\n[rewind] could not save - the run is unchanged.\r\n"); return rwHide(); }
+    sess = next; sessDead = false; ridRemember(sess.rid);
+    rwHide();
+    location.reload();   // the boot block restores cfg, replays up to here, then goes live. NOT try/caught: re-arming sessPush against an already-persisted truncation is worse than the failure.
+  }
+  function rwFoot(editing){
+    $("rwFoot").textContent = editing
+      ? "enter continues from here with whatever the field says - clear it to drop this reply and re-ask the model - esc goes back"
+      : rwFootIdle;
+  }
+  function rwEditClose(){ rwEditing = -1; rwEditEvt = null; $("rwEditWrap").style.display = "none"; if(rwOpen) rwFoot(false); }
+  function rwEditOpen(){
+    const it = rwItems[rwSel];
+    if(!it) return;
+    if(it.p) return rwCommitPast(it.i);   // a restored turn is rebuilt, not replayed - there is no recorded reply to rewrite
+    if(!rwSpoken(it.e) || !rwParse(it.e).said) return rwCommit(it.i);   // your own line, a diary note, or an empty reply: nothing to rewrite, just rewind
+    rwEditing = it.i;
+    rwEditEvt = it.e;            // identity, not just the index: a divergence can truncate and regrow the log, leaving idx pointing at a DIFFERENT event
+    rwEditOrig = rwParse(it.e).said;   // compare against what the FIELD was given, so "unchanged" is a fact rather than a guess about what the control did to the text
+    $("rwEdit").value = rwEditOrig;
+    $("rwEditWrap").style.display = "block";
+    rwFoot(true);
+    $("rwEdit").focus(); $("rwEdit").select();
+  }
+  function rwEditDone(){
+    const idx = rwEditing;
+    if(!sess || idx < 0 || idx >= sess.log.length || sess.log[idx] !== rwEditEvt) return rwHide();   // run finished, or the log shifted under us, while the field was open
+    const e = sess.log[idx], next = $("rwEdit").value;
+    if(!next.trim()) return rwCommit(idx);              // cleared: discard the reply itself, the model is asked again
+    const cur = rwParse(e);
+    // the action is deliberately preserved: a rewritten action would replay as a real move, and the history after it
+    // would then describe something that never happened. Words are yours to change, consequences stay the model's.
+    const old = e.v;
+    if(next !== rwEditOrig) e.v = JSON.stringify({ response: next, action: cur.action });   // vs what the field was HANDED, not vs the parse: the old comparison rewrote any reply the control had reformatted
+    rwCommit(idx + 1);
+    if(rwCommitted === false) e.v = old;   // the write failed and rwCommit rolled back: the live log must not keep a doctored reply the run never used
+  }
+  function saveFile(name, text){
+    const url = URL.createObjectURL(new Blob([text], {type:"application/json"}));   // Blob encodes the string as UTF-8
+    const a = document.createElement("a"); a.href = url; a.download = name;
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 1000);   // defer revoke so the download commits first (immediate revoke = empty file in some browsers)
+  }
+  // Pointer escape hatch: every action the picker advertises is keyboard-only, so a mouse user who opened it had no
+  // way out at all - clicking the backdrop did nothing and there is no Cancel control. Clicking outside now cancels.
+  $("rw").addEventListener("mousedown", e => { if(e.target === $("rw")) rwHide(); });
+  // Delegated on the LIST, which is static markup - a listener bound to a row died with the next rwRender().
+  const rwRow = t => { const r = t?.closest?.("#rwList > div"); return r ? [...r.parentNode.children].indexOf(r) : -1; };
+  $("rwList").addEventListener("click", e => {
+    const k = rwRow(e.target); if(k < 0) return;
+    rwEditClose(); rwSelect(k);   // else the highlight and the open field disagree, and enter rewinds to the row you did NOT pick
   });
+  // Double-click IS Enter: rwEditOpen() already routes a restored or unspoken row straight to a rewind and opens the
+  // field only where there is one, so both paths share that single decision instead of each guessing at it.
+  $("rwList").addEventListener("dblclick", e => {
+    const k = rwRow(e.target); if(k < 0) return;
+    rwEditClose(); rwSelect(k); rwEditOpen();
+  });
+  document.addEventListener("keydown", e => {   // capture: the picker must win over xterm's own key handling and the bar inputs
+    if(rwOpen){
+      if(rwEditing >= 0){
+        if(e.key === "Tab"){ e.preventDefault(); e.stopPropagation(); return; }   // Tab out of the textarea lands in the hidden toolbar behind the overlay
+        if(e.key === "Enter" && (e.shiftKey || e.altKey)) return;                 // deliberate newline in a multi-line reply; plain Enter still commits
+        if(e.key !== "Enter" && e.key !== "Escape") return;   // the field owns arrows, typing and selection
+        e.preventDefault(); e.stopPropagation();
+        return e.key === "Enter" ? rwEditDone() : (rwEditClose(), rwRender());
+      }
+      // The overlay is not inert, so without this Tab walked focus into the hidden toolbar and Space activated whatever
+      // it landed on - toggling upload consent or hitting Stop, with the confirmation printed behind the overlay.
+      if(e.key === "Tab"){ e.preventDefault(); e.stopPropagation(); $("rwBox").focus(); return; }
+      if(e.key === " " || e.key === "Spacebar"){ e.preventDefault(); e.stopPropagation(); return; }
+      if(e.key === "s" || e.key === "S"){
+        e.preventDefault(); e.stopPropagation();
+        if(!sess) return;
+        const { rid, ...portable } = sess;   // rid is a delete-and-overwrite capability on the archive row; a shared file must not carry it. run() mints a fresh one on load.
+        if(portable.cfg){ const { base, ...cfg } = portable.cfg; portable.cfg = cfg; }   // and never publish the endpoint URL: the loader refuses to ACCEPT this field, so it must not be exported either
+        return saveFile("npcagent-run-day" + (curDay || 1) + ".json", JSON.stringify(portable));
+      }
+      if(!["ArrowUp","ArrowDown","Home","End","Enter","Escape"].includes(e.key)) return;
+      e.preventDefault(); e.stopPropagation();
+      if(e.key === "Enter")  return rwEditOpen();
+      if(e.key === "Escape") return rwHide();
+      if(e.key === "ArrowUp")        rwSelect(Math.max(0, rwSel - 1));
+      else if(e.key === "ArrowDown") rwSelect(Math.min(rwItems.length - 1, rwSel + 1));
+      else if(e.key === "Home")      rwSelect(0);
+      else                           rwSelect(rwItems.length - 1);
+      return;
+    }
+    const ae = document.activeElement;
+    const typing = ae?.matches?.("#bar input:not([type=checkbox]), #bar select");   // only controls where Escape MEANS something: #run and the Share checkbox live in #bar too, and clicking either left it focused, killing the chord for the whole run
+    if(e.key === "Escape" && !e.ctrlKey && !e.altKey && !e.metaKey && !e.repeat && !e.isComposing && !typing){   // repeat: held Escape auto-repeats ~30ms apart and would always chord. field/IME: two Escapes there mean "dismiss this", not "rewind"
+      // e.timeStamp, not performance.now(): the sim runs Pyodide synchronously on this thread, so delivery can lag
+      // a keypress by ~1s. Timing the chord by arrival makes it fail exactly when the run is busiest.
+      const t = e.timeStamp;
+      if(t - rwEsc < 800){ rwEsc = 0; e.preventDefault(); e.stopPropagation(); rwShow(); }
+      else rwEsc = t;
+    }
+  }, true);
   document.addEventListener("keydown", e => {
     if((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && (e.key === "c" || e.key === "C")){   // copy terminal selection - works even when the terminal isn't focused (stdin is disabled between player turns)
+      if(document.activeElement?.closest?.("#bar, #rw")) return;   // typing in a bar field or the rewind editor: leave Ctrl-C to the input, else a stale terminal selection hijacks it and copyText steals focus back
       const sel = term.getSelection();
       if(sel){ copyText(sel); e.preventDefault(); return; }
     }
@@ -855,39 +2063,80 @@ _env`;
     // exclude BUTTON: Enter on a focused button already fires its click natively; running run() here too would
     // double-fire (Restart-button focused + Enter -> run() sets running, native click then reloads = session wiped)
     if(e.key === "Enter" && !running && !lineReader && t !== "INPUT" && t !== "SELECT" && t !== "BUTTON"){
-      sessClear(); run();
+      sessClear(); run();   // no confirmation anywhere: the owner's call, and the run is archived server-side regardless
     }
   });
 
+  let lastTier = null;
+  const modelStash = {};
   function syncBar(){
     const m = $("engine").value;
     $("baseUrl").classList.toggle("hidden", m !== "endpoint");
     $("apiKey").classList.toggle("hidden", m !== "endpoint");
-    $("modelSelect").classList.toggle("hidden", m !== "free");
-    $("model").classList.toggle("hidden", m === "free");
+    const picker = (m === "free" || m === "chatgpt");   // both tiers offer a known model list; the others take a free-text id
+    $("modelSelect").classList.toggle("hidden", !picker);
+    $("model").classList.toggle("hidden", picker);
     $("baseUrl").closest(".fld").classList.toggle("collapsed", m !== "endpoint");   // collapse the whole field (Model field keeps one visible control, so it never collapses)
     $("apiKey").closest(".fld").classList.toggle("collapsed", m !== "endpoint");
     $("model").placeholder = m === "local" ? "owner/repo/file.gguf" : "model (auto)";
-    if(m === "local" && !$("model").value) $("model").value = HF_DEFAULT;
-    if(m === "free" && lcReady) probeFreeModels();
+    if(lastTier !== m){   // each tier keeps its own model text (traitStore's shape): a gguf path is meaningless to an API endpoint, and clearing it outright would lose a hand-typed one
+      if(lastTier !== null) modelStash[lastTier] = $("model").value;
+      $("model").value = modelStash[m] ?? (m === "local" ? HF_DEFAULT : "");
+      lastTier = m;
+    }
+    if(m === "free" && lcReady) probeFreeModels();   // symmetric ownership: each catalog tier stamps modelSelect.dataset.tier and refuses its cache when another tier overwrote the options, so no cross-tier reset (or ordering rule) is needed here
+    if(m === "chatgpt" && $("modelSelect").dataset.tier !== "chatgpt") cgptModelList();   // placeholder until sign-in fetches the account's real list
+    if(m !== "chatgpt") $("effortFld").classList.add("collapsed");                        // effort is a ChatGPT-tier control only
     barFade();   // collapsing endpoint fields changes overflow without resizing the bar
   }
+  let engineWas = $("engine").value, engineGen = 0;
   $("engine").addEventListener("change", async () => {
+    const gen = ++engineGen;               // a switch that awaits (model load, sign-in, catalog) can finish AFTER a newer one:
+    const stale = () => gen !== engineGen; // without this the older handler installs its bridge over the newer tier and silently bills the wrong provider
+    const m = $("engine").value;           // snapshot BEFORE the first await: an OLDER handler's revert() can flip the dropdown under us, and re-reading it later installed one tier's bridge beside another tier's model list
     syncBar();
-    if(!running) return;                          // Python only ever calls js.httpComplete, so each branch just rebuilds it
-    const m = $("engine").value;
+    if(m !== "chatgpt") usageClear();      // another tier's quota is not this one's: a stale percentage would be a lie
+    if(m === "chatgpt" && cgptTok()){   // already signed in: load the real catalog now so Model/Effort are usable BEFORE a run
+      try{ await ensureLibcurl(); }catch(_){ }          // waiting beats a bare lcReady check: picking the tier while the WASM is still loading used to silently leave the 3-model default list
+      const cat = await cgptFetchModels(cgptTok());
+      if(stale()) return;
+      $("modelSelect").dataset.tier = "";
+      cgptModelList(cat);
+      cgptUsageRefresh(true);   // picking the tier is when a user wants to SEE what is left before committing a run
+    }
+    if(!running){ engineWas = m; return; }   // keep it current between runs too, else a later revert() offers the PREVIOUS run's tier
+
+    // stale guard: a failure here must not yank the dropdown out from under a NEWER switch that already owns the bridge
+    const revert = why => { if(stale()) return; writeErr("[!] "+why+" - staying on the previous engine\r\n"); $("engine").value = engineWas; syncBar(); };
     if(m === "local"){
-      if(!wll){ write("Switching to local GGUF...\r\n"); try{ await loadLocalModel($("model").value); write("Model ready.\r\n"); }catch(e){ writeErr("[!] "+e.message+"\r\n"); return; } }
+      if(localStale($("model").value)){ write("Switching to local GGUF...\r\n"); try{ await loadLocalModel($("model").value); write("Model ready.\r\n"); }catch(e){ revert(e.message); return; } }
+      if(stale()) return;   // a newer switch won while the model loaded
       makeWllamaBridge();
       write("[engine switched to local]\r\n");
     }else if(m === "free"){
-      if(!lcReady){ writeErr("[!] libcurl not ready yet.\r\n"); return; }
+      if(!lcReady){ revert("libcurl not ready yet"); return; }
       makeFreeLibcurlBridge();
       write("[engine switched to free]\r\n");
+    }else if(m === "chatgpt"){
+      if(!lcReady){ revert("libcurl not ready yet"); return; }
+      let tok;
+      try{ tok = cgptTok() || await cgptLogin(); }catch(e){ revert(e?.message || e); return; }
+      const cat = await cgptFetchModels(tok);
+      if(stale()) return;   // sign-in + catalog can take a minute; the user may have moved on
+      cgptModelList(cat);
+      makeChatgptBridge();
+      write("[engine switched to ChatGPT account - "+$("modelSelect").value+"]\r\n");
     }else{
       makeHttpBridge();   // reads baseUrl/apiKey live; fields are editable mid-run
       write("[engine switched to endpoint - set Base URL / Key if needed]\r\n");
     }
+    // only reached when the switch SUCCEEDED (every failure path returns via revert). A switch used to update the
+    // bridge and nothing else, so Python's MODE, the resume config and the archive labels all stayed at startup values.
+    engineWas = m;
+    curTier = m;
+    curModel = (m === "free" || m === "chatgpt") ? $("modelSelect").value : $("model").value;
+    try{ pyodide?.globals.set("MODE", m); }catch(_){ }        // endpoint-only `reasoning` is gated on this
+    if(sess){ const cfg = (sess.cfg ||= {}); cfg.mode = m; cfg.model = curModel; cfg.base = $("baseUrl").value; cfg.effort = $("effort").value; sessSave(); }   // so a reload resumes on the tier that was actually running
   });
   syncBar();
 
@@ -921,6 +2170,8 @@ _env`;
   barFade();
 
   sess = sessLoad();
+  everRan = !!sess;   // a resumed run is not a START state: leaving the button in Load mode during the replay invites overwriting the very session being replayed
+  dlSync();
   if(sess){                                   // saved session found: restore its setup and replay it back to where it left off
     const c = sess.cfg || {};
     if(c.mode) $("engine").value = c.mode;
@@ -929,10 +2180,27 @@ _env`;
     if(c.days) $("days").value = c.days;
     (c.traits || []).forEach((t, i) => { if(t) traitStore[i] = t; });
     $("traitVal").value = traitStore[$("traitWho").value] || "";
-    if(c.mode === "free" && c.model) $("modelSelect").dataset.wish = c.model;
-    else if(c.model) $("model").value = c.model;
+    if(c.effort) $("effort").dataset.wish = c.effort;   // OUTSIDE the c.model block: cgptEffortList reads this, and effort must restore even when no model was saved
+    if(c.model){
+      if(c.mode === "free" || c.mode === "chatgpt") $("modelSelect").dataset.wish = c.model;
+      else { modelStash[c.mode] = c.model; lastTier = c.mode; $("model").value = c.model; }   // seed the stash BEFORE syncBar, else it reads this as a tier change and swaps a custom GGUF for the default (a wrong ~2 GB download and a non-deterministic replay)
+    }
     syncBar(); syncDays();
-    write("\x1b[33m[resume] saved session ("+sess.log.length+" events) - replaying. press Stop to discard it.\x1b[0m\r\n\r\n");
+    // A session ALWAYS resumes itself. Loading a file is the intent to continue it, and a signed-out ChatGPT is not a
+    // reason to add a button: the run replays offline, then simply waits at its first live turn until an engine is
+    // picked. Switching the dropdown carries the activation a sign-in popup needs, so the button bought nothing -
+    // both paths ended in the same sign-in.
+    const snapped = !sess.log.length && !!sess.snap;   // a state restore that has not recorded a turn yet: nothing to replay
+    const what = snapped ? "restored state (" + sess.snap.sharegpt.length + " agents, day " + (sess.snap.day || "?") + ", no event log - nothing is replayed)"
+                         : "saved session (" + sess.log.length + " events)";
+    // The two things a file cannot restore, said once instead of being gated behind a click: who you are, and the
+    // endpoint URL (deliberately never trusted from a file - it would point this browser's inference at their server).
+    write("\x1b[33m[resume] " + what + (snapped ? " - continuing live" : " - replaying") + ". press Stop to discard it.\x1b[0m\r\n" +
+          (snapped ? "\x1b[33m         you are \x1b[1m" + (c.player || "nobody - Subject was blank, so this one runs itself") + "\x1b[0m\x1b[33m.\x1b[0m\r\n" : "") +
+          (c.mode === "chatgpt" && !cgptTok() ? "\x1b[33m         signed out of ChatGPT - it replays now and pauses at the first live turn; pick an engine then.\x1b[0m\r\n" : "") +
+          (sess.fromFile && c.mode === "endpoint" ? "\x1b[33m         BASE URL is this page's own (" + ($("baseUrl").value || "unset") + ") - a file's is never trusted.\x1b[0m\r\n" : "") +
+          "\r\n");
+    bootRun = true;   // no user activation on this path: the chatgpt branch must not try to open a sign-in popup
     run();
   }
 
