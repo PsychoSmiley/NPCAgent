@@ -109,20 +109,3 @@ If you use NPCAgent for your research, please cite it using the following BibTeX
   howpublished = {\url{https://github.com/PsychoSmiley/NPCAgent}}
 }
 ```
-
-## License
-
-[Apache-2.0](LICENSE)
-
-## Releasing
-
-`index.html` carries a base64 copy of `npc.py` inside a `<script type="text/plain" id="npcpy">` tag, so a downloaded
-copy opens by double-click with nothing to install. A `file://` page is an opaque origin and cannot read `npc.py` next
-to it, and no browser permission exists to allow that, so embedding is the only way this works offline.
-
-Served over HTTP the fetch wins, so the hosted demo and local dev always run the real `npc.py`. Re-embed after changing
-it. If you forget, the page says so on the next run instead of shipping a stale sim.
-
-```
-python -c "import base64,pathlib,re;q=chr(34);p=pathlib.Path('index.html');h=p.read_text(encoding='utf-8');b=base64.b64encode(pathlib.Path('npc.py').read_bytes()).decode();n,k=re.subn('(id='+q+'npcpy'+q+'>).*?(</script>)',lambda m:m.group(1)+b+m.group(2),h,count=1,flags=re.S);p.write_text(n,encoding='utf-8');print('slots replaced:',k,'| base64 chars:',len(b))"
-```
