@@ -643,7 +643,11 @@
         for(let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i);
         return URL.createObjectURL(new Blob([u], { type }));
       };
-      wllamaLocal = { esm: toBlob(js, "text/javascript"), wasm: { "default": toBlob(wasm, "application/wasm") } };
+      // The ESM is imported by the MAIN thread, where a blob: URL is fine. The wasm is fetched from INSIDE the worker,
+      // and on file:// the page origin is null, so the handle reads blob:null/... which a worker refuses to fetch
+      // ("URL scheme blob is not supported" / "Not allowed to load local resource"). A data: URL carries no origin
+      // and is accepted, and since the slot already holds base64 it costs no decode at all.
+      wllamaLocal = { esm: toBlob(js, "text/javascript"), wasm: { "default": "data:application/wasm;base64," + wasm } };
     }catch(e){ console.error("[NPCAgent] embedded wllama unusable", e); wllamaLocal = null; }
     return wllamaLocal;
   }
