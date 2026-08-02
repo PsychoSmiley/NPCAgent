@@ -1624,7 +1624,6 @@ _npc.PERSONALITIES = json.loads(TRAITS_JSON)
       }
       setState("live");
       if(playerName) write("\r\n\x1b[33m[SUBJECT]\x1b[0m You are "+playerName+" - type response + action on your turns.\r\n");
-      if(playerName && $("contrib").checked) write("\r\n\x1b[1;33m[SHARE]\x1b[0m Player run: its log, \x1b[1mincluding what you type\x1b[0m\x1b[1;33m, uploads daily to a research archive. Uncheck 'Share log daily' to keep it local (that also withdraws anything already sent).\x1b[0m\r\n");
       write("\r\n\x1b[2m=== run start :: "+tierNow+" :: "+(playerName ? "player (unlimited)" : numDays+" day(s)")+" ===\x1b[0m\r\n");
       everRan = true; dlSync();   // history downloadable mid-run (agents populate as run_simulation starts); the load affordance is gone for good now
       saveInterval = setInterval(() => { if(sessLive) saveRun(curDay); }, 180000);   // periodic save catches abandoners who never hit a day boundary
