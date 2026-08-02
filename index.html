@@ -655,7 +655,10 @@
   let ggufBlob = null;   // a .gguf handed over from disk: no fetch, no storage, so it works where the cache cannot
   // A picked file OVERRIDES the typed path, so every place that labels "which model ran" has to say the file, not the
   // HuggingFace path sitting greyed-out in the box. Getting this wrong writes the wrong model onto the archive row.
-  const localModelName = () => ggufBlob ? ggufBlob.name : $("model").value;
+  // Gate on the tier, not just on the blob: a file picked for the local tier stays loaded across an engine switch, and
+  // without this check an endpoint run gets archived under that gguf's name while a completely different model served
+  // every turn. The endpoint's own box decides what runs, so there the typed field is the only honest label.
+  const localModelName = () => (ggufBlob && $("engine").value === "local") ? ggufBlob.name : $("model").value;
 
   let wllLoading = null, wllPath = "", wllWant = "";
   // a picked file wins over the typed path, so the identity key has to follow whichever is actually going to load
