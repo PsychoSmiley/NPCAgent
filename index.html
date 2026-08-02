@@ -1860,7 +1860,15 @@ _env`;
       // Embedding wllama is what makes local models work offline: a file:// page cannot build a worker from a CDN
       // script, but it can from a blob. All-or-nothing - one slot without the other would just fail differently.
       if(wjsRes.ok && wasmRes.ok){
-        const wjs = new Uint8Array(await wjsRes.arrayBuffer()), wasm = new Uint8Array(await wasmRes.arrayBuffer());
+        // Chrome refuses a MODULE worker on file:// even from a blob ("Refused to cross-origin redirects of the
+        // top-level worker script"), while a CLASSIC blob worker is allowed. wllama asks for a module worker, but the
+        // code it puts in there is plain script - no import, no importScripts, no import.meta, no top-level await -
+        // so the flag is gratuitous and dropping it is what lets local models run from a double-clicked file.
+        let wjsText = await wjsRes.text();
+        const MODULE_WORKER = 'return new Worker(workerURL, { type: "module" });';
+        if(wjsText.includes(MODULE_WORKER)) wjsText = wjsText.replace(MODULE_WORKER, "return new Worker(workerURL);");
+        else write("\x1b[33m[pack] wllama changed shape - the worker is still a module one, so local models may not run offline.\x1b[0m\r\n");
+        const wjs = new TextEncoder().encode(wjsText), wasm = new Uint8Array(await wasmRes.arrayBuffer());
         out = out.replace(/(<script type="text\/plain" id="wllamajs">)([\s\S]*?)(<\/script>)/,   (m, a, _x, c) => a + b64(wjs) + c)
                  .replace(/(<script type="text\/plain" id="wllamawasm">)([\s\S]*?)(<\/script>)/, (m, a, _x, c) => a + b64(wasm) + c);
       }else write("\x1b[33m[pack] the runtime could not be fetched - building without it, so the download will need a network for local models.\x1b[0m\r\n");
