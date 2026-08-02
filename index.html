@@ -673,10 +673,10 @@
         try{
           await w.loadModelFromHF({ repo, file }, { ...opts, useCache: true });
         }catch(e){
-          if(!isStorageErr(e)) throw e;
+          if(!isStorageErr(e)) throw hfHint(e, repo, file);   // a bad path must not be reported as a storage problem
           writeErr("\r\n[local] this browser refused to store the model (local file). Downloading without cache - it will not persist to the next run.\r\n");
           try{ await w.loadModelFromHF({ repo, file }, { ...opts, useCache: false }); }
-          catch(e2){ throw storageHint(e2); }
+          catch(e2){ throw hfHint(storageHint(e2), repo, file); }
         }
       }
       // THE load check, not a belt-and-braces one: wllama resolves loadModel() even when llama.cpp refused the file,
@@ -695,6 +695,17 @@
   // Chrome reports a blocked file:// storage call as a bare "SecurityError: ...certain files are unsafe for access
   // within a Web application...", which names neither the API that refused nor anything the player can act on.
   // Replace it with the one instruction that actually resolves it; keep any other failure verbatim.
+  // HuggingFace answers 401 for a repo that does not exist, so it never reveals whether a private one does. wllama
+  // passes that through verbatim as "Invalid username or password", which sends people hunting for a login they were
+  // never asked for. The real cause is almost always a mistyped path, so name that instead.
+  function hfHint(e, repo, file){
+    const m = String(e?.message || e);
+    if(/HF API error \(40[13]\)|Invalid username or password/i.test(m))
+      return new Error(`HuggingFace has no "${repo}" (or it is gated). Expected owner/repo/file.gguf - check the path, and note a 401 here means "not found", not a login problem.`);
+    if(/HF API error \(404\)|\b404\b/.test(m))
+      return new Error(`"${file}" is not in the "${repo}" repo on HuggingFace - check the exact filename.`);
+    return e;
+  }
   const isStorageErr = e => e?.name === "SecurityError" || /SecurityError|storage|quota|cache|unsafe for access/i.test(String(e?.message || e));
   function storageHint(e){
     if(!isStorageErr(e)) return e;
