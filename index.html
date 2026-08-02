@@ -804,7 +804,12 @@
 
   async function lnaFetch(url, opts, space){
     if(!space) return fetch(url, opts);
-    try{ return await fetch(url, { ...opts, targetAddressSpace:space }); }
+    // targetAddressSpace can leave the request hanging instead of rejecting (seen against a 192.168.x server that a
+    // plain fetch reaches fine). A hang means the catch below never runs, so the retry never happens and the caller
+    // waits forever. Bound the hinted attempt; the plain retry is the one that actually has to work.
+    // NEVER clobber a caller's signal: the chat call arms a 120s budget, and replacing it here would abort every
+    // generation after the probe's timeout. Only the unsignalled callers (the /models probe) get the short bound.
+    try{ return await fetch(url, { ...opts, targetAddressSpace:space, signal: opts?.signal ?? AbortSignal.timeout(4000) }); }
     catch(e){ return fetch(url, opts); }
   }
 
@@ -1352,8 +1357,19 @@
     try{
       if(!HAS_JSPI) throw new Error("JSPI missing (Chrome/Edge 137+ required)");
 
+      // Name the server before the run starts. This began as a silent warm-up probe, which hid the one thing worth
+      // knowing: WHICH server answers this address. Two processes can hold a port (on Windows a 127.0.0.1 bind beats
+      // a 0.0.0.0 one), so "my backend is on :5000" is not the same as ":5000 is my backend". Never fatal - plenty of
+      // OpenAI-compatible servers, textgen included, do not implement /models and do not need a model id at all.
       if(mode === "endpoint" && space)
-        lnaFetch(base+"/models", {}, space).catch(() => {});
+        lnaFetch(base+"/models", {}, space).then(async r => {
+          if(!r.ok){
+            write("\r\n\x1b[2m[endpoint] "+base+" answered "+r.status+" for /models - it serves whatever model it already has loaded, so the Model field is ignored here.\x1b[0m\r\n");
+            return;
+          }
+          const ids = ((await r.json().catch(() => ({})))?.data || []).map(m => m?.id).filter(Boolean);
+          if(ids.length) write("\r\n\x1b[2m[endpoint] "+base+" is serving: \x1b[0m\x1b[36m"+ids.slice(0, 3).join(", ")+(ids.length > 3 ? ", +"+(ids.length-3)+" more" : "")+"\x1b[0m\r\n");
+        }).catch(e => writeErr("\r\n[endpoint] "+base+" did not answer ("+(e?.message || e)+") - check the server is up and allows this page's origin.\r\n"));
 
       // tier setup + Pyodide/npc.py load in parallel
       const pyodideReady = (async () => {
