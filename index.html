@@ -94,6 +94,7 @@
   #pack:focus-visible{ outline:2px solid var(--amber); outline-offset:2px; }
   #pack:disabled{ opacity:.3; cursor:default; }
   #pack.hidden{ display:none; }
+  #gguf.hidden{ display:none; }
   body[data-state="dormant"] #run, body[data-state="ended"] #run, body[data-state="fault"] #run{
         animation:beacon 2.8s ease-in-out infinite; }
   body[data-state="waking"] #run, body[data-state="live"] #run{
@@ -173,6 +174,9 @@
       <input id="traitVal" placeholder="none" title="Personality trait for this agent">
     </label>
     <input type="file" id="dlFile" accept=".json,application/json" class="hidden">
+    <input type="file" id="ggufFile" accept=".gguf" class="hidden">
+    <!-- arrow ascending OUT of a box: "load a model from disk", the mirror of #pack's descending arrow -->
+    <button id="gguf" class="hidden" title="Load a .gguf model from your disk. No download and no browser storage, so this is the only path that works fully offline (and the only one that works at all from a double-clicked file)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 6.8V1.3M4.8 3.5 7 1.3l2.2 2.2"/><path d="M1.5 8v4.5h11V8"/></svg></button>
     <button id="dl" title="Save this run: a ShareGPT history (dataset) AND a resumable run file you can load back" disabled><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 1v7M3.5 5 7 8.5 10.5 5M2 10.5V13h10v-2.5"/></svg></button>
     <!-- arrow descending INTO a box: "download the game itself", distinct from #dl's plain arrow ("save this run") -->
     <button id="pack" title="Download the game: packages this page into one standalone HTML you can double-click offline"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 1v5.5M4.8 4.6 7 6.8l2.2-2.2"/><path d="M1.5 8v4.5h11V8"/></svg></button>
@@ -586,10 +590,20 @@
     return out;
   };
 
+  // file:// is an opaque origin, so the Cache API and IndexedDB both refuse with a bare SecurityError - and wllama
+  // caches by default. That killed local models on exactly the build that needs them: a double-clicked page could
+  // never load one, and even a successful download could never persist, so "download once then play offline" is
+  // unreachable off a real origin. The disk picker below is the offline path there; the cache is the offline path
+  // on the hosted page.
+  const CAN_CACHE = (() => { try{ return location.protocol !== "file:" && !!globalThis.caches; }catch(_){ return false; } })();
+  let ggufBlob = null;   // a .gguf handed over from disk: no fetch, no storage, so it works where the cache cannot
+
   let wllLoading = null, wllPath = "", wllWant = "";
-  const localStale = p => !wll || JSON.stringify(parseGguf(p)) !== wllPath;   // "already loaded?" must account for the user typing a DIFFERENT gguf
+  // a picked file wins over the typed path, so the identity key has to follow whichever is actually going to load
+  const localKey = p => ggufBlob ? "blob:" + ggufBlob.name + ":" + ggufBlob.size : JSON.stringify(parseGguf(p));
+  const localStale = p => !wll || localKey(p) !== wllPath;   // "already loaded?" must account for the user typing a DIFFERENT gguf, or picking one
   function loadLocalModel(ggufPath){
-    const want = JSON.stringify(parseGguf(ggufPath));
+    const want = localKey(ggufPath);
     // dedupe concurrent calls (rapid engine toggles) so we never double-download the 2 GB model - but only for the SAME
     // path: returning an in-flight load of a DIFFERENT model left the UI naming one file while another was running
     if(wllLoading) return wllWant === want ? wllLoading : wllLoading.catch(() => {}).then(() => loadLocalModel(ggufPath));
@@ -601,19 +615,36 @@
     }
     wllLoading = (async () => {
       const { Wllama } = await import(WLLAMA_ESM);
-      const { repo, file } = parseGguf(ggufPath);
       const w = new Wllama(WLLAMA_WASM);
-      await w.loadModelFromHF({ repo, file }, {
-        n_ctx: N_CTX,
-        progressCallback: p => {
-          const l = p?.loaded || 0, t = p?.total || 0;
-          if(t) write(`\rdownloading ${(l/1e9).toFixed(1)}/${(t/1e9).toFixed(1)} GB`);
-        }
-      });
+      if(ggufBlob){
+        write(`\r\nloading ${ggufBlob.name} from disk (${(ggufBlob.size/1e9).toFixed(1)} GB)...\r\n`);
+        await w.loadModel([ggufBlob], { n_ctx: N_CTX });   // straight off disk: no network, no storage
+      }else{
+        const { repo, file } = parseGguf(ggufPath);
+        try{
+          await w.loadModelFromHF({ repo, file }, {
+            n_ctx: N_CTX,
+            useCache: CAN_CACHE,   // caching is what makes the SECOND run offline; where it is refused, download uncached rather than dying
+            progressCallback: p => {
+              const l = p?.loaded || 0, t = p?.total || 0;
+              if(t) write(`\rdownloading ${(l/1e9).toFixed(1)}/${(t/1e9).toFixed(1)} GB`);
+            }
+          });
+        }catch(e){ throw storageHint(e); }
+      }
       wll = w; wllPath = want;
     })();
     wllLoading.catch(() => {}).finally(() => { wllLoading = null; });   // side-chain swallows rejection (caller still sees it via the returned promise); avoids unhandledrejection
     return wllLoading;
+  }
+
+  // Chrome reports a blocked file:// storage call as a bare "SecurityError: ...certain files are unsafe for access
+  // within a Web application...", which names neither the API that refused nor anything the player can act on.
+  // Replace it with the one instruction that actually resolves it; keep any other failure verbatim.
+  function storageHint(e){
+    const msg = String(e?.message || e);
+    if(e?.name !== "SecurityError" && !/SecurityError|storage|quota|cache/i.test(msg)) return e;
+    return new Error("this browser blocks model storage on a local file, so the download cannot be kept. Click the upload button in the bar and pick a .gguf from your disk - that needs no download and runs fully offline.");
   }
 
   // Gemma (and most local GGUF chat templates) reject the 'system' role and demand strict
@@ -715,7 +746,7 @@
     const g = engineGen;
     const path = modelStash.local || HF_DEFAULT;
     if(!wll){
-      write("Loading "+parseGguf(path).file+" for fallback (~2 GB download, cached after the first time)...\r\n");
+      write("Loading "+parseGguf(path).file+" for fallback (~2 GB download"+(CAN_CACHE ? ", cached after the first time" : ", not cached here - see the upload button")+")...\r\n");
       try{ await loadLocalModel(path); write("\r\nLocal model ready ("+"CPU wasm).\r\n"); }
       catch(e){ writeErr("\r\n[!] Local fallback failed: "+(e?.message||e)+"\r\n"); return false; }
     }
@@ -1283,7 +1314,11 @@
           // repo the file chose. Auto-resume must not do that silently: name the repo before a byte moves. Loud, not
           // blocking - Stop is right there, and gating the load behind a click is the friction this path removed.
           if(sess && sess.fromFile) write("\r\n\x1b[33m[resume] this file picked the local model \x1b[1m"+g.repo+"\x1b[0m\x1b[33m - fetching it now (multi-GB on first use). Press Stop to cancel.\x1b[0m\r\n");
-          write("Loading "+g.file+" (cached after first download)\r\n");
+          // Never promise a cache that cannot exist: on file:// the download is discarded at reload, so telling the
+          // player it is "cached after first download" sells the exact offline guarantee this build cannot keep.
+          if(ggufBlob) { /* the picker already announced the file */ }
+          else if(CAN_CACHE) write("Loading "+g.file+" (cached after first download)\r\n");
+          else write("Loading "+g.file+" \x1b[33m(not cached - a local file cannot keep it, so this downloads every run. Use the upload button to load a .gguf from disk instead and never download again.)\x1b[0m\r\n");
           try{ await loadLocalModel(gguf); }
           catch(e){ wll = null; throw e; }
           write("\r\nModel ready ("+"CPU wasm, slow).\r\n");
@@ -1773,6 +1808,16 @@ _env`;
     if(!json) return writeErr("\r\n[download] nothing to save yet - let it run a turn first.\r\n");
     saveFile("npcagent-history.json", json);   // no session to attach (a finished run that already cleared it): dataset only
   });
+  $("gguf").addEventListener("click", () => $("ggufFile").click());
+  $("ggufFile").addEventListener("change", e => {
+    const f = e.target.files?.[0];
+    e.target.value = "";   // else picking the same file twice fires no change event
+    if(!f) return;
+    ggufBlob = f;
+    $("model").value = f.name;   // the bar must name what will actually run, not the HF path it now overrides
+    if(wll){ try{ wll.exit?.(); }catch(_){ } wll = null; wllPath = ""; }   // force the next load to rebuild against this blob
+    write("\r\n\x1b[36m[local]\x1b[0m " + f.name + " (" + (f.size/1e9).toFixed(1) + " GB) ready - press Run. No download, no internet.\r\n");
+  });
   $("dlFile").addEventListener("change", async e => {
     const f = e.target.files?.[0];
     e.target.value = "";   // else picking the same file twice fires no change event
@@ -2079,9 +2124,14 @@ rwFootIdle = (past.length ? past.length + " restored + " : "") + sess.log.length
     $("baseUrl").closest(".fld").classList.toggle("collapsed", m !== "endpoint");   // collapse the whole field (Model field keeps one visible control, so it never collapses)
     $("apiKey").closest(".fld").classList.toggle("collapsed", m !== "endpoint");
     $("model").placeholder = m === "local" ? "owner/repo/file.gguf" : "model (auto)";
+    $("gguf").classList.toggle("hidden", m !== "local");   // the disk picker only means anything for the local tier
     if(lastTier !== m){   // each tier keeps its own model text (traitStore's shape): a gguf path is meaningless to an API endpoint, and clearing it outright would lose a hand-typed one
       if(lastTier !== null) modelStash[lastTier] = $("model").value;
       $("model").value = modelStash[m] ?? (m === "local" ? HF_DEFAULT : "");
+      // Say it on the SWITCH, not after a 2 GB download has already been spent. Only where the cache is refused:
+      // on a real origin the download genuinely is a one-time cost and this warning would be a lie in the other direction.
+      if(m === "local" && lastTier !== null && !CAN_CACHE && !ggufBlob)
+        write("\r\n\x1b[33m[local]\x1b[0m this page runs from a file, so the browser refuses to store a downloaded model. Click the \x1b[1mupload\x1b[0m button and pick a .gguf from your disk - no download, and it works with no internet at all.\r\n");
       lastTier = m;
     }
     if(m === "free" && lcReady) probeFreeModels();   // symmetric ownership: each catalog tier stamps modelSelect.dataset.tier and refuses its cache when another tier overwrote the options, so no cross-tier reset (or ordering rule) is needed here
