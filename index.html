@@ -36,6 +36,10 @@
   .fld{ display:flex; flex-direction:column; gap:1px; min-width:0; animation:fieldIn .35s ease backwards; }
   .fld .tag{ font-size:11px; line-height:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); transition:color .15s; }  /* same 11px as the inputs; tight line-height keeps control positions unchanged */
   .fld:focus-within .tag{ color:var(--amber); }
+  /* The two model controls sit inside the Model field but are not the field. Without this, clicking the upload
+     button lands focus in .fld and :focus-within lights the MODEL caption amber, which reads as "this input is
+     active" when nothing was typed. Focus cannot be on the input and a button at once, so a flat override is safe. */
+  .fld:has(#gguf:focus, #ggufGet:focus) .tag{ color:var(--muted); }
   .fld.collapsed{ display:none; }   /* explicit field hide; simpler and less fragile than the previous :has() rule */
   #bar .fld:nth-of-type(2){ animation-delay:.04s; } #bar .fld:nth-of-type(3){ animation-delay:.08s; }
   #bar .fld:nth-of-type(4){ animation-delay:.12s; } #bar .fld:nth-of-type(5){ animation-delay:.16s; }
