@@ -150,6 +150,13 @@
         <option value="endpoint">Custom endpoint</option>
       </select>
     </label>
+    <!-- Both sit beside Engine, not out with the save/pack buttons: they are only meaningful the moment someone
+         picks Local GGUF, and that is where the eye already is. Hidden for every other tier. -->
+    <input type="file" id="ggufFile" accept=".gguf" class="hidden">
+    <!-- a real anchor, not a terminal line: xterm has no link addon here, and this must stay clickable on file:// -->
+    <a id="ggufGet" class="hidden" target="_blank" rel="noopener" title="Download this .gguf from HuggingFace in your browser, then load it with the button beside this link. This is the offline route: the page never downloads it itself.">get model</a>
+    <!-- arrow ascending OUT of a box: "load a model from disk", the mirror of #pack's descending arrow -->
+    <button id="gguf" class="hidden" title="Load a .gguf model from your disk. No download and no browser storage, so this is the only path that works fully offline (and the only one that works at all from a double-clicked file)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 6.8V1.3M4.8 3.5 7 1.3l2.2 2.2"/><path d="M1.5 8v4.5h11V8"/></svg></button>
     <label class="fld"><span class="tag">Base URL</span>
       <input id="baseUrl" value="http://127.0.0.1:5000/v1" class="hidden" title="OpenAI-compatible base URL (endpoint mode)">
     </label>
@@ -176,11 +183,6 @@
       <input id="traitVal" placeholder="none" title="Personality trait for this agent">
     </label>
     <input type="file" id="dlFile" accept=".json,application/json" class="hidden">
-    <input type="file" id="ggufFile" accept=".gguf" class="hidden">
-    <!-- a real anchor, not a terminal line: xterm has no link addon here, and this must stay clickable on file:// -->
-    <a id="ggufGet" class="hidden" target="_blank" rel="noopener" title="Download this .gguf from HuggingFace in your browser, then load it with the button on the right. This is the offline route: the page never downloads it itself.">get model</a>
-    <!-- arrow ascending OUT of a box: "load a model from disk", the mirror of #pack's descending arrow -->
-    <button id="gguf" class="hidden" title="Load a .gguf model from your disk. No download and no browser storage, so this is the only path that works fully offline (and the only one that works at all from a double-clicked file)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 6.8V1.3M4.8 3.5 7 1.3l2.2 2.2"/><path d="M1.5 8v4.5h11V8"/></svg></button>
     <button id="dl" title="Save this run: a ShareGPT history (dataset) AND a resumable run file you can load back" disabled><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 1v7M3.5 5 7 8.5 10.5 5M2 10.5V13h10v-2.5"/></svg></button>
     <!-- arrow descending INTO a box: "download the game itself", distinct from #dl's plain arrow ("save this run") -->
     <button id="pack" title="Download the game: packages this page into one standalone HTML you can double-click offline"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 1v5.5M4.8 4.6 7 6.8l2.2-2.2"/><path d="M1.5 8v4.5h11V8"/></svg></button>
