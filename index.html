@@ -101,6 +101,8 @@
             text-decoration:underline; white-space:nowrap; cursor:pointer; }
   #ggufGet:hover{ color:#e7b06b; }
   #ggufGet.hidden{ display:none; }
+  #ggufArrow{ color:var(--muted); font-size:10px; line-height:1; user-select:none; pointer-events:none; }
+  #ggufArrow.hidden{ display:none; }
   #gguf{ height:14px; width:18px; display:flex; align-items:center; justify-content:center; flex:0 0 auto;
          background:var(--void); color:var(--amber); border:1px solid var(--edge); border-radius:2px; padding:0; cursor:pointer;
          transition:border-color .15s, background-color .15s; }
@@ -172,7 +174,10 @@
          field's tag row because they only ever act on the model it names. -->
     <div class="fld"><span class="tagrow"><span class="tag">Model</span>
       <!-- a real anchor, not a terminal line: xterm has no link addon here, and this must stay clickable on file:// -->
-      <a id="ggufGet" class="hidden" target="_blank" rel="noopener" title="Download this .gguf from HuggingFace in your browser, then load it with the button beside this link. This is the offline route: the page never downloads it itself.">get model &rarr;</a>
+      <a id="ggufGet" class="hidden" target="_blank" rel="noopener" title="Download this .gguf from HuggingFace in your browser, then load it with the button beside this link. This is the offline route: the page never downloads it itself.">get model</a>
+      <!-- the arrow is signage, not a control: it points from the download link at the button you press next, so it
+           sits OUTSIDE the anchor (inside it, it would be underlined and clickable, implying a third thing to click) -->
+      <span id="ggufArrow" class="hidden" aria-hidden="true">&rarr;</span>
       <!-- arrow ascending OUT of a box: "load a model from disk", the mirror of #pack's descending arrow -->
       <button id="gguf" type="button" class="hidden" title="Load a .gguf model from your disk. No download and no browser storage, so this is the only path that works fully offline (and the only one that works at all from a double-clicked file)"><svg width="11" height="11" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M7 6.8V1.3M4.8 3.5 7 1.3l2.2 2.2"/><path d="M1.5 8v4.5h11V8"/></svg></button>
     </span>
@@ -633,7 +638,19 @@
     }
     wllLoading = (async () => {
       const { Wllama } = await import(WLLAMA_ESM);
-      const w = new Wllama(WLLAMA_WASM);
+      // Keep llama.cpp's own diagnostics. loadModel() RESOLVES even when the model failed to parse (verified: a junk
+      // blob logs "gguf_init_from_reader: failed to read magic" and still returns), so these lines are the only thing
+      // that says why - without them a bad or unsupported gguf is indistinguishable from a hang.
+      // llama.cpp routes its running commentary (slot update_slots, prompt_save, token-type notes) through warn/error
+      // too, several lines PER TURN. Latch only lines that read like an actual failure, and demote the rest to debug
+      // so the console stays readable during a long run.
+      let nativeErr = "";
+      const native = (...a) => {
+        const m = a.map(String).join(" ");
+        if(/\berror\b|\bfailed\b|cannot|unsupported/i.test(m)){ nativeErr ||= m; console.error("[wllama]", m); }
+        else console.debug("[wllama]", m);
+      };
+      const w = new Wllama(WLLAMA_WASM, { logger: { debug: () => {}, log: () => {}, warn: native, error: native } });
       if(ggufBlob){
         write(`\r\nloading ${ggufBlob.name} from disk (${(ggufBlob.size/1e9).toFixed(1)} GB)...\r\n`);
         await w.loadModel([ggufBlob], { n_ctx: N_CTX });   // straight off disk: no network, no storage
@@ -657,6 +674,13 @@
           try{ await w.loadModelFromHF({ repo, file }, { ...opts, useCache: false }); }
           catch(e2){ throw storageHint(e2); }
         }
+      }
+      // THE load check, not a belt-and-braces one: wllama resolves loadModel() even when llama.cpp refused the file,
+      // so without this a failed load is stored as a live handle and every later turn silently produces nothing.
+      if(!w.isModelLoaded()){
+        try{ await w.exit?.(); }catch(_){ }
+        throw new Error("the model did not load" + (nativeErr ? " - " + nativeErr : "") +
+          ". A .gguf that llama.cpp cannot read (wrong format, truncated download, or an architecture this build does not support) fails exactly this way.");
       }
       wll = w; wllPath = want;
     })();
@@ -1848,7 +1872,11 @@ _env`;
     if(!f) return;
     ggufBlob = f;
     $("model").value = f.name;   // the bar must name what will actually run, not the HF path it now overrides
-    if(wll){ try{ wll.exit?.(); }catch(_){ } wll = null; wllPath = ""; }   // force the next load to rebuild against this blob
+    // Drop BOTH the loaded model and any in-flight load. Clearing only `wll` was a silent hang: after a failed
+    // download the rejected-or-stuck wllLoading promise survived, and loadLocalModel's dedupe guard chained the
+    // picked file onto that dead promise, so Run produced no output, no error and no memory growth.
+    if(wll){ try{ wll.exit?.(); }catch(_){ } }
+    wll = null; wllPath = ""; wllLoading = null; wllWant = "";
     write("\r\n\x1b[36m[local]\x1b[0m " + f.name + " (" + (f.size/1e9).toFixed(1) + " GB) ready - press Run. No download, no internet.\r\n");
   });
   $("dlFile").addEventListener("change", async e => {
@@ -2159,6 +2187,7 @@ rwFootIdle = (past.length ? past.length + " restored + " : "") + sess.log.length
     $("model").placeholder = m === "local" ? "owner/repo/file.gguf" : "model (auto)";
     $("gguf").classList.toggle("hidden", m !== "local");   // the disk picker only means anything for the local tier
     $("ggufGet").classList.toggle("hidden", m !== "local");
+    $("ggufArrow").classList.toggle("hidden", m !== "local");
     if(m === "local") syncGgufLink();
     if(lastTier !== m){   // each tier keeps its own model text (traitStore's shape): a gguf path is meaningless to an API endpoint, and clearing it outright would lose a hand-typed one
       if(lastTier !== null) modelStash[lastTier] = $("model").value;
