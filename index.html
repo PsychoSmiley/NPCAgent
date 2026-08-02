@@ -238,6 +238,13 @@
        the standalone carries wllama itself and loads it from blob: instead of jsdelivr. ~10 MB, download only. -->
   <script type="text/plain" id="wllamajs"></script>
   <script type="text/plain" id="wllamawasm"></script>
+  <!-- Pyodide runs npc.py, so without these the standalone still needed a network to START, local model or not.
+       pyodide.mjs resolves the rest by URL, so the runtime serves them through a patched fetch. -->
+  <script type="text/plain" id="pyomjs"></script>
+  <script type="text/plain" id="pyoasmjs"></script>
+  <script type="text/plain" id="pyowasm"></script>
+  <script type="text/plain" id="pyostdlib"></script>
+  <script type="text/plain" id="pyolock"></script>
   <script type="module">
   /* ------------------------------------------------------------------ config */
   const WLLAMA_ESM  = "https://cdn.jsdelivr.net/npm/@wllama/wllama@3.5.1/esm/index.js";
@@ -650,6 +657,42 @@
       wllamaLocal = { esm: toBlob(js, "text/javascript"), wasm: { "default": "data:application/wasm;base64," + wasm } };
     }catch(e){ console.error("[NPCAgent] embedded wllama unusable", e); wllamaLocal = null; }
     return wllamaLocal;
+  }
+
+  const PYODIDE_URL = "https://cdn.jsdelivr.net/pyodide/v314.0.2/full/";
+
+  // Embedded Pyodide, standalone only. pyodide.mjs takes the module factory and the lockfile as OPTIONS, so those two
+  // need no network. The wasm and the stdlib zip are resolved by URL deep inside emscripten, so the only reliable way
+  // to serve them is to answer the fetch ourselves - patching fetch covers every path they might be requested through.
+  let pyoLocal;
+  function embeddedPyodide(){
+    if(pyoLocal !== undefined) return pyoLocal;
+    const slot = id => ($(id)?.textContent || "").trim();
+    const mjs = slot("pyomjs"), asm = slot("pyoasmjs"), wasm = slot("pyowasm"), std = slot("pyostdlib"), lock = slot("pyolock");
+    if(!mjs || !asm || !wasm || !std || !lock) return (pyoLocal = null);   // all or nothing: a partial set fails deeper and worse
+    try{
+      const bytes = b64 => { const s = atob(b64), u = new Uint8Array(s.length); for(let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i); return u; };
+      const blobUrl = (b64, type) => URL.createObjectURL(new Blob([bytes(b64)], { type }));
+      const served = {
+        "pyodide.asm.wasm":  [bytes(wasm), "application/wasm"],
+        "python_stdlib.zip": [bytes(std),  "application/zip"],
+        "pyodide-lock.json": [bytes(lock), "application/json"]
+      };
+      // Answer only these three, matched by exact filename under the Pyodide path, and hand everything else to the
+      // real fetch untouched. Serving the lockfile here rather than via lockFileContents avoids guessing whether that
+      // option wants text or parsed JSON - the fetch path is the one Pyodide uses by default and is known-good.
+      const realFetch = globalThis.fetch.bind(globalThis);
+      globalThis.fetch = (input, init) => {
+        const url = String(input?.url ?? input ?? "");
+        if(url.startsWith(PYODIDE_URL)) for(const name in served) if(url.endsWith(name)){
+          const [buf, type] = served[name];
+          return Promise.resolve(new Response(buf, { status:200, headers:{ "Content-Type":type, "Content-Length":String(buf.length) } }));
+        }
+        return realFetch(input, init);
+      };
+      pyoLocal = { mjs: blobUrl(mjs, "text/javascript"), asmUrl: blobUrl(asm, "text/javascript") };
+    }catch(e){ console.error("[NPCAgent] embedded pyodide unusable", e); pyoLocal = null; }
+    return pyoLocal;
   }
 
   let ggufBlob = null;   // a .gguf handed over from disk: no fetch, no storage, so it works where the cache cannot
@@ -1375,8 +1418,14 @@
       const pyodideReady = (async () => {
         if(!pyodide){
           write("Loading Pyodide...\r\n");
-          const { loadPyodide } = await import("https://cdn.jsdelivr.net/pyodide/v314.0.2/full/pyodide.mjs");
-          pyodide = await loadPyodide({ indexURL:"https://cdn.jsdelivr.net/pyodide/v314.0.2/full/" });
+          const emb = embeddedPyodide();
+          const { loadPyodide } = await import(emb ? emb.mjs : PYODIDE_URL + "pyodide.mjs");
+          // indexURL stays the CDN string: it is only a key for building asset URLs, and the patched fetch answers
+          // those locally. createPyodideModule is the one asset that cannot be intercepted, because pyodide.asm.mjs
+          // is loaded with a dynamic import() rather than a fetch.
+          pyodide = emb
+            ? await loadPyodide({ indexURL: PYODIDE_URL, createPyodideModule: (await import(emb.asmUrl)).default })
+            : await loadPyodide({ indexURL: PYODIDE_URL });
           pyodide.setStdout({ batched: s => {
             let m;
             s = s.replace(/[\x00-\x08\x0b-\x1f\x7f]/g, "");   // strip control chars from sim/LLM text (keeps \t,\n): a model emitting \x1b[ escapes could otherwise clear the screen or forge fake system lines. The harness re-adds its own ANSI colors below.
@@ -1866,13 +1915,20 @@ _env`;
     const btn = $("pack");
     btn.disabled = true;
     try{
-      write("\r\n\x1b[2m[pack] fetching the runtime (~8 MB) so the download needs no network at all...\x1b[0m\r\n");
-      const [htmlRes, pyRes, wjsRes, wasmRes] = await Promise.all([
+      write("\r\n\x1b[2m[pack] fetching the runtime (~24 MB) so the download needs no network at all...\x1b[0m\r\n");
+      const PYO = ["pyodide.mjs", "pyodide.asm.mjs", "pyodide.asm.wasm", "python_stdlib.zip", "pyodide-lock.json"];
+      const XT = ["https://cdn.jsdelivr.net/npm/@xterm/xterm@6.0.0/lib/xterm.js",
+                  "https://cdn.jsdelivr.net/npm/@xterm/addon-fit@0.11.0/lib/addon-fit.js",
+                  "https://cdn.jsdelivr.net/npm/@xterm/xterm@6.0.0/css/xterm.css"];
+      const [htmlRes, pyRes, wjsRes, wasmRes, ...rest] = await Promise.all([
         fetch(location.pathname, { cache:"no-cache" }),
         fetch("./npc.py", { cache:"no-cache" }),
         fetch(WLLAMA_ESM),
-        fetch(WLLAMA_WASM.default)
+        fetch(WLLAMA_WASM.default),
+        ...PYO.map(f => fetch(PYODIDE_URL + f)),
+        ...XT.map(u => fetch(u))
       ]);
+      const pyoRes = rest.slice(0, PYO.length), xtRes = rest.slice(PYO.length);
       if(!htmlRes.ok || !pyRes.ok) throw new Error("HTTP " + htmlRes.status + "/" + pyRes.status);
       const html = await htmlRes.text(), py = new Uint8Array(await pyRes.arrayBuffer());
       if(!packSlot.test(html)) throw new Error("this page has no npcpy slot to fill");
@@ -1894,6 +1950,29 @@ _env`;
         out = out.replace(/(<script type="text\/plain" id="wllamajs">)([\s\S]*?)(<\/script>)/,   (m, a, _x, c) => a + b64(wjs) + c)
                  .replace(/(<script type="text\/plain" id="wllamawasm">)([\s\S]*?)(<\/script>)/, (m, a, _x, c) => a + b64(wasm) + c);
       }else write("\x1b[33m[pack] the runtime could not be fetched - building without it, so the download will need a network for local models.\x1b[0m\r\n");
+
+      // Pyodide runs npc.py, so without it the download could not even START offline. Same all-or-nothing rule.
+      if(pyoRes.every(r => r.ok)){
+        const slots = ["pyomjs", "pyoasmjs", "pyowasm", "pyostdlib", "pyolock"];
+        const bufs = await Promise.all(pyoRes.map(async r => new Uint8Array(await r.arrayBuffer())));
+        // The closing tag MUST stay escaped as <\/script>: written literally it would end this very script element,
+        // which is exactly how the page broke the first time round.
+        slots.forEach((slot, i) => {
+          out = out.replace(new RegExp('(<script type="text/plain" id="' + slot + '">)([\\s\\S]*?)(<\\/script>)'),
+                            (m, a, _x, c) => a + b64(bufs[i]) + c);
+        });
+      }else write("\x1b[33m[pack] Pyodide could not be fetched - the download will still need a network to start.\x1b[0m\r\n");
+
+      // xterm arrives through <script src>/<link>, not a slot, so inline the tags themselves. Drop the integrity
+      // attribute with them: an SRI hash describes a fetch that no longer happens, and would reject the inlined copy.
+      if(xtRes.every(r => r.ok)){
+        const [xjs, xfit, xcss] = await Promise.all(xtRes.map(r => r.text()));
+        // "<\/script>" for the same reason as above: an unescaped closing tag here ends this script element.
+        out = out.replace(/<script src="https:\/\/cdn\.jsdelivr\.net\/npm\/@xterm\/xterm@6\.0\.0\/lib\/xterm\.js"[^>]*><\/script>/, () => "<script>" + xjs + "<\/script>")
+                 .replace(/<script src="https:\/\/cdn\.jsdelivr\.net\/npm\/@xterm\/addon-fit@0\.11\.0\/lib\/addon-fit\.js"[^>]*><\/script>/, () => "<script>" + xfit + "<\/script>")
+                 .replace(/<link rel="stylesheet" href="https:\/\/cdn\.jsdelivr\.net\/npm\/@xterm\/xterm@6\.0\.0\/css\/xterm\.css"[^>]*>/, () => "<style>" + xcss + "</style>");
+      }else write("\x1b[33m[pack] xterm could not be fetched - the download will still need a network for its terminal.\x1b[0m\r\n");
+
       saveFile("NPCAgent.html", out);
       write("\r\n\x1b[32m[pack] NPCAgent.html built - " + (out.length / 1048576).toFixed(1) + " MB, one file, double-click it offline.\x1b[0m\r\n");
     }catch(e){
