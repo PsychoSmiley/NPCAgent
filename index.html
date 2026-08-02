@@ -95,6 +95,8 @@
   #pack:disabled{ opacity:.3; cursor:default; }
   #pack.hidden{ display:none; }
   #gguf.hidden{ display:none; }
+  #ggufGet{ color:var(--amber); font:inherit; font-size:11px; text-decoration:underline; white-space:nowrap; align-self:center; padding:0 4px; }
+  #ggufGet.hidden{ display:none; }
   body[data-state="dormant"] #run, body[data-state="ended"] #run, body[data-state="fault"] #run{
         animation:beacon 2.8s ease-in-out infinite; }
   body[data-state="waking"] #run, body[data-state="live"] #run{
@@ -175,6 +177,8 @@
     </label>
     <input type="file" id="dlFile" accept=".json,application/json" class="hidden">
     <input type="file" id="ggufFile" accept=".gguf" class="hidden">
+    <!-- a real anchor, not a terminal line: xterm has no link addon here, and this must stay clickable on file:// -->
+    <a id="ggufGet" class="hidden" target="_blank" rel="noopener" title="Download this .gguf from HuggingFace in your browser, then load it with the button on the right. This is the offline route: the page never downloads it itself.">get model</a>
     <!-- arrow ascending OUT of a box: "load a model from disk", the mirror of #pack's descending arrow -->
     <button id="gguf" class="hidden" title="Load a .gguf model from your disk. No download and no browser storage, so this is the only path that works fully offline (and the only one that works at all from a double-clicked file)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 6.8V1.3M4.8 3.5 7 1.3l2.2 2.2"/><path d="M1.5 8v4.5h11V8"/></svg></button>
     <button id="dl" title="Save this run: a ShareGPT history (dataset) AND a resumable run file you can load back" disabled><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 1v7M3.5 5 7 8.5 10.5 5M2 10.5V13h10v-2.5"/></svg></button>
@@ -1816,6 +1820,13 @@ _env`;
     if(!json) return writeErr("\r\n[download] nothing to save yet - let it run a turn first.\r\n");
     saveFile("npcagent-history.json", json);   // no session to attach (a finished run that already cleared it): dataset only
   });
+  // Point the link at whatever gguf the Model field currently names, so a hand-typed repo stays downloadable.
+  // ?download=true makes HuggingFace serve it as an attachment instead of rendering a preview page.
+  function syncGgufLink(){
+    const g = parseGguf($("model").value);
+    $("ggufGet").href = `https://huggingface.co/${g.repo}/resolve/main/${g.file}?download=true`;
+  }
+  $("model").addEventListener("input", () => { if($("engine").value === "local") syncGgufLink(); });
   $("gguf").addEventListener("click", () => $("ggufFile").click());
   $("ggufFile").addEventListener("change", e => {
     const f = e.target.files?.[0];
@@ -2133,6 +2144,8 @@ rwFootIdle = (past.length ? past.length + " restored + " : "") + sess.log.length
     $("apiKey").closest(".fld").classList.toggle("collapsed", m !== "endpoint");
     $("model").placeholder = m === "local" ? "owner/repo/file.gguf" : "model (auto)";
     $("gguf").classList.toggle("hidden", m !== "local");   // the disk picker only means anything for the local tier
+    $("ggufGet").classList.toggle("hidden", m !== "local");
+    if(m === "local") syncGgufLink();
     if(lastTier !== m){   // each tier keeps its own model text (traitStore's shape): a gguf path is meaningless to an API endpoint, and clearing it outright would lose a hand-typed one
       if(lastTier !== null) modelStash[lastTier] = $("model").value;
       $("model").value = modelStash[m] ?? (m === "local" ? HF_DEFAULT : "");
