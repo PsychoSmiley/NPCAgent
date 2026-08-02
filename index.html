@@ -1587,7 +1587,10 @@ _npc.PERSONALITIES = json.loads(TRAITS_JSON)
       if(saveInterval){ clearInterval(saveInterval); saveInterval = null; }
       if(visHandler){ document.removeEventListener("visibilitychange", visHandler); visHandler = null; }
       if(lineReader){ const r = lineReader; lineReader = null; r.cleanup(); }   // a FATAL mid-player-turn leaves a stale reader: stdin stuck enabled, Enter-to-restart blocked
-      running = false; $("run").textContent = "Restart";
+      // "Restart" claims a run happened. A failure during setup - no model, refused download, dead worker - kills the
+      // attempt before a single turn, and offering to RE-start something that never started reads as though the crash
+      // wiped real progress. Only promise a restart when there is something to restart.
+      running = false; $("run").textContent = (llmTurns > 0 || curDay > 0) ? "Restart" : "Run";
       for(const el of $("bar").querySelectorAll("input,select")) el.disabled = false;
       // a re-armed resume is still pre-run: run() reads these four from the DOM, so they must stay frozen or editing
       // Subject/Days between the FATAL and the retry desyncs the replay
