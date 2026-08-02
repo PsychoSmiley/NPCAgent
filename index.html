@@ -621,16 +621,24 @@
         await w.loadModel([ggufBlob], { n_ctx: N_CTX });   // straight off disk: no network, no storage
       }else{
         const { repo, file } = parseGguf(ggufPath);
+        const opts = {
+          n_ctx: N_CTX,
+          progressCallback: p => {
+            const l = p?.loaded || 0, t = p?.total || 0;
+            if(t) write(`\rdownloading ${(l/1e9).toFixed(1)}/${(t/1e9).toFixed(1)} GB`);
+          }
+        };
+        // Caching is what makes the SECOND run offline, so never pre-emptively give it up: file:// is
+        // "potentially trustworthy" per spec and some engines do allow storage there. Ask for the cache,
+        // and only when the browser actually refuses does the download repeat uncached.
         try{
-          await w.loadModelFromHF({ repo, file }, {
-            n_ctx: N_CTX,
-            useCache: CAN_CACHE,   // caching is what makes the SECOND run offline; where it is refused, download uncached rather than dying
-            progressCallback: p => {
-              const l = p?.loaded || 0, t = p?.total || 0;
-              if(t) write(`\rdownloading ${(l/1e9).toFixed(1)}/${(t/1e9).toFixed(1)} GB`);
-            }
-          });
-        }catch(e){ throw storageHint(e); }
+          await w.loadModelFromHF({ repo, file }, { ...opts, useCache: true });
+        }catch(e){
+          if(!isStorageErr(e)) throw e;
+          writeErr("\r\n[local] this browser refused to store the model (local file). Downloading without cache - it will not persist to the next run.\r\n");
+          try{ await w.loadModelFromHF({ repo, file }, { ...opts, useCache: false }); }
+          catch(e2){ throw storageHint(e2); }
+        }
       }
       wll = w; wllPath = want;
     })();
@@ -641,9 +649,9 @@
   // Chrome reports a blocked file:// storage call as a bare "SecurityError: ...certain files are unsafe for access
   // within a Web application...", which names neither the API that refused nor anything the player can act on.
   // Replace it with the one instruction that actually resolves it; keep any other failure verbatim.
+  const isStorageErr = e => e?.name === "SecurityError" || /SecurityError|storage|quota|cache|unsafe for access/i.test(String(e?.message || e));
   function storageHint(e){
-    const msg = String(e?.message || e);
-    if(e?.name !== "SecurityError" && !/SecurityError|storage|quota|cache/i.test(msg)) return e;
+    if(!isStorageErr(e)) return e;
     return new Error("this browser blocks model storage on a local file, so the download cannot be kept. Click the upload button in the bar and pick a .gguf from your disk - that needs no download and runs fully offline.");
   }
 
@@ -1318,7 +1326,7 @@
           // player it is "cached after first download" sells the exact offline guarantee this build cannot keep.
           if(ggufBlob) { /* the picker already announced the file */ }
           else if(CAN_CACHE) write("Loading "+g.file+" (cached after first download)\r\n");
-          else write("Loading "+g.file+" \x1b[33m(not cached - a local file cannot keep it, so this downloads every run. Use the upload button to load a .gguf from disk instead and never download again.)\x1b[0m\r\n");
+          else write("Loading "+g.file+" \x1b[33m(caching may be refused for a local file; if so this downloads every run. Use the upload button to load a .gguf from disk instead and never download again.)\x1b[0m\r\n");
           try{ await loadLocalModel(gguf); }
           catch(e){ wll = null; throw e; }
           write("\r\nModel ready ("+"CPU wasm, slow).\r\n");
@@ -2131,7 +2139,7 @@ rwFootIdle = (past.length ? past.length + " restored + " : "") + sess.log.length
       // Say it on the SWITCH, not after a 2 GB download has already been spent. Only where the cache is refused:
       // on a real origin the download genuinely is a one-time cost and this warning would be a lie in the other direction.
       if(m === "local" && lastTier !== null && !CAN_CACHE && !ggufBlob)
-        write("\r\n\x1b[33m[local]\x1b[0m this page runs from a file, so the browser refuses to store a downloaded model. Click the \x1b[1mupload\x1b[0m button and pick a .gguf from your disk - no download, and it works with no internet at all.\r\n");
+        write("\r\n\x1b[33m[local]\x1b[0m this page runs from a file, so the browser may refuse to store a downloaded model (it is still attempted). Click the \x1b[1mupload\x1b[0m button and pick a .gguf from your disk instead - no download, and it works with no internet at all.\r\n");
       lastTier = m;
     }
     if(m === "free" && lcReady) probeFreeModels();   // symmetric ownership: each catalog tier stamps modelSelect.dataset.tier and refuses its cache when another tier overwrote the options, so no cross-tier reset (or ordering rule) is needed here
