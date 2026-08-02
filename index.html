@@ -233,6 +233,11 @@
        with base64(npc.py) to produce a one-file NPCAgent.html that works when double-clicked. type="text/plain" so it
        is inert markup rather than script. -->
   <script type="text/plain" id="npcpy"></script>
+  <!-- Filled only by the packager. A file:// page is a unique origin, so it cannot create a worker from a CDN script
+       and the local-model tier died there. Blob URLs inherit the page's origin and ARE allowed to back a worker, so
+       the standalone carries wllama itself and loads it from blob: instead of jsdelivr. ~10 MB, download only. -->
+  <script type="text/plain" id="wllamajs"></script>
+  <script type="text/plain" id="wllamawasm"></script>
   <script type="module">
   /* ------------------------------------------------------------------ config */
   const WLLAMA_ESM  = "https://cdn.jsdelivr.net/npm/@wllama/wllama@3.5.1/esm/index.js";
@@ -625,6 +630,24 @@
   // unreachable off a real origin. The disk picker below is the offline path there; the cache is the offline path
   // on the hosted page.
   const CAN_CACHE = (() => { try{ return location.protocol !== "file:" && !!globalThis.caches; }catch(_){ return false; } })();
+  // Embedded wllama, present only in a packaged standalone. Both slots must be filled or we fall back to the CDN:
+  // half a runtime is worse than none. Built once and memoised - decoding 7 MB of base64 twice is pure waste.
+  let wllamaLocal;
+  function embeddedWllama(){
+    if(wllamaLocal !== undefined) return wllamaLocal;
+    const js = ($("wllamajs")?.textContent || "").trim(), wasm = ($("wllamawasm")?.textContent || "").trim();
+    if(!js || !wasm) return (wllamaLocal = null);
+    try{
+      const toBlob = (b64, type) => {
+        const s = atob(b64), u = new Uint8Array(s.length);
+        for(let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i);
+        return URL.createObjectURL(new Blob([u], { type }));
+      };
+      wllamaLocal = { esm: toBlob(js, "text/javascript"), wasm: { "default": toBlob(wasm, "application/wasm") } };
+    }catch(e){ console.error("[NPCAgent] embedded wllama unusable", e); wllamaLocal = null; }
+    return wllamaLocal;
+  }
+
   let ggufBlob = null;   // a .gguf handed over from disk: no fetch, no storage, so it works where the cache cannot
   // A picked file OVERRIDES the typed path, so every place that labels "which model ran" has to say the file, not the
   // HuggingFace path sitting greyed-out in the box. Getting this wrong writes the wrong model onto the archive row.
@@ -646,7 +669,9 @@
       write("\r\nSwitching local model...\r\n");
     }
     wllLoading = (async () => {
-      const { Wllama } = await import(WLLAMA_ESM);
+      const emb = embeddedWllama();   // standalone: same-origin blobs, so the worker is allowed. hosted: CDN as before
+      const { Wllama } = await import(emb ? emb.esm : WLLAMA_ESM);
+      const WASM_CFG = emb ? emb.wasm : WLLAMA_WASM;
       // Keep llama.cpp's own diagnostics. loadModel() RESOLVES even when the model failed to parse (verified: a junk
       // blob logs "gguf_init_from_reader: failed to read magic" and still returns), so these lines are the only thing
       // that says why - without them a bad or unsupported gguf is indistinguishable from a hang.
@@ -659,7 +684,7 @@
         if(/\berror\b|\bfailed\b|cannot|unsupported/i.test(m)){ nativeErr ||= m; console.error("[wllama]", m); }
         else console.debug("[wllama]", m);
       };
-      const w = new Wllama(WLLAMA_WASM, { logger: { debug: () => {}, log: () => {}, warn: native, error: native } });
+      const w = new Wllama(WASM_CFG, { logger: { debug: () => {}, log: () => {}, warn: native, error: native } });
       if(ggufBlob){
         write(`\r\nloading ${ggufBlob.name} from disk (${(ggufBlob.size/1e9).toFixed(1)} GB)...\r\n`);
         await w.loadModel([ggufBlob], { n_ctx: N_CTX });   // straight off disk: no network, no storage
@@ -1819,18 +1844,28 @@ _env`;
     const btn = $("pack");
     btn.disabled = true;
     try{
-      const [htmlRes, pyRes] = await Promise.all([
+      write("\r\n\x1b[2m[pack] fetching the runtime (~8 MB) so the download needs no network at all...\x1b[0m\r\n");
+      const [htmlRes, pyRes, wjsRes, wasmRes] = await Promise.all([
         fetch(location.pathname, { cache:"no-cache" }),
-        fetch("./npc.py", { cache:"no-cache" })
+        fetch("./npc.py", { cache:"no-cache" }),
+        fetch(WLLAMA_ESM),
+        fetch(WLLAMA_WASM.default)
       ]);
       if(!htmlRes.ok || !pyRes.ok) throw new Error("HTTP " + htmlRes.status + "/" + pyRes.status);
       const html = await htmlRes.text(), py = new Uint8Array(await pyRes.arrayBuffer());
       if(!packSlot.test(html)) throw new Error("this page has no npcpy slot to fill");
       // btoa needs latin1, so walk the raw bytes rather than handing it a UTF-16 string
-      let bin = ""; for(const b of py) bin += String.fromCharCode(b);
-      const out = html.replace(packSlot, (m, a, _mid, c) => a + btoa(bin) + c);
+      const b64 = u8 => { let s = ""; for(const b of u8) s += String.fromCharCode(b); return btoa(s); };
+      let out = html.replace(packSlot, (m, a, _mid, c) => a + b64(py) + c);
+      // Embedding wllama is what makes local models work offline: a file:// page cannot build a worker from a CDN
+      // script, but it can from a blob. All-or-nothing - one slot without the other would just fail differently.
+      if(wjsRes.ok && wasmRes.ok){
+        const wjs = new Uint8Array(await wjsRes.arrayBuffer()), wasm = new Uint8Array(await wasmRes.arrayBuffer());
+        out = out.replace(/(<script type="text\/plain" id="wllamajs">)([\s\S]*?)(<\/script>)/,   (m, a, _x, c) => a + b64(wjs) + c)
+                 .replace(/(<script type="text\/plain" id="wllamawasm">)([\s\S]*?)(<\/script>)/, (m, a, _x, c) => a + b64(wasm) + c);
+      }else write("\x1b[33m[pack] the runtime could not be fetched - building without it, so the download will need a network for local models.\x1b[0m\r\n");
       saveFile("NPCAgent.html", out);
-      write("\r\n\x1b[32m[pack] NPCAgent.html built - " + Math.round(out.length / 1024) + " KB, one file, double-click it offline.\x1b[0m\r\n");
+      write("\r\n\x1b[32m[pack] NPCAgent.html built - " + (out.length / 1048576).toFixed(1) + " MB, one file, double-click it offline.\x1b[0m\r\n");
     }catch(e){
       writeErr("\r\n[pack] could not package this page (" + (e?.message || e) + ")\r\n");
     }
