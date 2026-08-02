@@ -168,7 +168,9 @@
         <option value="endpoint">Custom endpoint</option>
       </select>
     </label>
-    <input type="file" id="ggufFile" accept=".gguf" class="hidden">
+    <!-- multiple: a single gguf cannot exceed 2GB (emscripten's ftell is MAX_LONG-bound), so anything larger ships as
+         split parts. wllama sorts them itself by the -00001-of-0000N suffix; it just has to be handed all of them. -->
+    <input type="file" id="ggufFile" accept=".gguf" multiple class="hidden">
     <label class="fld"><span class="tag">Base URL</span>
       <input id="baseUrl" value="http://127.0.0.1:5000/v1" class="hidden" title="OpenAI-compatible base URL (endpoint mode)">
     </label>
@@ -701,11 +703,13 @@
   // Gate on the tier, not just on the blob: a file picked for the local tier stays loaded across an engine switch, and
   // without this check an endpoint run gets archived under that gguf's name while a completely different model served
   // every turn. The endpoint's own box decides what runs, so there the typed field is the only honest label.
-  const localModelName = () => (ggufBlob && $("engine").value === "local") ? ggufBlob.name : $("model").value;
+  const localModelName = () => (ggufBlob && $("engine").value === "local")
+    ? (ggufBlob.length > 1 ? ggufBlob[0].name.replace(/-\d{5}-of-\d{5}\.gguf$/i, ".gguf") : ggufBlob[0].name)   // name the model, not part 1 of 5
+    : $("model").value;
 
   let wllLoading = null, wllPath = "", wllWant = "";
   // a picked file wins over the typed path, so the identity key has to follow whichever is actually going to load
-  const localKey = p => ggufBlob ? "blob:" + ggufBlob.name + ":" + ggufBlob.size : JSON.stringify(parseGguf(p));
+  const localKey = p => ggufBlob ? "blob:" + ggufBlob.map(f => f.name + ":" + f.size).join("|") : JSON.stringify(parseGguf(p));
   const localStale = p => !wll || localKey(p) !== wllPath;   // "already loaded?" must account for the user typing a DIFFERENT gguf, or picking one
   function loadLocalModel(ggufPath){
     const want = localKey(ggufPath);
@@ -736,8 +740,9 @@
       };
       const w = new Wllama(WASM_CFG, { logger: { debug: () => {}, log: () => {}, warn: native, error: native } });
       if(ggufBlob){
-        write(`\r\nloading ${ggufBlob.name} from disk (${(ggufBlob.size/1e9).toFixed(1)} GB)...\r\n`);
-        await w.loadModel([ggufBlob], { n_ctx: N_CTX });   // straight off disk: no network, no storage
+        const totalBytes = ggufBlob.reduce((n, f) => n + f.size, 0);
+        write(`\r\nloading ${ggufBlob.length > 1 ? ggufBlob.length + " parts" : ggufBlob[0].name} from disk (${(totalBytes/1e9).toFixed(1)} GB)...\r\n`);
+        await w.loadModel(ggufBlob, { n_ctx: N_CTX });   // straight off disk: no network, no storage; wllama orders split parts itself
       }else{
         const { repo, file } = parseGguf(ggufPath);
         const opts = {
@@ -2052,20 +2057,26 @@ _env`;
   });
   $("gguf").addEventListener("click", () => $("ggufFile").click());
   $("ggufFile").addEventListener("change", e => {
-    const f = e.target.files?.[0];
+    const picked = [...(e.target.files || [])];
     e.target.value = "";   // else picking the same file twice fires no change event
-    if(!f) return;
-    ggufBlob = f;
+    if(!picked.length) return;
+    ggufBlob = picked;     // always an array: wllama takes Blob[] and orders split parts itself
+    const f = picked[0], total = picked.reduce((n, x) => n + x.size, 0);
+    const label = picked.length > 1 ? picked.length + " parts" : f.name;
+    // A single gguf cannot exceed 2GB, and llama.cpp's failure for an oversized one is opaque. Say so up front rather
+    // than after a long load: the fix (grab the split build instead) is not something anyone guesses from the error.
+    if(picked.length === 1 && f.size > 2147483648)
+      writeErr("\r\n[local] " + f.name + " is " + (f.size/1073741824).toFixed(1) + " GB. A single .gguf must stay under 2 GB here - use the split build of this model and select every part at once.\r\n");
     // Do NOT overwrite the box. Whatever is typed there stays, greyed and struck through, so the override is legible:
     // "that path is still yours, it is simply not what runs". Overwriting it silently destroyed a hand-typed repo.
     $("model").classList.add("superseded");
-    $("model").title = "Overridden by the loaded file " + f.name + ". Type here to go back to downloading this path instead.";
+    $("model").title = "Overridden by the loaded file " + label + ". Type here to go back to downloading this path instead.";
     // Drop BOTH the loaded model and any in-flight load. Clearing only `wll` was a silent hang: after a failed
     // download the rejected-or-stuck wllLoading promise survived, and loadLocalModel's dedupe guard chained the
     // picked file onto that dead promise, so Run produced no output, no error and no memory growth.
     if(wll){ try{ wll.exit?.(); }catch(_){ } }
     wll = null; wllPath = ""; wllLoading = null; wllWant = "";
-    write("\r\n\x1b[36m[local]\x1b[0m " + f.name + " (" + (f.size/1e9).toFixed(1) + " GB) ready - press Run. No download, no internet.\r\n");
+    write("\r\n\x1b[36m[local]\x1b[0m " + label + " (" + (total/1e9).toFixed(1) + " GB) ready - press Run. No download, no internet.\r\n");
   });
   $("dlFile").addEventListener("change", async e => {
     const f = e.target.files?.[0];
