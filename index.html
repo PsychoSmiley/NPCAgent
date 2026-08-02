@@ -1378,6 +1378,11 @@
       let usedLocal = false;
       if(mode === "local"){
         const gguf = $("model").value || HF_DEFAULT;
+        // A HuggingFace id is itself owner/repo, so a usable path needs THREE segments. parseGguf silently swaps
+        // anything shorter for the default, which means a typo runs a different model than the one on screen and
+        // labels the archive row with it. Never let that happen quietly.
+        if(!ggufBlob && gguf.split("/").length < 3)
+          writeErr("\r\n[!] \"" + gguf + "\" is not a full model path (needs owner/repo/file.gguf) - falling back to the default model instead.\r\n");
         if(localStale(gguf)){
           const g = parseGguf(gguf);
           // A loaded file names its own model, and on this tier that means a multi-GB fetch from whatever HuggingFace
