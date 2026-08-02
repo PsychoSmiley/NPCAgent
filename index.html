@@ -105,6 +105,8 @@
             text-decoration:underline; white-space:nowrap; cursor:pointer; }
   #ggufGet:hover{ color:#e7b06b; }
   #ggufGet.hidden{ display:none; }
+  /* the typed path is kept but visibly not in play once a file is loaded from disk */
+  #model.superseded{ opacity:.42; text-decoration:line-through; text-decoration-thickness:1px; }
   #ggufArrow{ color:var(--muted); font-size:10px; line-height:1; user-select:none; pointer-events:none; }
   #ggufArrow.hidden{ display:none; }
   #gguf{ height:14px; width:18px; display:flex; align-items:center; justify-content:center; flex:0 0 auto;
@@ -624,6 +626,9 @@
   // on the hosted page.
   const CAN_CACHE = (() => { try{ return location.protocol !== "file:" && !!globalThis.caches; }catch(_){ return false; } })();
   let ggufBlob = null;   // a .gguf handed over from disk: no fetch, no storage, so it works where the cache cannot
+  // A picked file OVERRIDES the typed path, so every place that labels "which model ran" has to say the file, not the
+  // HuggingFace path sitting greyed-out in the box. Getting this wrong writes the wrong model onto the archive row.
+  const localModelName = () => ggufBlob ? ggufBlob.name : $("model").value;
 
   let wllLoading = null, wllPath = "", wllWant = "";
   // a picked file wins over the typed path, so the identity key has to follow whichever is actually going to load
@@ -1308,7 +1313,7 @@
     const mode       = $("engine").value;
     const base       = $("baseUrl").value.trim().replace(/\/+$/, "");
     const apiKey     = $("apiKey").value.trim();
-    const modelName  = (mode === "free" ? $("modelSelect").value : $("model").value).trim();
+    const modelName  = (mode === "free" ? $("modelSelect").value : (mode === "local" ? localModelName() : $("model").value)).trim();
     const space      = addressSpace(base);
     let modelOverride = modelName;
     if(sess && !modelOverride) modelOverride = sess.cfg?.model || "";   // resume can start offline: skip the model probe, replay needs no network
@@ -1550,7 +1555,7 @@ _npc.PERSONALITIES = json.loads(TRAITS_JSON)
       // read the picker LIVE for the catalog tiers: a resumed free run whose saved id rotated out of the catalog is
       // corrected by probeFreeModels mid-startup, and taking the stale modelOverride here undid that correction.
       if(liveGen){ curModel = ((tierNow === "free" || tierNow === "chatgpt") && $("modelSelect").value) || modelOverride || modelName || ""; engineWas = mode; }   // the bridge just installed IS the truth; without this a later failed switch reverts the label to the page-load tier
-      else if(!curModel) curModel = (tierNow === "free" || tierNow === "chatgpt") ? $("modelSelect").value : $("model").value;   // a failed-and-reverted switch bumps the gen without claiming curModel, leaving the archive label empty
+      else if(!curModel) curModel = (tierNow === "free" || tierNow === "chatgpt") ? $("modelSelect").value : localModelName();   // a failed-and-reverted switch bumps the gen without claiming curModel, leaving the archive label empty
       try{ pyodide?.globals.set("MODE", curTier); }catch(_){ }   // MODE was frozen before runPythonAsync and before the recovery awaits; a switch landing in that window would leave endpoint-only `reasoning` gated on the startup tier
       if(sess){   // cfg was written from the STARTUP tier, so a switch that won during load would resume onto the wrong one
         const cfg = (sess.cfg ||= {});
@@ -1882,14 +1887,30 @@ _env`;
     const g = parseGguf($("model").value);
     $("ggufGet").href = `https://huggingface.co/${g.repo}/resolve/main/${g.file}?download=true`;
   }
-  $("model").addEventListener("input", () => { if($("engine").value === "local") syncGgufLink(); });
+  // Typing a path is an instruction to use that path, so it takes the field back from a loaded file. Without this the
+  // box could be greyed out forever with no way to return to downloading short of a reload.
+  $("model").addEventListener("input", () => {
+    if($("engine").value !== "local") return;
+    syncGgufLink();
+    if(ggufBlob){
+      ggufBlob = null;
+      if(wll){ try{ wll.exit?.(); }catch(_){ } }
+      wll = null; wllPath = ""; wllLoading = null; wllWant = "";
+      $("model").classList.remove("superseded");
+      $("model").title = "Model id - blank picks automatically";
+      write("\r\n\x1b[2m[local] loaded file dropped - this path will be downloaded instead.\x1b[0m\r\n");
+    }
+  });
   $("gguf").addEventListener("click", () => $("ggufFile").click());
   $("ggufFile").addEventListener("change", e => {
     const f = e.target.files?.[0];
     e.target.value = "";   // else picking the same file twice fires no change event
     if(!f) return;
     ggufBlob = f;
-    $("model").value = f.name;   // the bar must name what will actually run, not the HF path it now overrides
+    // Do NOT overwrite the box. Whatever is typed there stays, greyed and struck through, so the override is legible:
+    // "that path is still yours, it is simply not what runs". Overwriting it silently destroyed a hand-typed repo.
+    $("model").classList.add("superseded");
+    $("model").title = "Overridden by the loaded file " + f.name + ". Type here to go back to downloading this path instead.";
     // Drop BOTH the loaded model and any in-flight load. Clearing only `wll` was a silent hang: after a failed
     // download the rejected-or-stuck wllLoading promise survived, and loadLocalModel's dedupe guard chained the
     // picked file onto that dead promise, so Run produced no output, no error and no memory growth.
@@ -2266,7 +2287,7 @@ rwFootIdle = (past.length ? past.length + " restored + " : "") + sess.log.length
     // bridge and nothing else, so Python's MODE, the resume config and the archive labels all stayed at startup values.
     engineWas = m;
     curTier = m;
-    curModel = (m === "free" || m === "chatgpt") ? $("modelSelect").value : $("model").value;
+    curModel = (m === "free" || m === "chatgpt") ? $("modelSelect").value : localModelName();
     try{ pyodide?.globals.set("MODE", m); }catch(_){ }        // endpoint-only `reasoning` is gated on this
     if(sess){ const cfg = (sess.cfg ||= {}); cfg.mode = m; cfg.model = curModel; cfg.base = $("baseUrl").value; cfg.effort = $("effort").value; sessSave(); }   // so a reload resumes on the tier that was actually running
   });
