@@ -1793,6 +1793,9 @@ _env`;
     return { v:2, npc:npcVer, npcLen:(sess&&sess.npcLen)||0, tier:curTier, model:curModel,
              player:!!curPlayer, daysReq:curDaysReq, day:day|0, quality:core.quality,
              sharegpt:core.sharegpt, diaries:core.diaries, stats:core.stats,
+             // ENV_PY extracts these and snapOf() reads them back, but they were never carried across the middle, so
+             // every archive and every resume silently came back childless with the per-pair attempt counts reset.
+             pregnancies:core.pregnancies, tries:core.tries,
              transcript: tr.length > 500000 ? tr.slice(-500000) : tr };
   }
 
@@ -2021,7 +2024,9 @@ _env`;
       try{
         const fresh = buildEnvelope(curDay);
         if(fresh && fresh.sharegpt && fresh.sharegpt.length){
-          portable.snap = { sharegpt: fresh.sharegpt, diaries: fresh.diaries || {}, stats: fresh.stats || {}, day: curDay | 0 };
+          portable.snap = { sharegpt: fresh.sharegpt, diaries: fresh.diaries || {}, stats: fresh.stats || {},
+                            pregnancies: fresh.pregnancies || [], tries: fresh.tries || {},   // second drop point: a portable save lost the countdown too
+                            day: curDay | 0 };
           portable.past = pastOf(portable.snap);   // rewind reaches the whole saved history, not just the part this session recorded
         }
       }catch(_){ }   // no envelope yet (nothing completed): keep whatever snap we already had
