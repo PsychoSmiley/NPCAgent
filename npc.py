@@ -229,8 +229,18 @@ def player_input(prompt_text, source, agent, possible_actions, all_agents=None):
     """Human controller - same signature, contract and history record as send_message. Invalid/empty action -> 'none' (perform_action does not enforce the menu)."""
     source_name = source if isinstance(source, str) else source["name"]
     record_prompt(agent, source_name, prompt_text, possible_actions, all_agents)
-    shown = prompt_text if source_name == "Game System" else f'{source_name}: "{prompt_text}"'  # who is talking to you, same as the LLM gets inside its payload
-    status = f"  [{agent['name']}] ${agent['money']} | E{agent['energy']}/{capacity(agent)} | {agent['location']} | {format_time()}\n"
+    # System facts arrive glued to the front of the partner's line (see conv_turn), which buried "the job is open again"
+    # mid-sentence inside their dialogue. Split them back out so a notice reads as a notice, not as something Bob said.
+    pre, _, said = prompt_text.rpartition("\n")
+    shown = prompt_text if source_name == "Game System" else f'{source_name}: "{said}"'  # who is talking to you, same as the LLM gets inside its payload
+    if pre and source_name != "Game System": shown = f"  \x1b[2m{pre.strip()}\x1b[0m\n{shown}"
+    # the menu lists `work` wherever you stand at the Cafe, so who holds the counter has to be visible BEFORE the attempt
+    # rather than only in the failure it causes. turn_context already computes this for the LLM; the human never saw it.
+    job = ""
+    if all_agents and agent["location"] == "Cafe":
+        busy = [("you" if a is agent else a["name"]) for a in cafe_workers(all_agents)]
+        job = f" | {', '.join(busy)} working" if busy else " | counter free"
+    status = f"  [{agent['name']}] ${agent['money']} | E{agent['energy']}/{capacity(agent)} | {agent['location']}{job} | {format_time()}\n"
     print(f"\n>>> YOUR TURN <<<\n{status}{shown}\n  possibleAction: {', '.join(possible_actions)}")
     resp = input("  response: \x1b[2m(optional)\x1b[0m").strip() or "..."
     tab  = f"\x00TAB:{','.join(possible_actions)}" if sys.platform == "emscripten" else ""  # browser harness strips the suffix into Tab-cycle completions
@@ -562,7 +572,7 @@ def conv_turn(agent):
     # System facts first, the partner's actual words LAST: the reply must answer what was just said, and the tail of a
     # prompt is where attention is strongest - the same reason diary notes live at the end of history.
     pre = take_wake(current) + take_notices(current)
-    msg = (pre.strip() + " " + state["msg"]) if pre else state["msg"]
+    msg = (pre.strip() + "\n" + state["msg"]) if pre else state["msg"]   # newline, not a space: player_input splits here to show a notice as its own line instead of inside the speaker's quote
     response, action = (player_input(msg, other, current, acts, state["all_agents"]) if current.get("player")
                         else send_message(msg, other, current, acts))   # the LLM gets the speaker inside the payload; the player needs it on screen
     print(f"{current['name']}: \"{response}\" (Action: {action})")
