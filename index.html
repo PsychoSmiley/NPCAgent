@@ -84,17 +84,17 @@
   #run:disabled{ opacity:.4; cursor:default; animation:none; }
   #run:focus-visible{ outline:2px solid var(--fg); outline-offset:2px; }
   #dl:focus-visible{ outline:2px solid var(--amber); outline-offset:2px; }
-  #dl{ height:22px; width:auto; padding:0 5px; gap:3px; margin-left:auto; align-self:flex-end; display:flex; align-items:center; justify-content:center;
+  #dl{ height:22px; width:auto; padding:0 4px; gap:2px; margin-left:auto; align-self:flex-end; display:flex; align-items:center; justify-content:center;
         background:var(--void); color:var(--amber); border:1px solid var(--edge); border-radius:2px; cursor:pointer;
         transition:border-color .15s, background-color .15s; }   /* margin-left:auto pins dl + Share to the right on wide screens; collapses to 0 when the bar overflows */
   #dl:hover:not(:disabled){ border-color:#3d473a; }
   #dl:focus:not(:disabled), #dl:active:not(:disabled){ border-color:var(--amber); }
   #dl:disabled{ opacity:.3; cursor:default; }
   /* Self-packager: same chrome as #dl but no margin-left:auto, so it sits directly beside it rather than claiming the gap */
-  #pack{ height:22px; width:auto; padding:0 5px; gap:3px; align-self:flex-end; display:flex; align-items:center; justify-content:center;
+  #pack{ height:22px; width:auto; padding:0 4px; gap:2px; align-self:flex-end; display:flex; align-items:center; justify-content:center;
         background:var(--void); color:var(--moss); border:1px solid var(--edge); border-radius:2px; cursor:pointer;
         transition:border-color .15s, background-color .15s; }
-  #pack b{ font:700 10px/1 ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.04em; }
+  #pack b{ font:700 12px/1 ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.02em; }
   #pack:hover:not(:disabled){ border-color:#3d473a; }
   #pack:focus-visible{ outline:2px solid var(--amber); outline-offset:2px; }
   #pack:disabled{ opacity:.3; cursor:default; }
@@ -188,7 +188,7 @@
            sits OUTSIDE the anchor (inside it, it would be underlined and clickable, implying a third thing to click) -->
       <span id="ggufArrow" class="hidden" aria-hidden="true">&rarr;</span>
       <!-- arrow ascending OUT of a box: "load a model from disk", the mirror of #pack's descending arrow -->
-      <button id="gguf" type="button" class="hidden" title="Load a .gguf model from your disk. No download and no browser storage, so this is the only path that works fully offline (and the only one that works at all from a double-clicked file)"><svg width="11" height="11" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M7 6.8V1.3M4.8 3.5 7 1.3l2.2 2.2"/><path d="M1.5 8v4.5h11V8"/></svg></button>
+      <button id="gguf" type="button" class="hidden" title="Load a .gguf model from your disk. No download and no browser storage, so this is the only path that works fully offline (and the only one that works at all from a double-clicked file)"><svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.87" stroke-linecap="round" stroke-linejoin="round"><path d="M7 6.8V1.3M4.8 3.5 7 1.3l2.2 2.2"/><path d="M1.5 8v4.5h11V8"/></svg></button>
     </span>
       <select id="modelSelect" title="Free model id"></select>
       <input id="model" placeholder="model (auto)" class="hidden" title="Model id - blank picks automatically">
@@ -209,9 +209,9 @@
       <input id="traitVal" placeholder="none" title="Personality trait for this agent">
     </label>
     <input type="file" id="dlFile" accept=".json,application/json" class="hidden">
-    <button id="dl" title="Save this run: a ShareGPT history (dataset) AND a resumable run file you can load back" disabled><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 1v7M3.5 5 7 8.5 10.5 5M2 10.5V13h10v-2.5"/></svg><svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.5 8.5a1.5 1.5 0 0 1-1.5 1.5H5l-3 2.5V3.5A1.5 1.5 0 0 1 3.5 2h7.5A1.5 1.5 0 0 1 12.5 3.5z"/></svg></button>
+    <button id="dl" title="Save this run: a ShareGPT history (dataset) AND a resumable run file you can load back" disabled><svg width="15" height="15" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 1v7M3.5 5 7 8.5 10.5 5M2 10.5V13h10v-2.5"/></svg><svg width="15" height="15" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.4" y="2.2" width="11.2" height="7.6" rx="1.6"/><path d="M4.6 9.8v2.9L8.2 9.8"/></svg></button>
     <!-- arrow descending INTO a box: "download the game itself", distinct from #dl's plain arrow ("save this run") -->
-    <button id="pack" title="Download the game: packages this page into one standalone HTML you can double-click offline"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 1v5.5M4.8 4.6 7 6.8l2.2-2.2"/><path d="M1.5 8v4.5h11V8"/></svg><b>HTML</b></button>
+    <button id="pack" title="Download the game: packages this page into one standalone HTML you can double-click offline"><svg width="15" height="15" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 1v5.5M4.8 4.6 7 6.8l2.2-2.2"/><path d="M1.5 8v4.5h11V8"/></svg><b>HTML</b></button>
     <label id="contribBox" title="Upload this run's log to a research archive at the end of each in-game day. Opt-in, on by default; your choice is remembered. A player run's upload includes what you type - unchecking mid-run also withdraws anything already sent.">
       <input type="checkbox" id="contrib" checked><span class="tag">Share log daily</span>
     </label>
