@@ -740,14 +740,25 @@
         else console.debug("[wllama]", m);
       };
       const w = new Wllama(WASM_CFG, { logger: { debug: () => {}, log: () => {}, warn: native, error: native } });
+      // wllama has not been CPU-only since 3.1: it offloads EVERY layer to WebGPU by default (n_gpu_layers 99999) and
+      // decides purely on `navigator.gpu` existing. A browser that reports it but cannot produce an adapter - old GPU,
+      // blocklisted driver, VM or remote desktop, hardware acceleration off, Firefox without JSPI - takes
+      // llama_context down with it, and the player sees only a wasm stack ending in ggml_backend_webgpu_free.
+      // Ask for a real adapter first, and stay on CPU when there is not one. Also SAY which backend ran: without it,
+      // "why is this using my CPU" is unanswerable from the page.
+      const gpu = await (async () => { try{ return !!(await navigator.gpu?.requestAdapter()); }catch(_){ return false; } })();
+      const backend = gpu ? "GPU" : "CPU (no WebGPU in this browser)";
+      const gpuOpt = gpu ? {} : { n_gpu_layers: 0 };
       if(ggufBlob){
         const totalBytes = ggufBlob.reduce((n, f) => n + f.size, 0);
-        write(`\r\nloading ${ggufBlob.length > 1 ? ggufBlob.length + " parts" : ggufBlob[0].name} from disk (${(totalBytes/1e9).toFixed(1)} GB)...\r\n`);
-        await w.loadModel(ggufBlob, { n_ctx: N_CTX });   // straight off disk: no network, no storage; wllama orders split parts itself
+        write(`\r\nloading ${ggufBlob.length > 1 ? ggufBlob.length + " parts" : ggufBlob[0].name} from disk (${(totalBytes/1e9).toFixed(1)} GB) on ${backend}...\r\n`);
+        await w.loadModel(ggufBlob, { n_ctx: N_CTX, ...gpuOpt });   // straight off disk: no network, no storage; wllama orders split parts itself
       }else{
         const { repo, file } = parseGguf(ggufPath);
+        write(`\r\nrunning on ${backend}\r\n`);
         const opts = {
           n_ctx: N_CTX,
+          ...gpuOpt,
           progressCallback: p => {
             const l = p?.loaded || 0, t = p?.total || 0;
             if(t) write(`\rdownloading ${(l/1e9).toFixed(1)}/${(t/1e9).toFixed(1)} GB`);
