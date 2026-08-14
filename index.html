@@ -792,6 +792,17 @@
       return new Error(`"${file}" is not in the "${repo}" repo on HuggingFace - check the exact filename.`);
     return e;
   }
+  // A wasm abort's stack is nothing but wasm-function[N] frames, so the one line that names the cause scrolls off the
+  // top and what reaches a bug report is "[FATAL] and a bunch of wasm-funcs" - undiagnosable. Lead with the message,
+  // keep at most three real frames, and say how many wasm frames were dropped so nobody thinks output went missing.
+  function fatalText(e){
+    const msg = String(e?.message || e || "unknown error");
+    const isWasm = l => /wasm-function\[|\.wasm[:)]/.test(l);
+    const lines = String(e?.stack || "").split("\n").slice(1).map(s => s.trim()).filter(Boolean);
+    const n = lines.filter(isWasm).length;
+    return [msg, ...lines.filter(l => !isWasm(l)).slice(0, 3),
+            n ? `(${n} wasm frames hidden - press F12 for the full trace)` : ""].filter(Boolean).join("\r\n  ");
+  }
   const isStorageErr = e => e?.name === "SecurityError" || /SecurityError|storage|quota|cache|unsafe for access/i.test(String(e?.message || e));
   function storageHint(e){
     if(!isStorageErr(e)) return e;
@@ -1696,7 +1707,7 @@ _npc.PERSONALITIES = json.loads(TRAITS_JSON)
       write("\r\n\x1b[2m=== run complete ===\x1b[0m\r\n");
     }catch(e){
       setState("fault");   // BEFORE the save: that upload can wait ~50s on the mutex plus a 45s POST, and a silent Stop-looking hang invites the one click that wipes the crashed run
-      writeErr("\r\n[FATAL] "+(e?.stack || e)+"\r\n");
+      writeErr("\r\n[FATAL] "+fatalText(e)+"\r\n");
       // Pyodide + libcurl + wllama are three WASM heaps in one tab; after enough reloads the browser simply has no
       // address space left, and the raw RangeError tells the user nothing about the one thing that fixes it.
       if(/WebAssembly|could not allocate|Out of memory/i.test(String(e?.message || e)))
