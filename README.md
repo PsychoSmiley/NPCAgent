@@ -22,9 +22,11 @@ I started this in 2023 with one idea, [inspired by Stanford's generative agents]
 Hundreds of hours later I had something stable enough to archive. I got there by cutting the problem into small studies, each one borrowing from a project I'd already built:
 
 1. [LLM_Buttplug](https://github.com/PsychoSmiley/LLM_Buttplug): could a simple [first-draft prompt](https://gist.github.com/PsychoSmiley/9a54b5fdd934435f01ae5146fe516d89) drive a JSON function and a chat answer in one reply, with no LoRA training, no [GBNF grammar](https://github.com/ggerganov/llama.cpp/blob/master/grammars/README.md), nothing bolted on? It held up on about half the local models around then.
-2. [mcp-to-mcp](https://github.com/PsychoSmiley/mcp-to-mcp): MCP against the plain JSON this script uses. The JSON won. It was the step-by-step run-up to `https://mcpworld.edge-relay-9x.workers.dev/world`, which has no repo of its own. Drop that URL into [claude.ai Settings -> Connectors](https://claude.ai/customize/connectors) and open two chats.
+2. [mcp-to-mcp](https://github.com/PsychoSmiley/mcp-to-mcp): could multiple MCPs communicate with each other? Measured against the plain JSON this script uses, the JSON won. To try that early version, copy `https://mcpworld.edge-relay-9x.workers.dev/world` into [claude.ai Settings -> Connectors](https://claude.ai/customize/connectors), or any other chat that accepts a *remote MCP* URL, and open two chats.
 3. Prompt engineering then turned into measurement. Every edit meant a full run into [`log/`](log), scored by [`agents-game-log-analyzer.md`](agents-game-log-analyzer.md), and the score decided whether I kept the edit or threw it out.
 4. The prompt balances *survival* against *creativity*, where creativity means the emergence and the entertainment of role-play. I'd worked that definition out earlier on [RP-Leaderboard](https://github.com/PsychoSmiley/RP-Leaderboard/blob/main/benchmark.py#L75-L89).
+
+### Game design
 
 **Terrarium, not script**
 - create CONDITIONS, observe emergence, "Hollow Level 3" economic OUTCOMES (wealth gap) ≠ strategic COGNITION (intentional hoarding)
