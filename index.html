@@ -154,6 +154,19 @@
   @media (prefers-reduced-motion:reduce){
     *,*::before,*::after{ animation:none!important; transition:none!important; }
   }
+
+  /* The bar is one non-wrapping scroll row. That reads well on a desktop and is unusable on a phone: the controls
+     measure 969px against a 390px screen, so Subject, Days, Trait, both download buttons and the Share toggle sit
+     579px off the right edge with only a thin fade hinting they exist. Wrap instead below 760px - a taller bar costs
+     a few rows of terminal, an unreachable control costs the feature. */
+  @media (max-width:760px){
+    #bar{ flex-wrap:wrap; overflow-x:hidden; -webkit-mask-image:none; mask-image:none; }
+    #bar > *{ flex:0 1 auto; }
+    #bar input, #bar select{ max-width:38vw; }   /* Model alone claimed 130px of the 390 */
+    #brand{ margin-right:4px; }
+    #dl{ margin-left:auto; }                     /* keep the two download buttons together at the end of their row */
+    #term{ padding:4px 5px 0; }
+  }
 </style>
 </head>
 
@@ -299,6 +312,14 @@
   fit.fit();
   const xtTextarea = $("term").querySelector(".xterm-helper-textarea");
   if(xtTextarea) xtTextarea.disabled = true;
+  // 100dvh is supposed to shrink when the on-screen keyboard opens, but several mobile browsers keep reporting the
+  // full height, leaving the line being typed underneath the keyboard with no way to scroll to it. visualViewport
+  // reports the genuinely usable area, so pin the body to it and let the ResizeObserver below refit the terminal.
+  if(window.visualViewport){
+    const vvFit = () => { document.body.style.height = visualViewport.height + "px"; };
+    visualViewport.addEventListener("resize", vvFit);
+    vvFit();
+  }
   new ResizeObserver(() => {
     fit.fit();
     // term.cols just changed, so a live reader's row bookkeeping now describes the OLD wrap. Left stale, the next
