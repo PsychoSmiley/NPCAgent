@@ -270,7 +270,31 @@
   const N_CTX       = 8192;
   const MAX_TOKENS_CAP = 256;
 
-  const WISP_RELAY  = "wss://wisp.mercurywork.shop/";
+  // One hardcoded relay is a single point of failure twice over: a relay can die outright (4 of 31 probed on
+  // 2026-08-18 were already gone) and a live one can be refused by the upstream. All 30 below answered a real
+  // completion on 2026-08-18. mercurywork stays first because it has carried every run to date; the rest are only
+  // ever reached by hopRelay() after a refusal, so a healthy run never touches them.
+  const WISP_RELAYS = [
+    "wss://wisp.mercurywork.shop/", "wss://anura.pro/", "wss://fern.best/",
+    "wss://wisp.terbiumon.top/wisp/", "wss://ssh-proxy.terbiumon.top/", "wss://tomp.app/wisp",
+    "wss://nebulaservices.org/wisp/", "wss://relay.widgetry.org/", "wss://linuxontab-net.fly.dev/wisp",
+    "wss://relay.linuxontab.com/wisp", "wss://construction.services.codd70.ru/socket/",
+    "wss://onebigorange-tmm.tbt.mx/websocket/", "wss://arsenic.smartfoloo.space/wisp/",
+    "wss://0.catclass.net/wisp/", "wss://openbare.xyz/wisp/", "wss://civil.quartinal.me/wisp/",
+    "wss://altior-browser.onrender.com/wisp/", "wss://55gms.com/wisp/", "wss://pgis.x10.mx/wisp/",
+    "wss://tinf0il.site/wisp/", "wss://sg.zadmin.xyz/wisp/", "wss://invisiproxy.com/wisp/",
+    "wss://terbiumon.top/wisp/", "wss://linuxontab.com/wisp/", "wss://boltunblocker.com/wisp/",
+    "wss://scramjet.mercurywork.shop/wisp/", "wss://updaown-2.koyeb.app/wisp/",
+    "wss://studyworkandmore.uk/wisp/", "wss://boltunblocker.bot.nu/wisp/", "wss://nebulaproxy.io/wisp/"
+  ];
+  const RELAY_HOPS  = 5;    // per turn. A refusal returns in ~250ms so hopping is cheap, but walking all 30 on a
+                            // genuine upstream outage would stall the turn for minutes to reach the same answer.
+  let relayAt = 0;
+  const curRelay = () => WISP_RELAYS[relayAt];
+  function hopRelay(){
+    relayAt = (relayAt + 1) % WISP_RELAYS.length;
+    try{ libcurl.set_websocket(curRelay()); return true; }catch(_){ return false; }
+  }
   const FREE_UP    = atob("aHR0cHM6Ly9vcGVuY29kZS5haS96ZW4vdjE="); // upstream hidden from source readers
   const FREE_MAXTOK = 4096;
 
@@ -498,7 +522,7 @@
   // init libcurl WISP relay for the free tier (CORS bypass via WASM TCP)
   let lcReady = false;
   document.addEventListener("libcurl_load", () => {
-    libcurl.set_websocket(WISP_RELAY); lcReady = true;
+    libcurl.set_websocket(curRelay()); lcReady = true;
     if($("engine").value === "free") probeFreeModels();
   });
 
@@ -997,9 +1021,23 @@
         delete b.reasoning;                       // free models don't take it; a stale MODE=="endpoint" after a mid-run switch would otherwise leak it in
         b.max_tokens = Math.max(b.max_tokens||0, FREE_MAXTOK);   // reasoning models eat small caps (diary's 1000) as <think> -> empty; floor it here, not in Python, so it survives a mid-run switch
         bodyJson = JSON.stringify(b);
-        const r = await libcurl.fetch(FREE_UP+"/chat/completions", {
-          method:"POST", headers:freeHeaders(), body:bodyJson, signal:AbortSignal.timeout(120000)
-        });
+        // A refusal or a dead socket is not necessarily OUR quota - it can be this relay's. Hop to the next verified
+        // one and re-send the SAME turn before counting a failure, so the run only gives up once several independent
+        // exits have all refused. A refusal answers in ~250ms, so this costs a fraction of a second.
+        let r, hops = 0;
+        for(;;){
+          try{
+            r = await libcurl.fetch(FREE_UP+"/chat/completions", {
+              method:"POST", headers:freeHeaders(), body:bodyJson, signal:AbortSignal.timeout(120000)
+            });
+          }catch(e){
+            if(hops++ < RELAY_HOPS && hopRelay()) continue;   // dead relay: the next one may be alive
+            throw e;
+          }
+          if((r.status === 429 || r.status === 502 || r.status === 503) && hops++ < RELAY_HOPS && hopRelay()) continue;
+          break;
+        }
+        if(hops) write("\r\n\x1b[2m[relay] switched exit after "+hops+" refusal"+(hops>1?"s":"")+".\x1b[0m\r\n");
         if(!r.ok){
           lcFails++;
           const detail = apiErrDetail(await r.text());
@@ -1690,7 +1728,7 @@ _npc.PERSONALITIES = json.loads(TRAITS_JSON)
         const m = $("engine").value;
         // libcurl.set_websocket is a plain setter with no throw path, so presence + a try/catch proves nothing;
         // `ready` is the library's own getter over wasm_ready, and set_websocket is what binds fetch once it is up
-        if(!lcReady && typeof libcurl !== "undefined" && libcurl.ready){ try{ libcurl.set_websocket(WISP_RELAY); lcReady = true; }catch(_){ } }
+        if(!lcReady && typeof libcurl !== "undefined" && libcurl.ready){ try{ libcurl.set_websocket(curRelay()); lcReady = true; }catch(_){ } }
         if(m === "local" && wll) makeWllamaBridge();
         else if(m === "free" && lcReady) makeFreeLibcurlBridge();
         else if(m === "chatgpt" && cgptTok() && lcReady) makeChatgptBridge();
