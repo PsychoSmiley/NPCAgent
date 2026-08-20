@@ -1041,7 +1041,11 @@
         if(!r.ok){
           lcFails++;
           const detail = apiErrDetail(await r.text());
-          writeErr("\r\n[API] "+r.status+(detail ? ": "+detail : "")+" (pick another model if it persists)\r\n");
+          // Name the MODEL and the hop count. Without them a per-model refusal (403 on a gated id) is indistinguishable
+          // from a global rate limit, and the hop message only ever reached the terminal, so a pasted console log said
+          // nothing about whether the relay fallback had even run.
+          writeErr("\r\n[API] "+r.status+" on "+(b.model || "?")+" after "+hops+" relay hop"+(hops === 1 ? "" : "s")
+                   +(detail ? ": "+detail : "")+" (pick another model if it persists)\r\n");
           const fb = await freeFallback(bodyJson);
           return fb !== null ? fb : "";
         }
@@ -1426,7 +1430,10 @@
       try{
         const res = await libcurl.fetch(FREE_UP+"/models", { headers:freeHeaders(), signal:AbortSignal.timeout(30000) });   // a never-settling probe was memoized in freeProbe and left run() stuck in "waking"
         if(!res.ok) throw new Error("HTTP "+res.status);
-        const ids = ((await res.json()).data || []).map(m => m.id).filter(i => /free/i.test(i));
+        // `contributor` models end in "-free" but answer 403 to a public key, so a plain /free/ test offers a model
+        // nobody here can run. Picking it produced a generic refusal that read exactly like a rate limit.
+        const ids = ((await res.json()).data || []).map(m => m.id)
+          .filter(i => /free/i.test(i) && !/contributor/i.test(i));
         if(ids.length) try{ localStorage.setItem(FREE_CATKEY, JSON.stringify(ids)); }catch(_){ }   // survive the next refused probe
         if(!mine()) return ids;
         if(ids.length){
