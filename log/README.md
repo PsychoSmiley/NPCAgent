@@ -11,6 +11,7 @@ Years of LLM testing to evaluate [NPCAgent](../README.md); the raw runs are in `
 | ✅ Claude Sonnet 4.5 | 7 | Philosophical, worth paying |
 | ✅ MiniMax-M2 | 7 | Anti-repetition, best free API |
 | ✅ Gemini 3 Pro | 7 | Scientific |
+| ⚠️ x-preview-f / ox-alpha / GLM 5.5 | 7 | One model, two storefronts - x-preview-f self-IDs as "ox-alpha" (GLM 5.5 unconfirmed, it is instructed to deny any identity). Builds institutions and courts from nothing, clean relay; narrates unexecuted actions as fact, so the economy is fictional (v0.9.2) |
 | ✅ grok-code-fast-1 | 6.5 | Loop breaker, beats distilled |
 | ✅ DeepSeek v3.2 | 6 | Pragmatic |
 | ✅ Groq compound-beta-mini / llama3-8b / llama-4-maverick | - | usable |
