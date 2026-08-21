@@ -575,7 +575,10 @@ def conv_turn(agent):
     msg = (pre.strip() + "\n" + state["msg"]) if pre else state["msg"]   # newline, not a space: player_input splits here to show a notice as its own line instead of inside the speaker's quote
     response, action = (player_input(msg, other, current, acts, state["all_agents"]) if current.get("player")
                         else send_message(msg, other, current, acts))   # the LLM gets the speaker inside the payload; the player needs it on screen
-    print(f"{current['name']}: \"{response}\" (Action: {action})")
+    # An off-menu keyword here is inert by design (see mod_conv_action), but it PRINTED identically to an executed
+    # open-world action, and only a following "-> X attempts:" line told them apart. Two separate log readers took it
+    # for a dropped action and reported an engine bug. Name it inline instead - display only, nothing else changes.
+    print(f"{current['name']}: \"{response}\" (Action: {action}{'' if action in acts else ' - ignored, not offered in conversation'})")
     mod_conv_action(current, other, state, action, acts)   # mod seam: feature effects
     state["turns"] += 1
     state["msg"] = response

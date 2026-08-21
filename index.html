@@ -969,6 +969,14 @@
     const g = engineGen;
     const path = modelStash.local || HF_DEFAULT;
     if(!wll){
+      // wllama stages EVERY download through its cache manager and then looks the file back up there
+      // (`savedFiles.find(...)` -> "Model file not found"). On file:// the browser refuses that storage, so
+      // loadModelFromHF cannot succeed whatever useCache says - the retry without cache fails identically.
+      // Downloading 2 GB to arrive at that is worse than saying, up front, the one thing that does work.
+      if(!CAN_CACHE && !ggufBlob){
+        writeErr("\r\n[!] A downloaded model cannot run from a local file - this browser blocks the storage wllama needs. Click the upload button in the bar and pick a .gguf from your disk; that needs no download and works fully offline.\r\n");
+        return false;
+      }
       write("Loading "+parseGguf(path).file+" for fallback (~2 GB download"+(CAN_CACHE ? ", cached after the first time" : ", not cached here - see the upload button")+")...\r\n");
       try{ await loadLocalModel(path); write("\r\nLocal model ready ("+"CPU wasm).\r\n"); }
       catch(e){ writeErr("\r\n[!] Local fallback failed: "+(e?.message||e)+"\r\n"); return false; }
@@ -1011,6 +1019,19 @@
     const b = JSON.parse(bodyJson);
     return globalThis.wllamaComplete(JSON.stringify(b.messages||[]), b.max_tokens||MAX_TOKENS_CAP, b.temperature||0.5);
   }
+  // Free tier only. The endpoint and ChatGPT bridges own their own model and must never be rotated out from under
+  // the user - this walks the FREE picker's own list, which already excludes contributor-gated ids.
+  const MODEL_SWAPS = 4;
+  function nextFreeModel(){
+    const sel = $("modelSelect");
+    const ids = sel ? [...sel.options].map(o => o.value).filter(Boolean) : [];
+    if(ids.length < 2) return null;
+    const nx = ids[(ids.indexOf(sel.value) + 1) % ids.length];
+    if(nx === sel.value) return null;
+    sel.value = nx;        // persist: the next turn starts from whichever id actually answered
+    try{ noteModel(nx); }catch(_){ }   // keep curModel/cfg/archive naming the model that really ran
+    return nx;
+  }
   function makeFreeLibcurlBridge(){
     lcFails = 0; localDead = false;
     globalThis._httpRaw = async bodyJson => {
@@ -1021,10 +1042,11 @@
         delete b.reasoning;                       // free models don't take it; a stale MODE=="endpoint" after a mid-run switch would otherwise leak it in
         b.max_tokens = Math.max(b.max_tokens||0, FREE_MAXTOK);   // reasoning models eat small caps (diary's 1000) as <think> -> empty; floor it here, not in Python, so it survives a mid-run switch
         bodyJson = JSON.stringify(b);
-        // A refusal or a dead socket is not necessarily OUR quota - it can be this relay's. Hop to the next verified
-        // one and re-send the SAME turn before counting a failure, so the run only gives up once several independent
-        // exits have all refused. A refusal answers in ~250ms, so this costs a fraction of a second.
-        let r, hops = 0;
+        // 429 here is PER MODEL, measured: one exit answered 200 for one id and 429 for another in the same second,
+        // so a refusal means "this model is busy", exactly what the upstream's own error text says. Rotate the model
+        // and re-send the SAME turn. Transport failures are a different animal - a dead socket or a 502/503 is the
+        // exit misbehaving, not the model, so those still hop relays.
+        let r, hops = 0, swaps = 0;
         for(;;){
           try{
             r = await libcurl.fetch(FREE_UP+"/chat/completions", {
@@ -1034,7 +1056,12 @@
             if(hops++ < RELAY_HOPS && hopRelay()) continue;   // dead relay: the next one may be alive
             throw e;
           }
-          if((r.status === 429 || r.status === 502 || r.status === 503) && hops++ < RELAY_HOPS && hopRelay()) continue;
+          if(r.status === 429 && swaps < MODEL_SWAPS){
+            const nm = nextFreeModel();
+            if(nm){ swaps++; b.model = nm; bodyJson = JSON.stringify(b);
+                    write("\r\n\x1b[2m[free] "+nm+" (previous model was busy)\x1b[0m\r\n"); continue; }
+          }
+          if((r.status === 502 || r.status === 503) && hops++ < RELAY_HOPS && hopRelay()) continue;
           break;
         }
         if(hops) write("\r\n\x1b[2m[relay] switched exit after "+hops+" refusal"+(hops>1?"s":"")+".\x1b[0m\r\n");
