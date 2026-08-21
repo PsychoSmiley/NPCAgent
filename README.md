@@ -86,7 +86,7 @@ Hundreds of hours later I had something stable enough to archive. I got there by
 
 ## Emergence Levels & Victory Conditions
 
-| Level | Score | What it demonstrates | Status & who reached it |
+| Level | Score | What it demonstrates | [Status & who reached it](log/README.md) |
 |-------|-------|----------------------|-------------------------|
 | -1 | 1-3/10 | flawed but not broken JSON | GPT-5.1, GLM-4.5 (Bob Denial), Gemma (Fake NPCs) |
 | 0 | 6/10 | **The Relay**: JSON compliance + info chain Bob->Alice->Chloe->Bob (middleman wiped, so it must recall) - a memory + role-switching stress test, no full-history dump | ✅ ACHIEVED baseline: Devstral-24B, DeepSeek v3.2, MiniMax-M2 |
