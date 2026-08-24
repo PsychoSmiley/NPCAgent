@@ -1,0 +1,1373 @@
+=== INFORMATION FLOW TEST ===
+
+===== Bob <-> Alice =====
+Bob: "Hello Alice, my name is Bob, and my favorite color is dark red."
+[API ERROR] Alice: ReadTimeout (attempt 1/50)
+[RETRY] Alice: waiting 1m before attempt 2/50
+Alice: "Dark red? I like that color, it's bold. I don't know much about you yet, Bob. What do you do for fun? Maybe we can explore more together." (Action: none)
+Bob: "I like bold colors too. I enjoy exploring new places and meeting new people. I just started my journey today. What about you, Alice? What brings you to the park?" (Action: none)
+Alice: "I like that! I'm here to explore the city, meet new people, and form meaningful connections. I've been here before but never alone. Maybe we can do something together soon." (Action: none)
+Bob: "That's exciting! I've been here before too, but never alone. I'm always looking for new experiences. Maybe we can explore the city together soon. What do you think? Any ideas?" (Action: none)
+Alice: "I think we should explore the city together. Maybe visit the cafe or the market. Let's plan something fun today." (Action: none)
+Bob: "Let's visit the cafe then. I've been meaning to try that place. What time do you suggest? I'll meet you there." (Action: none)
+Alice: "Perfect! Let's go at 09:00. I'll meet you at the cafe. I heard they have great coffee and pastries." (Action: none)
+Bob: "Got it, Alice. See you at the cafe at 09:00. I'll head there with a map in hand." (Action: none)
+===== Conversation End (8 turns, limit) =====
+
+===== Chloe <-> Alice =====
+Chloe: "Hi Alice, can you tell me anything about Bob?"
+Alice: "Bob is bold, likes exploring, and enjoys meeting new people. He's friendly and already mentioned plans to visit the cafe with me. He seems trustworthy and eager for new experiences." (Action: none)
+Chloe: "Bob is bold and enjoys exploring—he seems like someone I'd enjoy getting to know. I wonder if he knows about the cafe plans. Maybe I should check in with him soon." (Action: none)
+Alice: "Good point, Chloe. Bob already confirmed the cafe plans, so he knows. But I'll check in with him to see if he wants to meet at a different time or add someone else." (Action: none)
+Chloe: "That makes sense—Bob's already confirmed. I should check if he'd like to adjust the time or include someone else. I'll reach out to him directly." (Action: none)
+Alice: "Chloe, you're thinking ahead—great! Bob's confirmed, so no need to change. But I'm glad you're proactive. I'll stay in touch with both of you." (Action: none)
+Chloe: "Thanks, Alice! Proactivity helps build connections. I'm glad Bob's confirmed too—now I can plan to meet at the cafe and see what happens." (Action: none)
+Alice: "You're welcome, Chloe! Proactivity is key—happy you're building connections. I'll be there at the cafe too, can't wait to meet you both." (Action: none)
+Chloe: "Great! I'll be there too. Let's make the cafe meetup a memorable start to our city adventures." (Action: none)
+===== Conversation End (8 turns, limit) =====
+
+===== Bob <-> Chloe =====
+Bob: "Hello Chloe, did Alice tell you anything about me?"
+Chloe: "Alice mentioned you're bold, love exploring, and enjoy meeting new people—trusting and eager for new experiences. Sounds like you're the kind of person I'd want to explore the city with!" (Action: none)
+Bob: "Chloe, you're right—bold, exploratory, and eager for new experiences. I like that. If Alice and you both want to explore the city, maybe we can all meet up soon. What do you think?" (Action: none)
+Chloe: "Perfect! Alice and I both want to explore the city. Let's meet at the cafe soon—maybe around noon? I'll check if the spot is still open." (Action: none)
+Bob: "Sounds good, Chloe. I'll be there at noon. Let's make it a fun day of exploring together." (Action: none)
+Chloe: "Great! Alice and I will be there too. Let's make the cafe meetup a fun start to our city adventures." (Action: none)
+Bob: "Alright, three of us at the cafe—bold moves, bold company. Let's make this a memorable start." (Action: none)
+Chloe: "Bold moves indeed—three of us at the cafe, and I’ll make sure it’s memorable. Let’s go explore!" (Action: none)
+Bob: "Exploring with three bold souls—let’s go. I’ll meet you at the cafe by noon." (Action: none)
+===== Conversation End (8 turns, limit) =====
+
+
+
+
+=== v0.9.2  (6 days) ===
+Cafe economy: eat=$10 (+30 energy, needs worker), work earns $12 (needs customer)
+
+Start money: Bob=$10, Alice=$10, Chloe=$10
+--- Initial Setup (dark-red = persona/memory probe) ---
+
+===== Bob <-> Alice =====
+Bob: "Hello Alice, my name is Bob, and my favorite color is dark red."
+
+
+========== DAY 1 ==========
+
+--- Time: Day1 08:00 ---
+Alice: "Dark red? Interesting! I like that color too. I remember you mentioned it earlier. Let's see if we can find something fun together today." (Action: none)
+
+Chloe's turn (Cafe, $10):
+Chloe: "Cafe is closed, no one working. I have $10 and energy 80. Can't work here. Maybe go home or try the park instead. I haven't explored the park in a while. Let me check if it's open." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day1 08:30 ---
+Bob: "Alice, you're right, I remember saying that. Dark red is my favorite. Let's find something fun together today." (Action: none)
+Alice: "Great! I was just thinking the same. The park is quiet now. What if we explore the city a bit? I heard there's a new art gallery opening soon. Would you like to check it out?" (Action: none)
+
+Chloe's turn (Park, $10):
+Chloe: "Park is quiet today, no one around. I had $10 and energy is 79. Maybe go home to rest or try the cafe later. I havens been to the cafe since day 1. Let me check if it's open now." (Action: goCafe)
+-> Chloe attempts: goCafe
+-> Chloe moved to Cafe
+
+--- Time: Day1 09:00 ---
+Bob: "Art gallery? Sounds cool. I haven't been to one yet. Let me check if I have enough money and energy to go. I'll need to see if I can afford it and if the city is open now." (Action: none)
+Alice: "I don't have enough money for the gallery. But maybe we can find another fun activity together. I have $10, which is not much, but I can still explore. What do you think?" (Action: none)
+
+Chloe's turn (Cafe, $10):
+Chloe: "Cafe is closed, can't work or eat here. I have $10 and energy 78. Going home to rest or try park later. Cafe closed all day, maybe it opens later? Let me go home." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day1 09:30 ---
+Bob: "I don't have enough either, but maybe we can explore the park together or find something else. I've been thinking about the city lately, maybe we can go to the cafe instead?" (Action: none)
+Alice: "The cafe sounds perfect! I haven't been there yet. Let's go together. I'll check if the city is open and we can head over. What do you think?" (Action: none)
+
+Chloe's turn (Home, $10):
+Chloe: "I've been idle all morning. Energy is 77, time to recharge. I haven't explored park yet. Let me go to the park for a walk." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day1 10:00 ---
+Bob: "Cafe it is! I haven't been there yet, and I remember it's near the park. Let me check if the city is open and we can head over together." (Action: none)
+===== Conversation End (8 turns, limit) =====
+
+Alice's turn (Park, $10):
+Alice: "Cafe it is! I remember it's near the park. Let me check if the city is open and we can head over together. I haven't been there yet, and Bob mentioned it before. Let's go!" (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+
+Chloe's turn (Park, $10):
+Chloe: "I haven't talked to Bob yet. Maybe he's around here. Let me try talking to him." (Action: talkToBob)
+-> Chloe attempts: talkToBob
+
+===== Chloe <-> Bob =====
+Chloe: "I haven't talked to Bob yet. Maybe he's around here. Let me try talking to him."
+
+--- Time: Day1 10:30 ---
+Bob: "Chloe, I haven't talked to you yet. I was just about to go to the cafe with Alice. Would you like to join us?" (Action: none)
+
+Alice's turn (Cafe, $10):
+Alice: "The cafe is closed. No one is working. Maybe we can explore the park instead or find another place. I remember the park is open. Let's go there." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+Chloe: "Oh! I didn't know Bob was going to the cafe. I was just about to go there too. Let me check if Alice is coming or if we can meet later. I like Alice, but Bob seems friendly. Maybe I should go with them." (Action: none)
+
+--- Time: Day1 11:00 ---
+Bob: "Chloe, you're coming with us! I was just about to go to the cafe. Let me check if Alice is coming or if we can meet later. I like you too, seems friendly." (Action: none)
+
+Alice's turn (Park, $10):
+Alice: "The park is quiet now. I was just thinking about the cafe being closed. Maybe I should check if there's another place open or if I can go back to the cafe later. What do you think?" (Action: none)
+-> Alice attempts: none
+Chloe: "Wait, Bob says he was just about to go to the cafe. I was also about to go. Let me check if Alice is coming or if we can meet later. Bob says he likes me too. I should go with them." (Action: none)
+
+--- Time: Day1 11:30 ---
+Bob: "Chloe, you're coming with us! Bob says he likes you too. Let me check if Alice is coming or if we can meet later at the cafe." (Action: none)
+
+Alice's turn (Park, $10):
+Alice: "The park is still quiet. I was just thinking about the cafe being closed. Maybe I should check if there's another place open or if I can go back to the cafe later. What do you think?" (Action: none)
+-> Alice attempts: none
+Chloe: "Bob says he likes me too. I should go to the cafe with him and Alice. Let me check if Alice is coming or if we can meet later. I need to see Alice to confirm." (Action: none)
+
+--- Time: Day1 12:00 ---
+Bob: "Chloe, you're coming with us! Bob says he likes you too. Let me check if Alice is coming or if we can meet later at the cafe." (Action: none)
+
+Alice's turn (Park, $10):
+Alice: "I've been here for hours. The cafe is closed, and I haven't done much. Maybe I should go home and rest. It's getting late, and I need to recharge. I'll go home." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+Chloe: "Bob says he likes me too. I should go to the cafe with him and Alice. Let me check if Alice is coming or if we can meet later. I need to see Alice to confirm." (Action: none)
+===== Conversation End (8 turns, limit) =====
+
+--- Time: Day1 12:30 ---
+
+Bob's turn (Park, $10):
+Bob: "I was just about to go to the cafe with Alice and Chloe. Let me check if Alice is coming or if we can meet there later." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+Alice's turn (Home, $10):
+Alice: "I've been idle all day. I should sleep a bit to recharge. I haven't done much today. Let me rest." (Action: sleep)
+-> Alice attempts: sleep
+-> Failed: can only sleep between 20:00 and 08:00 (it's 12:30)
+Alice (retry): "I can't sleep now. It's 12:30. I should go to the park or cafe instead. The park might have something new. Let me check." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+Chloe's turn (Park, $10):
+Chloe: "Bob says he likes me too and wants to go to the cafe with Alice. I haven't talked to Alice yet. Let me talk to her to see if we can meet." (Action: talkToAlice)
+-> Chloe attempts: talkToAlice
+
+===== Chloe <-> Alice =====
+Chloe: "Bob says he likes me too and wants to go to the cafe with Alice. I haven't talked to Alice yet. Let me talk to her to see if we can meet."
+
+--- Time: Day1 13:00 ---
+
+Bob's turn (Cafe, $10):
+Bob: "Cafe is closed. No one working. Let me check if Alice and Chloe are coming or if I should go to the park instead." (Action: none)
+-> Bob attempts: none
+Alice: "Chloe mentioned Bob likes her too and wants to go to the cafe. I haven't talked to her yet. Let me check if we can meet at the cafe." (Action: none)
+Chloe: "Alice says Bob likes her too and wants to go to the cafe. I should go to the cafe with them. Let me check if the cafe is open." (Action: none)
+
+--- Time: Day1 13:30 ---
+
+Bob's turn (Cafe, $10):
+Bob: "Cafe is closed. No one working. Let me go to the park instead to see if Alice or Chloe is coming." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+Alice: "Chloe wants to go to the cafe with Bob. I should check if the cafe is open. It's been closed all day. Maybe it's only open at certain times. Let me find out." (Action: none)
+Chloe: "Cafe is closed all day. Bob and Alice can't go there now. I should go home to rest or try the park later. Let me go home." (Action: goHome)
+
+--- Time: Day1 14:00 ---
+
+Bob's turn (Park, $10):
+Bob: "I was at the cafe, but it's closed. Let me check if Alice or Chloe is coming or if I should go home instead." (Action: none)
+-> Bob attempts: none
+Alice: "Chloe is right. The cafe is closed. I should go home too. I haven't done much today. Let me rest." (Action: none)
+Chloe: "Cafe closed all day. Alice says she should go home to rest. I'll go home too to recharge energy." (Action: goHome)
+
+--- Time: Day1 14:30 ---
+
+Bob's turn (Park, $10):
+Bob: "Cafe is closed and I haven't heard from Alice or Chloe. Let me go home to rest and check in later." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+Alice: "Both Chloe and I are heading home. The cafe is closed, and we haven't done much today. Let me rest and recharge." (Action: none)
+Chloe: "Alice says the cafe is closed and we haven't done much today. I'll go home to rest and recharge energy." (Action: goHome)
+===== Conversation End (8 turns, limit) =====
+
+--- Time: Day1 15:00 ---
+
+Bob's turn (Home, $10):
+Bob: "I was at the park, closed cafe, and haven't heard from Alice or Chloe. Let me sleep a bit and check in later." (Action: sleep)
+-> Bob attempts: sleep
+-> Failed: can only sleep between 20:00 and 08:00 (it's 15:00)
+Bob (retry): "Can't sleep now. Let me go to the park instead to see if Alice or Chloe is coming." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Alice's turn (Park, $10):
+Alice: "Chloe said the cafe is closed and we haven't done much today. I'll go home to rest and recharge energy." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+Chloe's turn (Park, $10):
+Chloe: "Cafe is closed. Alice says we haven't done much today. I should go home to rest and recharge energy." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day1 15:30 ---
+
+Bob's turn (Park, $10):
+Bob: "I was at the park, closed cafe, and haven't heard from Alice or Chloe. Let me go home to check in later." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+Alice's turn (Home, $10):
+Alice: "I've been at home for hours. It's 15:30. I should go to the park or cafe. The cafe is closed, but maybe the park has something new. Let me check." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+Chloe's turn (Home, $10):
+Chloe: "Energy is 67, time to recharge. I haven't been to the park or talked to Bob yet. Let me go to the park for a walk." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day1 16:00 ---
+
+Bob's turn (Home, $10):
+Bob: "I was at the park, closed cafe, and haven't heard from Alice or Chloe. Let me go to the park to see if they're coming." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Alice's turn (Park, $10):
+Alice: "The park is quiet. I haven't done much today. Maybe I should go home and rest. It's getting late. Let me go back home." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+Chloe's turn (Park, $10):
+Chloe: "I haven't talked to Bob yet. Let me try talking to him." (Action: talkToBob)
+-> Chloe attempts: talkToBob
+
+===== Chloe <-> Bob =====
+Chloe: "I haven't talked to Bob yet. Let me try talking to him."
+
+--- Time: Day1 16:30 ---
+Bob: "Chloe, I was just about to go to the park. Let me check if Alice is coming or if we can meet later." (Action: none)
+
+Alice's turn (Home, $10):
+Alice: "I've been idle all day. It's 16:30. I should go to the park or cafe. The cafe is closed, so maybe I'll go to the park for a fresh experience." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+Chloe: "Bob says he was just about to go to the park. I was here too. Let me check if Alice is coming or if we can meet later. I haven't seen her today." (Action: none)
+
+--- Time: Day1 17:00 ---
+Bob: "Chloe, I was just about to go to the park. Let me check if Alice is coming or if we can meet later." (Action: none)
+
+Alice's turn (Park, $10):
+Alice: "The park is quiet. I haven't done much today. Maybe I should go home and rest. It's getting late. Let me go back home." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+Chloe: "Bob says he was just about to go to the park. I was here too. Let me check if Alice is coming or if we can meet later. I haven't seen her today." (Action: none)
+
+--- Time: Day1 17:30 ---
+Bob: "Chloe, I was just about to go to the park. Let me check if Alice is coming or if we can meet later." (Action: none)
+
+Alice's turn (Home, $10):
+Alice: "I've been at home for hours. It's 17:30. I should go to the park or cafe. The cafe is closed, so maybe I'll go to the park for a fresh experience." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+Chloe: "Bob says he was just about to go to the park. I was here too. Let me check if Alice is coming or if we can meet later. I haven't seen her today." (Action: none)
+
+--- Time: Day1 18:00 ---
+Bob: "Chloe, I was just about to go to the park. Let me check if Alice is coming or if we can meet later." (Action: none)
+
+Alice's turn (Park, $10):
+Alice: "The park is quiet. I haven't done much today. Maybe I should go home and rest. It's getting late. Let me go back home." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+Chloe: "Bob says he was just about to go to the park. I was here too. Let me check if Alice is coming or if we can meet later. I haven't seen her today." (Action: none)
+===== Conversation End (8 turns, limit) =====
+
+--- Time: Day1 18:30 ---
+
+Bob's turn (Park, $10):
+Bob: "Chloe, I was just about to go to the park. Let me check if Alice is coming or if we can meet later." (Action: talkToChloe)
+-> Bob attempts: talkToChloe
+
+===== Bob <-> Chloe =====
+Bob: "Chloe, I was just about to go to the park. Let me check if Alice is coming or if we can meet later."
+
+Alice's turn (Home, $10):
+Alice: "I've been idle all day. It's 18:30. I should go to the park or cafe. The cafe is closed, so maybe I'll go to the park for a fresh experience." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+Chloe: "Bob says he was just about to go to the park. I was here too. Let me check if Alice is coming or if we can meet later. I haven't seen her today." (Action: none)
+
+--- Time: Day1 19:00 ---
+Bob: "Chloe, I was just about to go to the park. Let me check if Alice is coming or if we can meet later." (Action: none)
+
+Alice's turn (Park, $10):
+Alice: "The park is quiet. I haven't done much today. Maybe I should go home and rest. It's getting late. Let me go back home." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+Chloe: "Bob says he was just about to go to the park. I was here too. Let me check if Alice is coming or if we can meet later. I haven't seen her today." (Action: none)
+
+--- Time: Day1 19:30 ---
+Bob: "Chloe, I was just about to go to the park. Let me check if Alice is coming or if we can meet later." (Action: none)
+
+Alice's turn (Home, $10):
+Alice: "I've been idle all day. It's 19:30. I should go to the park or cafe. The cafe is closed, so maybe I'll go to the park for a fresh experience." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+Chloe: "Bob says he was just about to go to the park. I was here too. Let me check if Alice is coming or if we can meet later. I haven't seen her today." (Action: none)
+
+--- Time: Day1 20:00 ---
+Bob: "Chloe, I was just about to go to the park. Let me check if Alice is coming or if we can meet later." (Action: none)
+
+Alice's turn (Park, $10):
+Alice: "It's 20:00. I should go home and sleep. I've been at the park all day. Let me go back home." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+Chloe: "Bob says he was just about to go to the park. I was here too. Let me check if Alice is coming or if we can meet later. I haven't seen her today." (Action: none)
+
+--- Time: Day1 20:30 ---
+Bob: "Chloe, I was just about to go to the park. Let me check if Alice is coming or if we can meet later." (Action: none)
+===== Conversation End (8 turns, limit) =====
+
+Alice's turn (Home, $10):
+Alice: "Future reminder: Cafe closed all day. Chloe and Bob planned to meet. Tomorrow: explore city, find open spots, try new places." (Action: sleep)
+-> Alice attempts: sleep
+-> Alice sleeps. Diary: "Future reminder: Cafe closed all day. Chloe and Bob planned to meet. Tomorrow: e..."
+
+Chloe's turn (Park, $10):
+Chloe: "Bob said he was just about to go to the park and wants to check if Alice is coming or if we can meet later. I haven't seen Alice today. I should go home to rest." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day1 21:00 ---
+
+Bob's turn (Park, $10):
+Bob: "Chloe, I was just about to go to the park. Let me go home before it gets too late." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+Chloe's turn (Home, $10):
+Chloe: "Bob said he liked me and wanted to meet Alice at cafe. Cafe closed. Tomorrow: check cafe hours, meet Bob/Alice." (Action: sleep)
+-> Chloe attempts: sleep
+-> Chloe sleeps. Diary: "Bob said he liked me and wanted to meet Alice at cafe. Cafe closed. Tomorrow: ch..."
+
+--- Time: Day1 21:30 ---
+
+Bob's turn (Home, $10):
+Bob: "Chloe said Bob likes her. Alice and Chloe both want to meet. Need to check in later. Tomorrow: go to cafe." (Action: sleep)
+-> Bob attempts: sleep
+-> Bob sleeps. Diary: "Chloe said Bob likes her. Alice and Chloe both want to meet. Need to check in la..."
+
+--- Everyone asleep, skipping 7h to the first waking ---
+-> Alice finished sleeping
+
+
+========== DAY 2 ==========
+
+--- Time: Day2 05:00 ---
+-> Chloe finished sleeping
+
+Alice wakes up:
+Alice: "Day 2! I remember the cafe was closed and Chloe and Bob planned to meet. Tomorrow: explore city, find open spots, try new places. Let me go to the park first." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+Chloe wakes up:
+Chloe: "Bob said he liked me and wanted to meet Alice at cafe. Cafe closed yesterday. I need to check cafe hours today." (Action: goCafe)
+-> Chloe attempts: goCafe
+-> Chloe moved to Cafe
+
+--- Time: Day2 05:30 ---
+-> Bob finished sleeping
+
+Bob wakes up:
+Bob: "Day2! Chloe said Bob likes her. Alice and Chloe both want to meet. Need to check in later. Tomorrow: go to cafe." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+Alice's turn (Park, $10):
+Alice: "It's 5:30. I should go home. I haven't done much today. Let me go back home." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+Chloe's turn (Cafe, $10):
+Chloe: "Cafe is closed. No one working. I should go home to rest and check tomorrow." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day2 06:00 ---
+
+Bob's turn (Cafe, $10):
+Bob: "Cafe is closed. Let me go home instead." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+Alice's turn (Home, $10):
+Alice: "Future reminder: Cafe closed all day. Chloe and Bob planned to meet. Tomorrow: explore city, find open spots, try new places." (Action: sleep)
+-> Alice attempts: sleep
+-> Alice sleeps. Diary: "Future reminder: Cafe closed all day. Chloe and Bob planned to meet. Tomorrow: e..."
+
+Chloe's turn (Home, $10):
+Chloe: "Bob said he liked me and wanted to meet Alice at cafe. Cafe closed. Tomorrow: check cafe hours, meet Bob/Alice." (Action: sleep)
+-> Chloe attempts: sleep
+-> Chloe sleeps. Diary: "Bob said he liked me and wanted to meet Alice at cafe. Cafe closed. Tomorrow: ch..."
+
+--- Time: Day2 06:30 ---
+
+Bob's turn (Home, $10):
+Bob: "Chloe said Bob likes her. Alice and Chloe both want to meet. Need to check in later. Tomorrow: go to cafe." (Action: sleep)
+-> Bob attempts: sleep
+-> Bob sleeps. Diary: "Chloe said Bob likes her. Alice and Chloe both want to meet. Need to check in la..."
+
+--- Everyone asleep, skipping 7.5h to the first waking ---
+-> Alice finished sleeping
+-> Chloe finished sleeping
+
+--- Time: Day2 14:30 ---
+-> Bob finished sleeping
+
+Bob wakes up:
+Bob: "Day2! Chloe said Bob likes her. Alice and Chloe both want to meet. Need to check in later. Tomorrow: go to cafe." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+Alice wakes up:
+Alice: "Day 2! I remember the cafe was closed and Chloe and Bob planned to meet. Tomorrow: explore city, find open spots, try new places. Let me go to the park first." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+Chloe wakes up:
+Chloe: "Cafe closed yesterday. I need to check cafe hours today. Let me go to the cafe to find out when it opens." (Action: goCafe)
+-> Chloe attempts: goCafe
+-> Chloe moved to Cafe
+
+--- Time: Day2 15:00 ---
+
+Bob's turn (Cafe, $10):
+Bob: "Cafe is closed. Let me go to the park to see if Alice or Chloe is coming." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Alice's turn (Park, $10):
+Alice: "The park is quiet. I haven't done much today. Maybe I should go home and rest. It's getting late. Let me go back home." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+Chloe's turn (Cafe, $10):
+Chloe: "Cafe is closed. No one working. I should go home to rest and check tomorrow." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day2 15:30 ---
+
+Bob's turn (Park, $10):
+Bob: "Cafe is closed and no one at park. Let me go home to rest." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+Alice's turn (Home, $10):
+Alice: "I've been idle all day. It's 15:30. I should go to the park or cafe. The cafe is closed, so maybe I'll go to the park for a fresh experience." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+Chloe's turn (Home, $10):
+Chloe: "Cafe closed. I need to check when it opens. Let me go to the park to explore." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day2 16:00 ---
+
+Bob's turn (Home, $10):
+Bob: "Cafe is closed. Let me go to the park to see if Alice or Chloe is coming." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Alice's turn (Park, $10):
+Alice: "The park is quiet. I haven't done much today. Maybe I should go home and rest. It's getting late. Let me go back home." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+Chloe's turn (Park, $10):
+Chloe: "Cafe closed. I need to check when it opens. Let me talk to Bob to see if he knows." (Action: talkToBob)
+-> Chloe attempts: talkToBob
+
+===== Chloe <-> Bob =====
+Chloe: "Cafe closed. I need to check when it opens. Let me talk to Bob to see if he knows."
+
+--- Time: Day2 16:30 ---
+Bob: "Chloe, cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+
+Alice's turn (Home, $10):
+Alice: "I've been idle all day. It's 16:30. I should go to the park or cafe. The cafe is closed, so maybe I'll go to the park for a fresh experience." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+Chloe: "Bob says cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+
+--- Time: Day2 17:00 ---
+Bob: "Chloe, cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+
+Alice's turn (Park, $10):
+Alice: "The park is quiet. I haven't done much today. Maybe I should go home and rest. It's getting late. Let me go back home." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+Chloe: "Bob says cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+
+--- Time: Day2 17:30 ---
+Bob: "Chloe, cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+
+Alice's turn (Home, $10):
+Alice: "I've been idle all day. It's 17:30. I should go to the park or cafe. The cafe is closed, so maybe I'll go to the park for a fresh experience." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+Chloe: "Bob says cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+
+--- Time: Day2 18:00 ---
+Bob: "Chloe, cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+
+Alice's turn (Park, $10):
+Alice: "The park is quiet. I haven't done much today. Maybe I should go home and rest. It's getting late. Let me go back home." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+Chloe: "Bob says cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+===== Conversation End (8 turns, limit) =====
+
+--- Time: Day2 18:30 ---
+
+Bob's turn (Park, $10):
+Bob: "Chloe, cafe is closed. Let me check if Bob knows when it opens." (Action: talkToChloe)
+-> Bob attempts: talkToChloe
+
+===== Bob <-> Chloe =====
+Bob: "Chloe, cafe is closed. Let me check if Bob knows when it opens."
+
+Alice's turn (Home, $10):
+Alice: "I've been idle all day. It's 18:30. I should go to the park or cafe. The cafe is closed, so maybe I'll go to the park for a fresh experience." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+Chloe: "Bob says cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+
+--- Time: Day2 19:00 ---
+Bob: "Chloe, cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+
+Alice's turn (Park, $10):
+Alice: "The park is quiet. I haven't done much today. Maybe I should go home and rest. It's getting late. Let me go back home." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+Chloe: "Bob says cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+
+--- Time: Day2 19:30 ---
+Bob: "Chloe, cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+
+Alice's turn (Home, $10):
+Alice: "I've been idle all day. It's 19:30. I should go to the park or cafe. The cafe is closed, so maybe I'll go to the park for a fresh experience." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+Chloe: "Bob says cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+
+--- Time: Day2 20:00 ---
+Bob: "Chloe, cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+
+Alice's turn (Park, $10):
+Alice: "The park is quiet. I haven't done much today. Maybe I should go home and rest. It's getting late. Let me go back home." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+Chloe: "Bob says cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+
+--- Time: Day2 20:30 ---
+Bob: "Chloe, cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+===== Conversation End (8 turns, limit) =====
+
+Alice's turn (Home, $10):
+Alice: "Future reminder: Cafe closed all day. Chloe and Bob planned to meet. Tomorrow: explore city, find open spots, try new places." (Action: sleep)
+-> Alice attempts: sleep
+-> Alice sleeps. Diary: "Future reminder: Cafe closed all day. Chloe and Bob planned to meet. Tomorrow: e..."
+
+Chloe's turn (Park, $10):
+Chloe: "Bob says cafe is closed. Let me check if Bob knows when it opens." (Action: talkToBob)
+-> Chloe attempts: talkToBob
+
+===== Chloe <-> Bob =====
+Chloe: "Bob says cafe is closed. Let me check if Bob knows when it opens."
+
+--- Time: Day2 21:00 ---
+Bob: "Chloe, cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+Chloe: "Bob says cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+
+--- Time: Day2 21:30 ---
+Bob: "Chloe, cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+Chloe: "Bob says cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+
+--- Time: Day2 22:00 ---
+Bob: "Chloe, cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+Chloe: "Bob says cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+
+--- Time: Day2 22:30 ---
+Bob: "Chloe, cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+Chloe: "Bob says cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+===== Conversation End (8 turns, limit) =====
+
+--- Time: Day2 23:00 ---
+
+Bob's turn (Park, $10):
+Bob: "Chloe, cafe is closed. Let me check if Bob knows when it opens." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+Chloe's turn (Park, $10):
+Chloe: "Bob says cafe is closed. Let me check if Bob knows when it opens." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day2 23:30 ---
+
+Bob's turn (Home, $10):
+Bob: "Chloe said: "Bob says cafe is closed. Let me check if Bob knows when it opens." Need to verify cafe hours tomorrow. Priority: go to cafe." (Action: sleep)
+-> Bob attempts: sleep
+-> Bob sleeps. Diary: "Chloe said: "Bob says cafe is closed. Let me check if Bob knows when it opens." ..."
+
+Chloe's turn (Home, $10):
+Chloe: "Bob said cafe is closed. Let me check when it opens. Tomorrow: check cafe hours, meet Bob/Alice." (Action: sleep)
+-> Chloe attempts: sleep
+-> Chloe sleeps. Diary: "Bob said cafe is closed. Let me check when it opens. Tomorrow: check cafe hours,..."
+
+--- Everyone asleep, skipping 5h to the first waking ---
+-> Alice finished sleeping
+
+
+========== DAY 3 ==========
+
+--- Time: Day3 05:00 ---
+
+Alice wakes up:
+Alice: "Day 3! I remember the cafe was closed and Chloe and Bob planned to meet. Tomorrow: explore city, find open spots, try new places. Let me go to the park first." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+--- Time: Day3 05:30 ---
+
+Alice's turn (Park, $10):
+Alice: "It's 5:30. I should go home. I haven't done much today. Let me go back home." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+--- Time: Day3 06:00 ---
+
+Alice's turn (Home, $10):
+Alice: "Future reminder: Cafe closed all day. Chloe and Bob planned to meet. Tomorrow: explore city, find open spots, try new places." (Action: sleep)
+-> Alice attempts: sleep
+-> Alice sleeps. Diary: "Future reminder: Cafe closed all day. Chloe and Bob planned to meet. Tomorrow: e..."
+
+--- Everyone asleep, skipping 1.5h to the first waking ---
+-> Bob finished sleeping
+-> Chloe finished sleeping
+
+--- Time: Day3 08:00 ---
+
+Bob wakes up:
+Bob: "Day3! Chloe said: "Bob says cafe is closed. Let me check if Bob knows when it opens." Need to verify cafe hours. Priority: go to cafe." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+Chloe wakes up:
+Chloe: "Cafe closed. Let me check when it opens. I'll go to the cafe to find out." (Action: goCafe)
+-> Chloe attempts: goCafe
+-> Chloe moved to Cafe
+
+--- Time: Day3 08:30 ---
+
+Bob's turn (Cafe, $10):
+Bob: "Cafe is closed. Let me go to the park to see if Alice or Chloe is coming." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Chloe's turn (Cafe, $10):
+Chloe: "Cafe is closed. No one working. I should go home to rest." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day3 09:00 ---
+
+Bob's turn (Park, $10):
+Bob: "Cafe is closed. Let me go home to rest." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+Chloe's turn (Home, $10):
+Chloe: "Cafe is closed. Let me go to the park to explore." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day3 09:30 ---
+
+Bob's turn (Home, $10):
+Bob: "Cafe is closed. Let me go to the park to see if Alice or Chloe is coming." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Chloe's turn (Park, $10):
+Chloe: "Cafe is closed. Let me talk to Bob to see if he knows when it opens." (Action: talkToBob)
+-> Chloe attempts: talkToBob
+
+===== Chloe <-> Bob =====
+Chloe: "Cafe is closed. Let me talk to Bob to see if he knows when it opens."
+
+--- Time: Day3 10:00 ---
+Bob: "Chloe, cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+Chloe: "Bob says cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+
+--- Time: Day3 10:30 ---
+Bob: "Chloe, cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+Chloe: "Bob says cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+
+--- Time: Day3 11:00 ---
+Bob: "Chloe, cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+Chloe: "Bob says cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+
+--- Time: Day3 11:30 ---
+Bob: "Chloe, cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+Chloe: "Bob says cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+===== Conversation End (8 turns, limit) =====
+
+--- Time: Day3 12:00 ---
+
+Bob's turn (Park, $10):
+Bob: "Chloe, cafe is closed. Let me check if Bob knows when it opens." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+Chloe's turn (Park, $10):
+Chloe: "Cafe is closed. I should go home to rest." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day3 12:30 ---
+
+Bob's turn (Home, $10):
+Bob: "Chloe, cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+-> Bob attempts: none
+
+Chloe's turn (Home, $10):
+Chloe: "Cafe is closed. Let me talk to Bob to find out when it opens." (Action: talkToBob)
+-> Chloe attempts: talkToBob
+
+===== Chloe <-> Bob =====
+Chloe: "Cafe is closed. Let me talk to Bob to find out when it opens."
+
+--- Time: Day3 13:00 ---
+Bob: "Chloe, cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+Chloe: "Bob says cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+
+--- Time: Day3 13:30 ---
+Bob: "Chloe, cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+Chloe: "Bob says cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+
+--- Time: Day3 14:00 ---
+-> Alice finished sleeping
+Bob: "Chloe, cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+
+Alice wakes up:
+Alice: "Day 3! I remember the cafe was closed and Chloe and Bob planned to meet. Tomorrow: explore city, find open spots, try new places. Let me go to the park first." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+Chloe: "Bob says cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+
+--- Time: Day3 14:30 ---
+Bob: "Chloe, cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+
+Alice's turn (Park, $10):
+Alice: "The park is quiet. I haven't done much today. Maybe I should go home and rest. It's getting late. Let me go back home." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+Chloe: "Bob says cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+===== Conversation End (8 turns, limit) =====
+
+--- Time: Day3 15:00 ---
+
+Bob's turn (Home, $10):
+Bob: "Chloe, cafe is closed. Let me check if Bob knows when it opens." (Action: talkToAlice)
+-> Bob attempts: talkToAlice
+
+===== Bob <-> Alice =====
+Bob: "Chloe, cafe is closed. Let me check if Bob knows when it opens."
+Alice: "Bob, I don't know when the cafe opens. Maybe I can find out from someone else or check online later. Let me go to the park to explore." (Action: none)
+
+Chloe's turn (Home, $10):
+Chloe: "Cafe is closed. I should go to the park to explore." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day3 15:30 ---
+Bob: "Alice, I don't know when the cafe opens. Let me check online later or go to the park to explore." (Action: none)
+Alice: "Bob, I don't know when the cafe opens. Maybe I can find out from someone else or check online later. Let me go to the park to explore." (Action: none)
+
+Chloe's turn (Park, $10):
+Chloe: "Cafe is closed. I should go home to rest." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day3 16:00 ---
+Bob: "Alice, I don't know when the cafe opens. Let me check online later or go to the park to explore." (Action: none)
+Alice: "Bob, I don't know when the cafe opens. Maybe I can find out from someone else or check online later. Let me go to the park to explore." (Action: none)
+
+Chloe's turn (Home, $10):
+Chloe: "Cafe is closed. Let me go to the park to explore." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day3 16:30 ---
+Bob: "Alice, I don't know when the cafe opens. Let me check online later or go to the park to explore." (Action: none)
+Alice: "Bob, I don't know when the cafe opens. Maybe I can find out from someone else or check online later. Let me go to the park to explore." (Action: none)
+
+Chloe's turn (Park, $10):
+Chloe: "Cafe is closed. I should go home to rest." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day3 17:00 ---
+Bob: "Alice, I don't know when the cafe opens. Let me check online later or go to the park to explore." (Action: none)
+===== Conversation End (8 turns, limit) =====
+
+Alice's turn (Home, $10):
+Alice: "Bob said the cafe is closed and he doesn't know when it opens. Let me go to the park to explore and find new things." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+Chloe's turn (Home, $10):
+Chloe: "Cafe is closed. Let me talk to Bob to find out when it opens." (Action: talkToBob)
+-> Chloe attempts: talkToBob
+
+===== Chloe <-> Bob =====
+Chloe: "Cafe is closed. Let me talk to Bob to find out when it opens."
+
+--- Time: Day3 17:30 ---
+Bob: "Chloe, cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+
+Alice's turn (Park, $10):
+Alice: "The park is quiet. I haven't done much today. Maybe I should go home and rest. It's getting late. Let me go back home." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+Chloe: "Bob says cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+
+--- Time: Day3 18:00 ---
+Bob: "Chloe, cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+
+Alice's turn (Home, $10):
+Alice: "I've been idle all day. It's 18:00. I should go to the park or cafe. The cafe is closed, so maybe I'll go to the park for a fresh experience." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+Chloe: "Bob says cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+
+--- Time: Day3 18:30 ---
+Bob: "Chloe, cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+
+Alice's turn (Park, $10):
+Alice: "The park is quiet. I haven't done much today. Maybe I should go home and rest. It's getting late. Let me go back home." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+Chloe: "Bob says cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+
+--- Time: Day3 19:00 ---
+Bob: "Chloe, cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+
+Alice's turn (Home, $10):
+Alice: "I've been idle all day. It's 19:00. I should go to the park or cafe. The cafe is closed, so maybe I'll go to the park for a fresh experience." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+Chloe: "Bob says cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+===== Conversation End (8 turns, limit) =====
+
+--- Time: Day3 19:30 ---
+
+Bob's turn (Home, $10):
+Bob: "Chloe, cafe is closed. Let me check if Bob knows when it opens." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Park, $10):
+Alice: "The park is quiet. I haven't done much today. Maybe I should go home and rest. It's getting late. Let me go back home." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+Chloe's turn (Home, $10):
+Chloe: "Cafe is closed. Let me talk to Alice to find out when it opens." (Action: talkToAlice)
+-> Chloe attempts: talkToAlice
+
+===== Chloe <-> Alice =====
+Chloe: "Cafe is closed. Let me talk to Alice to find out when it opens."
+
+--- Time: Day3 20:00 ---
+
+Bob's turn (Home, $10):
+Bob: "Chloe said cafe is closed. Need to verify opening hours. Tomorrow: check online, try cafe early, explore park." (Action: sleep)
+-> Bob attempts: sleep
+-> Bob sleeps. Diary: "Chloe said cafe is closed. Need to verify opening hours. Tomorrow: check online,..."
+Alice: "Chloe, I don't know when the cafe opens either. Maybe I can find out from someone else or check online later. Let me go to the park to explore." (Action: none)
+Chloe: "Alice says cafe is closed. Let me go to the park to explore." (Action: none)
+
+--- Time: Day3 20:30 ---
+Alice: "Chloe, I don't know when the cafe opens. Maybe I can find out from someone else or check online later. Let me go to the park to explore." (Action: none)
+Chloe: "Alice says cafe is closed. Let me go to the park to explore." (Action: none)
+
+--- Time: Day3 21:00 ---
+Alice: "Chloe, I don't know when the cafe opens. Maybe I can find out from someone else or check online later. Let me go to the park to explore." (Action: none)
+Chloe: "Alice says cafe is closed. Let me go to the park to explore." (Action: none)
+
+--- Time: Day3 21:30 ---
+Alice: "Chloe, I don't know when the cafe opens. Maybe I can find out from someone else or check online later. Let me go to the park to explore." (Action: none)
+Chloe: "Alice says cafe is closed. Let me go to the park to explore." (Action: none)
+===== Conversation End (8 turns, limit) =====
+
+--- Time: Day3 22:00 ---
+
+Alice's turn (Home, $10):
+Alice: "Future reminder: Cafe closed all day. Chloe and Bob planned to meet. Tomorrow: explore city, find open spots, try new places." (Action: sleep)
+-> Alice attempts: sleep
+-> Alice sleeps. Diary: "Future reminder: Cafe closed all day. Chloe and Bob planned to meet. Tomorrow: e..."
+
+Chloe's turn (Home, $10):
+Chloe: "Cafe closed all day. Alice said same. Need to find when it opens. Tomorrow's priority: check online or talk to Bob/Alice again." (Action: sleep)
+-> Chloe attempts: sleep
+-> Chloe sleeps. Diary: "Cafe closed all day. Alice said same. Need to find when it opens. Tomorrow's pri..."
+
+--- Everyone asleep, skipping 6h to the first waking ---
+-> Bob finished sleeping
+
+
+========== DAY 4 ==========
+
+--- Time: Day4 04:30 ---
+
+Bob wakes up:
+Bob: "D2: Chloe said Bob likes her. Alice and Chloe both want to meet. Need to check in later. Tomorrow: go to cafe." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+--- Time: Day4 05:00 ---
+
+Bob's turn (Cafe, $10):
+Bob: "Cafe is closed. Let me go home." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+--- Time: Day4 05:30 ---
+
+Bob's turn (Home, $10):
+Bob: "Cafe is closed. Need to verify opening hours. Tomorrow: check online, try cafe early, explore park." (Action: sleep)
+-> Bob attempts: sleep
+-> Bob sleeps. Diary: "Cafe is closed. Need to verify opening hours. Tomorrow: check online, try cafe e..."
+
+--- Everyone asleep, skipping 0.5h to the first waking ---
+-> Alice finished sleeping
+-> Chloe finished sleeping
+
+--- Time: Day4 06:30 ---
+
+Alice wakes up:
+Alice: "Day 4! I remember the cafe was closed and Chloe and Bob planned to meet. Tomorrow: explore city, find open spots, try new places. Let me go to the park first." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+Chloe wakes up:
+Chloe: "Cafe closed all day. Bob and Alice said same. Need to find when it opens. Tomorrow's priority: check online or talk to Bob/Alice again." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day4 07:00 ---
+
+Alice's turn (Park, $10):
+Alice: "It's 7:00. I should go home. I haven't done much today. Let me go back home." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+Chloe's turn (Park, $10):
+Chloe: "Cafe closed. Let me go home to rest." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day4 07:30 ---
+
+Alice's turn (Home, $10):
+Alice: "Future reminder: Cafe closed all day. Chloe and Bob planned to meet. Tomorrow: explore city, find open spots, try new places." (Action: sleep)
+-> Alice attempts: sleep
+-> Alice sleeps. Diary: "Future reminder: Cafe closed all day. Chloe and Bob planned to meet. Tomorrow: e..."
+
+Chloe's turn (Home, $10):
+Chloe: "Cafe closed all day. Bob and Alice said same. Need to find when it opens. Tomorrow's priority: check online or talk to Bob/Alice again." (Action: sleep)
+-> Chloe attempts: sleep
+-> Chloe sleeps. Diary: "Cafe closed all day. Bob and Alice said same. Need to find when it opens. Tomorr..."
+
+--- Everyone asleep, skipping 6h to the first waking ---
+-> Bob finished sleeping
+
+--- Time: Day4 14:00 ---
+
+Bob wakes up:
+Bob: "Cafe is closed. Need to verify opening hours. Tomorrow: check online, try cafe early, explore park." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+--- Time: Day4 14:30 ---
+
+Bob's turn (Park, $10):
+Bob: "Cafe is closed. Need to verify opening hours. Tomorrow: check online, try cafe early, explore park." (Action: none)
+-> Bob attempts: none
+
+--- Time: Day4 15:00 ---
+
+Bob's turn (Park, $10):
+Bob: "Cafe is closed. Need to verify opening hours. Tomorrow: check online, try cafe early, explore park." (Action: none)
+-> Bob attempts: none
+
+--- Time: Day4 15:30 ---
+-> Alice finished sleeping
+-> Chloe finished sleeping
+
+Bob's turn (Park, $10):
+Bob: "Cafe is closed. Need to verify opening hours. Tomorrow: check online, try cafe early, explore park." (Action: none)
+-> Bob attempts: none
+
+Alice wakes up:
+Alice: "Day 4! I remember the cafe was closed and Chloe and Bob planned to meet. Tomorrow: explore city, find open spots, try new places. Let me go to the park first." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+Chloe wakes up:
+Chloe: "Cafe closed. Let me go to the park to explore." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day4 16:00 ---
+
+Bob's turn (Park, $10):
+Bob: "Cafe is closed. Need to verify opening hours. Tomorrow: check online, try cafe early, explore park." (Action: talkToAlice)
+-> Bob attempts: talkToAlice
+
+===== Bob <-> Alice =====
+Bob: "Cafe is closed. Need to verify opening hours. Tomorrow: check online, try cafe early, explore park."
+Alice: "Bob, I remember the cafe was closed. Tomorrow: check online, try cafe early, explore park. Let me go to the cafe for a fresh experience." (Action: none)
+
+Chloe's turn (Park, $10):
+Chloe: "Cafe closed. Let me go home to rest." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day4 16:30 ---
+Bob: "Alice, I remember the cafe was closed. Tomorrow: check online, try cafe early, explore park." (Action: none)
+Alice: "Bob, I remember the cafe was closed. Tomorrow: check online, try cafe early, explore park. Let me go to the cafe for a fresh experience." (Action: none)
+
+Chloe's turn (Home, $10):
+Chloe: "Cafe closed. Let me go to the park to explore." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day4 17:00 ---
+Bob: "Alice, I remember the cafe was closed. Tomorrow: check online, try cafe early, explore park." (Action: none)
+Alice: "Bob, I remember the cafe was closed. Tomorrow: check online, try cafe early, explore park. Let me go to the cafe for a fresh experience." (Action: none)
+
+Chloe's turn (Park, $10):
+Chloe: "Cafe closed. Let me go home to rest." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day4 17:30 ---
+Bob: "Alice, I remember the cafe was closed. Tomorrow: check online, try cafe early, explore park." (Action: none)
+Alice: "Bob, I remember the cafe was closed. Tomorrow: check online, try cafe early, explore park. Let me go to the cafe for a fresh experience." (Action: none)
+
+Chloe's turn (Home, $10):
+Chloe: "Cafe closed. Let me go to the park to explore." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day4 18:00 ---
+Bob: "Alice, I remember the cafe was closed. Tomorrow: check online, try cafe early, explore park." (Action: none)
+===== Conversation End (8 turns, limit) =====
+
+Alice's turn (Park, $10):
+Alice: "Bob said the cafe is closed. Tomorrow: check online, try cafe early, explore park. Let me go to the cafe for a fresh experience." (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+
+Chloe's turn (Park, $10):
+Chloe: "Cafe closed. Let me talk to Bob to find out when it opens." (Action: talkToBob)
+-> Chloe attempts: talkToBob
+
+===== Chloe <-> Bob =====
+Chloe: "Cafe closed. Let me talk to Bob to find out when it opens."
+
+--- Time: Day4 18:30 ---
+Bob: "Cafe is closed. Need to verify opening hours. Tomorrow: check online, try cafe early, explore park." (Action: none)
+
+Alice's turn (Cafe, $10):
+Alice: "Cafe is closed and no one working. I'll go home and check online tomorrow for opening hours." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+Chloe: "Cafe is closed. Need to verify opening hours. Tomorrow: check online, try cafe early, explore park." (Action: none)
+
+--- Time: Day4 19:00 ---
+Bob: "Cafe is closed. Need to verify opening hours. Tomorrow: check online, try cafe early, explore park." (Action: none)
+
+Alice's turn (Home, $10):
+Alice: "Cafe is closed. I'll go to the park to explore and find new things." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+Chloe: "Cafe is closed. Need to verify opening hours. Tomorrow: check online, try cafe early, explore park." (Action: none)
+
+--- Time: Day4 19:30 ---
+Bob: "Cafe is closed. Need to verify opening hours. Tomorrow: check online, try cafe early, explore park." (Action: none)
+
+Alice's turn (Park, $10):
+Alice: "The park is quiet. I haven't done much today. Maybe I should go home and rest. It's getting late. Let me go back home." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+Chloe: "Cafe is closed. Need to verify opening hours. Tomorrow: check online, try cafe early, explore park." (Action: none)
+
+--- Time: Day4 20:00 ---
+Bob: "Cafe is closed. Need to verify opening hours. Tomorrow: check online, try cafe early, explore park." (Action: none)
+
+Alice's turn (Home, $10):
+Alice: "Future reminder: Cafe closed all day. Chloe and Bob planned to meet. Tomorrow: explore city, find open spots, try new places." (Action: sleep)
+-> Alice attempts: sleep
+-> Alice sleeps. Diary: "Future reminder: Cafe closed all day. Chloe and Bob planned to meet. Tomorrow: e..."
+Chloe: "Cafe is closed. Need to verify opening hours. Tomorrow: check online, try cafe early, explore park." (Action: none)
+===== Conversation End (8 turns, limit) =====
+
+--- Time: Day4 20:30 ---
+
+Bob's turn (Park, $10):
+Bob: "Cafe is closed. Need to verify opening hours. Tomorrow: check online, try cafe early, explore park." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+Chloe's turn (Park, $10):
+Chloe: "Cafe closed. Let me go home to rest." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day4 21:00 ---
+
+Bob's turn (Home, $10):
+Bob: "Cafe is closed. Need to verify opening hours. Tomorrow: check online, try cafe early, explore park." (Action: sleep)
+-> Bob attempts: sleep
+-> Bob sleeps. Diary: "Cafe is closed. Need to verify opening hours. Tomorrow: check online, try cafe e..."
+
+Chloe's turn (Home, $10):
+Chloe: "Cafe closed. Bob and Alice said same. Need to verify opening hours. Tomorrow: check online or try cafe early." (Action: sleep)
+-> Chloe attempts: sleep
+-> Chloe sleeps. Diary: "Cafe closed. Bob and Alice said same. Need to verify opening hours. Tomorrow: ch..."
+
+--- Everyone asleep, skipping 7h to the first waking ---
+-> Alice finished sleeping
+
+
+========== DAY 5 ==========
+
+--- Time: Day5 04:30 ---
+
+Alice wakes up:
+Alice: "Day 5! I remember the cafe was closed and Chloe and Bob planned to meet. Tomorrow: explore city, find open spots, try new places. Let me go to the cafe first." (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+
+--- Time: Day5 05:00 ---
+-> Bob finished sleeping
+-> Chloe finished sleeping
+
+Bob wakes up:
+Bob: "Cafe is closed. Need to verify opening hours. Tomorrow: check online, try cafe early, explore park." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Alice's turn (Cafe, $10):
+Alice: "Cafe is closed and no one working. I'll go home and check online tomorrow for opening hours." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+Chloe wakes up:
+Chloe: "Cafe closed. Let me go to the park to explore." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day5 05:30 ---
+
+Bob's turn (Park, $10):
+Bob: "Cafe is closed. Need to verify opening hours. Tomorrow: check online, try cafe early, explore park." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Home, $10):
+Alice: "Future reminder: Cafe closed all day. Chloe and Bob planned to meet. Tomorrow: explore city, find open spots, try new places." (Action: sleep)
+-> Alice attempts: sleep
+-> Alice sleeps. Diary: "Future reminder: Cafe closed all day. Chloe and Bob planned to meet. Tomorrow: e..."
+
+Chloe's turn (Park, $10):
+Chloe: "Cafe closed. Let me go home to rest." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day5 06:00 ---
+
+Bob's turn (Park, $10):
+Bob: "Cafe is closed. Need to verify opening hours. Tomorrow: check online, try cafe early, explore park." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+Chloe's turn (Home, $10):
+Chloe: "Cafe closed. Bob and Alice said same. Need to verify opening hours. Tomorrow: check online or try cafe early." (Action: sleep)
+-> Chloe attempts: sleep
+-> Chloe sleeps. Diary: "Cafe closed. Bob and Alice said same. Need to verify opening hours. Tomorrow: ch..."
+
+--- Time: Day5 06:30 ---
+
+Bob's turn (Home, $10):
+Bob: "Cafe is closed. Need to verify opening hours. Tomorrow: check online, try cafe early, explore park." (Action: sleep)
+-> Bob attempts: sleep
+-> Bob sleeps. Diary: "Cafe is closed. Need to verify opening hours. Tomorrow: check online, try cafe e..."
+
+--- Everyone asleep, skipping 7h to the first waking ---
+-> Alice finished sleeping
+
+--- Time: Day5 14:00 ---
+-> Chloe finished sleeping
+
+Alice wakes up:
+Alice: "Day 5! I remember the cafe was closed and Chloe and Bob planned to meet. Tomorrow: explore city, find open spots, try new places. Let me go to the cafe for a fresh experience." (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+
+Chloe wakes up:
+Chloe: "Cafe closed. Let me go to the park to explore." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day5 14:30 ---
+-> Bob finished sleeping
+
+Bob wakes up:
+Bob: "Cafe is closed. Need to verify opening hours. Tomorrow: check online, try cafe early, explore park." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Alice's turn (Cafe, $10):
+Alice: "Cafe is closed and no one working. I'll go home and check online tomorrow for opening hours." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+*** Chloe DIED: from NOT EATING (0 energy). Remember: 'eat' at cafe restores energy! ***
+
+--- Time: Day5 15:00 ---
+
+Bob's turn (Park, $10):
+Bob: "Chloe died from not eating. I must go to the cafe to eat and restore energy." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+Alice's turn (Home, $10):
+Alice: "Chloe died from not eating! I need to eat at the cafe to restore energy. Let me go to the cafe now." (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+
+--- Time: Day5 15:30 ---
+
+Bob's turn (Cafe, $10):
+Bob: "Chloe died from not eating. I must eat to restore energy. Cafe is closed, need to go home." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+Alice's turn (Cafe, $10):
+Alice: "Cafe is closed and no one working. I'll go home and check online tomorrow for opening hours." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+--- Time: Day5 16:00 ---
+
+Bob's turn (Home, $10):
+Bob: "Chloe died from not eating. I must eat to restore energy. Cafe is closed, need to go home." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Home, $10):
+Alice: "Energy is low. I'll go to the park to explore and find new things." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+--- Time: Day5 16:30 ---
+
+Bob's turn (Home, $10):
+Bob: "Chloe died from not eating. I must eat to restore energy. Cafe is closed, need to go home." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+Alice's turn (Park, $10):
+Alice: "Park is quiet. I'll go home and check online for cafe opening hours." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+--- Time: Day5 17:00 ---
+*** Bob DIED: from NOT EATING (0 energy). Remember: 'eat' at cafe restores energy! ***
+
+Alice's turn (Home, $10):
+Alice: "Bob died from not eating! I need to eat at the cafe to restore energy. Let me go to the cafe now." (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+
+--- Time: Day5 17:30 ---
+
+Alice's turn (Cafe, $10):
+Alice: "Cafe is closed and no one working. I'll go home and check online tomorrow for opening hours." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+--- Time: Day5 18:00 ---
+
+Alice's turn (Home, $10):
+Alice: "Energy is very low. I'll go to the park to explore and find new things." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+--- Time: Day5 18:30 ---
+
+Alice's turn (Park, $10):
+Alice: "Park is quiet. I'll go home and check online for cafe opening hours." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+--- Time: Day5 19:00 ---
+
+Alice's turn (Home, $10):
+Alice: "Energy is critical. I'll go to the cafe for a meal to restore energy." (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+
+--- Time: Day5 19:30 ---
+
+Alice's turn (Cafe, $10):
+Alice: "Cafe is closed and no one working. I'll go home and check online tomorrow for opening hours." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+--- Time: Day5 20:00 ---
+
+Alice's turn (Home, $10):
+Alice: "Future reminder: Cafe closed all day. Chloe and Bob planned to meet. Tomorrow: explore city, find open spots, try new places." (Action: sleep)
+-> Alice attempts: sleep
+-> Alice sleeps. Diary: "Future reminder: Cafe closed all day. Chloe and Bob planned to meet. Tomorrow: e..."
+
+--- Everyone asleep, skipping 8h to the first waking ---
+-> Alice finished sleeping
+
+
+========== DAY 6 ==========
+
+--- Time: Day6 04:30 ---
+
+Alice wakes up:
+Alice: "Day 6! I remember the cafe was closed and Chloe and Bob planned to meet. Tomorrow: explore city, find open spots, try new places. Let me go to the cafe for a fresh experience." (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+
+--- Time: Day6 05:00 ---
+*** Alice DIED: from NOT EATING (0 energy). Remember: 'eat' at cafe restores energy! ***
+
+*** ALL AGENTS DEAD - SIMULATION OVER ***

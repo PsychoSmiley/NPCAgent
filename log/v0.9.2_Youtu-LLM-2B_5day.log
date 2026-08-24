@@ -1,0 +1,1829 @@
+=== INFORMATION FLOW TEST ===
+
+===== Bob <-> Alice =====
+Bob: "Hello Alice, my name is Bob, and my favorite color is dark red."
+Alice: "Hi Bob! Nice to meet you. I heard your favorite color is dark red. We're at the park today. How can I assist you?" (Action: none)
+Bob: "I'm here to assist you, but I need you to ask me questions or give me input. Since I'm an NPC, I can't directly help like a human would. Let's see what you need. However, given the possible actions, I might need to leave the conversation if I can't help. Alternatively, I can respond with a message and then decide to leave." (Action: leaveConversation)
+===== Conversation End (2 turns) =====
+
+===== Chloe <-> Alice =====
+Chloe: "Hi Alice, can you tell me anything about Bob?"
+Alice: "Hi Bob! I understand you're asking about me, but as an NPC, I can't directly assist like a human. Bob mentioned he needs you to ask questions or give input. Since I can't help directly, I think it's best to leave the conversation to explore new opportunities or rest. Let's see what you need next!" (Action: leaveConversation)
+===== Conversation End (1 turns) =====
+
+===== Bob <-> Chloe =====
+Bob: "Hello Chloe, did Alice tell you anything about me?"
+Chloe: "I understand. Alice mentioned I can't assist directly, so I'll follow your advice to leave the conversation. Exploring new opportunities or rest is a good plan. Goodbye!" (Action: leaveConversation)
+===== Conversation End (1 turns) =====
+
+
+
+
+=== v0.9.2  (6 days) ===
+Cafe economy: eat=$10 (+30 energy, needs worker), work earns $12 (needs customer)
+
+Start money: Bob=$10, Alice=$10, Chloe=$10
+--- Initial Setup (dark-red = persona/memory probe) ---
+
+===== Bob <-> Alice =====
+Bob: "Hello Alice, my name is Bob, and my favorite color is dark red."
+
+
+========== DAY 1 ==========
+
+--- Time: Day1 08:00 ---
+Alice: "Hello Bob! Nice to meet you. I have some plans for the day. What can I do for you?" (Action: none)
+
+Chloe's turn (Cafe, $10):
+Chloe: "I have $10 and high energy, so I can go eat at the cafe even though it's empty. Maybe I can have food there. Let's go eat." (Action: eat)
+-> Chloe attempts: eat
+-> Failed: No one working. Someone must 'work' first.
+Chloe (retry): "I can't eat because there's no one working at the cafe. With $10 and high energy, I'd prefer to explore a new place like the park instead. Action: goPark" (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day1 08:30 ---
+[API ERROR] Bob: ReadTimeout (attempt 1/50)
+[RETRY] Bob: waiting 1m before attempt 2/50
+Bob: "Alice, I see you have plans for the day. With $10 and energy 81/82, I can offer options like helping with tasks, exploring nearby spots, or just chatting. Let me know how you'd like to proceed—socializing, rest, or planning activities. What sounds good to you?" (Action: none)
+Alice: "Hello Bob! Thanks for the offer. What would you like to do today?" (Action: none)
+
+Chloe's turn (Cafe, $10):
+Chloe: "The cafe is empty, so I can't eat or work there. With $10 and high energy, exploring a new place like the park would be good. Let's go to the park." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day1 09:00 ---
+Bob: "I don't know what you'd like to do, but I can offer options like exploring the park, helping with tasks, or just chatting. What sounds good to you?" (Action: none)
+Alice: "Hello Bob! With energy at 78/81, I’m considering taking a break. Exploring the park feels familiar, but my stamina is low. Let me know if you’d prefer to leave the conversation for rest or try something new." (Action: leaveConversation)
+===== Conversation End (5 turns) =====
+
+Chloe's turn (Park, $10):
+Chloe: "I have energy left and $10 to spend, so engaging in a conversation at the park would be good. Let's talkToBob to explore potential interactions." (Action: talkToBob)
+-> Chloe attempts: talkToBob
+
+===== Chloe <-> Bob =====
+Chloe: "I have energy left and $10 to spend, so engaging in a conversation at the park would be good. Let's talkToBob to explore potential interactions."
+
+--- Time: Day1 09:30 ---
+[API ERROR] Bob: ReadTimeout (attempt 1/50)
+[RETRY] Bob: waiting 1m before attempt 2/50
+Bob: "I understand you want to continue the conversation. With energy at 79/82, it's reasonable to engage in a brief interaction before considering a break. Let's talkToBob to explore potential interactions, but I might suggest taking a short pause if needed. What feels best for you?" (Action: none)
+
+Alice's turn (Park, $10):
+Alice: "With energy at 78/81 and time at 09:30, I’m leaning toward leaving the park for rest. Going home will help recharge before tomorrow’s plans. Let me know if you’d like to confirm this or explore alternatives." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+Chloe: "I agree, let's keep talking. With my energy and funds, engaging in this interaction feels reasonable before deciding to pause. Let's see what Bob has to say." (Action: none)
+
+--- Time: Day1 10:00 ---
+Bob: "I agree, let's keep talking. With energy at 78/82 and $10 to spend, engaging in this interaction is reasonable. Let's explore potential interactions—maybe ask about your plans or offer help. What feels best for you?" (Action: none)
+
+Alice's turn (Home, $10):
+Alice: "With energy at 77/81 and time at 10:00, I’m prioritizing rest to recharge before tomorrow. Sleeping now will help me recover for future plans. Let me know if you’d prefer to confirm this or explore alternatives like going to the park or cafe for a short break." (Action: sleep)
+-> Alice attempts: sleep
+-> Failed: can only sleep between 20:00 and 08:00 (it's 10:00)
+Alice (retry): "With energy at 77/81 and time at 10:00, I’m considering going to the park to recharge before tomorrow. It’s a familiar spot, but I’ll use this break to rest and prepare for future plans." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+Chloe: "I've been chatting with Bob for a while, and with energy at 77/80, it's reasonable to take a short break before resting. Let's leave the conversation to recharge." (Action: leaveConversation)
+===== Conversation End (4 turns) =====
+
+--- Time: Day1 10:30 ---
+
+Bob's turn (Park, $10):
+Bob: "I understand you're considering a break. With energy at 78/82, it's reasonable to leave the conversation to recharge. Let's go home to rest. Goodbye!" (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+Alice's turn (Park, $10):
+Alice: "With energy at 76/81 and time at 10:30, I’m considering going home to recharge before tomorrow. It’s a familiar spot, but I’ll use this break to rest and prepare for future plans." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+Chloe's turn (Park, $10):
+Chloe: "With energy at 77/80 and $10 to spend, heading home would allow me to rest and recharge before returning to the park. Let's goHome." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day1 11:00 ---
+
+Bob's turn (Home, $10):
+Bob: "With energy at 77/82, taking a short break is wise. Sleeping will help me recharge before the day ends. Let's rest and return with more stamina for future plans." (Action: sleep)
+-> Bob attempts: sleep
+-> Failed: can only sleep between 20:00 and 08:00 (it's 11:00)
+Bob (retry): "With energy at 77/82 and time at 11:00, going to a cafe would allow rest without violating sleep rules. Let me head to the cafe to recharge before the day ends." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+Alice's turn (Home, $10):
+Alice: "With energy at 75/81 and time at 11:00, I’m prioritizing rest to recharge before tomorrow. Going to the park or cafe could help me recover, but I’ll avoid repeating familiar spots. Let me know if you’d prefer to explore a new place or rest here." (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+
+Chloe's turn (Home, $10):
+Chloe: "With energy at 76/80 and $10 left, resting at home makes sense before returning to explore or socialize. Sleep allows me to recharge and form memories without overextending. Action: sleep" (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day1 11:30 ---
+
+Bob's turn (Cafe, $10):
+Bob: "With energy at 76/82 and time at 11:30, going home is the best option to rest without violating sleep rules. Let me head home to recharge before the day ends." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+Alice's turn (Cafe, $10):
+Alice: "With energy at 74/81 and time at 11:30, I’m considering going home to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge for future plans." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+Chloe's turn (Home, $10):
+Chloe: "With energy at 76/80 and $10 left, resting at home makes sense before returning to explore or socialize. Sleep allows me to recharge and form memories without overextending." (Action: sleep)
+-> Chloe attempts: sleep
+-> Failed: can only sleep between 20:00 and 08:00 (it's 11:30)
+Chloe (retry): "I can't sleep now, but going to the park would be a good way to rest and explore. Let's goPark." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day1 12:00 ---
+
+Bob's turn (Home, $10):
+Bob: "With energy at 75/82 and time at 12:00, going to the park would allow a brief break to recharge without violating sleep rules. Even if it's a familiar place, stepping away to rest aligns with your goals." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Alice's turn (Home, $10):
+Alice: "With energy at 73/81 and time at 12:00, I’m considering going home to rest before tomorrow’s plans. It’s a familiar spot, but I’ll use this break to recharge for future activities." (Action: goHome)
+-> Alice attempts: goHome
+-> Failed: you are already at the Home
+Alice (retry): "With energy at 73/81 and time at 12:00, I’m considering going to the park to recharge before tomorrow. It’s a familiar spot, but I’ll use this break to rest and prepare for future plans." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+Chloe's turn (Park, $10):
+Chloe: "With energy at 75/80 and $10 left, engaging in a conversation at the park feels reasonable. Let's talkToBob to explore potential interactions before deciding to rest or go elsewhere." (Action: talkToBob)
+-> Chloe attempts: talkToBob
+
+===== Chloe <-> Bob =====
+Chloe: "With energy at 75/80 and $10 left, engaging in a conversation at the park feels reasonable. Let's talkToBob to explore potential interactions before deciding to rest or go elsewhere."
+
+--- Time: Day1 12:30 ---
+Bob: "I understand you're considering engaging in a conversation with Bob at the park. With energy at 73/82 and $10 left, continuing the interaction feels reasonable before deciding to rest or go elsewhere. Let's talkToBob to explore potential interactions as planned." (Action: none)
+
+Alice's turn (Park, $10):
+Alice: "With energy at 72/81 and time at 12:30, I’m considering going to the cafe to recharge before tomorrow. It’s a new place, and I’ll use this break to rest while avoiding repetitive park routines." (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+Chloe: "I agree, let's talkToBob to explore potential interactions. With energy at 75/80 and $10 left, continuing this conversation feels reasonable before deciding to rest or go elsewhere." (Action: talkToBob)
+
+--- Time: Day1 13:00 ---
+Bob: "I agree, let's continue the conversation with Bob. With energy at 72/82 and $10 left, engaging in this interaction aligns with your plans. What would you like to discuss or explore today?" (Action: none)
+
+Alice's turn (Cafe, $10):
+Alice: "With energy at 71/81 and time at 13:00, I’m considering eating at the cafe to recharge before tomorrow. It’s a familiar spot, and I’ll use this break to rest while avoiding repetitive park routines." (Action: eat)
+-> Alice attempts: eat
+-> Failed: No one working. Someone must 'work' first.
+Alice (retry): "With energy at 71/81 and time at 13:00, I’m considering going home to rest before tomorrow. It’s a familiar spot, and I’ll use this break to recharge while avoiding repetitive routines." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+Chloe: "With energy at 73/80 and $10 left, continuing the conversation feels reasonable, but I need to rest to recharge and form memories without overextending. Let's leave the conversation." (Action: leaveConversation)
+===== Conversation End (4 turns) =====
+
+--- Time: Day1 13:30 ---
+
+Bob's turn (Park, $10):
+Bob: "I understand you're considering a break to recharge. With energy at 72/82 and $10 left, it's reasonable to leave the conversation to recharge. Let's go home to rest and form memories without overextending. Goodbye!" (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+Alice's turn (Home, $10):
+Alice: "With energy at 70/81 and time at 13:30, I’m considering going to the park to recharge before tomorrow. It’s a familiar spot, but I’ll use this break to rest and prepare for future plans." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+Chloe's turn (Park, $10):
+Chloe: "With energy at 73/80 and $10 left, engaging in a new interaction like talking to Alice would be refreshing. Let's explore potential connections without overextending. Action: talkToAlice" (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day1 14:00 ---
+
+Bob's turn (Home, $10):
+Bob: "With energy at 71/82 and time at 14:00, taking a short break is wise. Sleeping will help me recharge without overextending, aligning with your goal to rest and form memories. Let's sleep to return with more stamina for future plans." (Action: sleep)
+-> Bob attempts: sleep
+-> Failed: can only sleep between 20:00 and 08:00 (it's 14:00)
+Bob (retry): "With energy at 71/82 and time at 14:00, going to the park allows a brief break to recharge without violating sleep rules. Even if it's a familiar place, stepping away to rest aligns with your goal to recharge and form memories while continuing the conversation with Bob." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Alice's turn (Park, $10):
+Alice: "With energy at 69/81 and time at 14:00, I’m considering going home to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding repetitive park routines." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+Chloe's turn (Park, $10):
+Chloe: "With energy at 73/80 and $10 left, continuing this interaction feels reasonable, but I need to rest to recharge and form memories without overextending. Let's leave the conversation." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day1 14:30 ---
+
+Bob's turn (Park, $10):
+Bob: "I understand you're considering ending the conversation at the park. With energy at 70/82 and $10 left, going home allows rest and recharging without overextending. Let's go home to recharge and form memories before the day ends." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+Alice's turn (Home, $10):
+Alice: "With energy at 68/81 and time at 14:30, I’m considering going home to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding repetitive park routines. Let me know if you’d prefer to confirm this or explore alternatives like going to the park or cafe for a short break." (Action: sleep)
+-> Alice attempts: sleep
+-> Failed: can only sleep between 20:00 and 08:00 (it's 14:30)
+Alice (retry): "With energy at 68/81 and time at 14:30, I’m considering going to the park to recharge before tomorrow. It’s a familiar spot, but I’ll use this break to rest and prepare for future plans." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+Chloe's turn (Park, $10):
+Chloe: "With energy at 73/80 and $10 left, resting at home allows me to recharge and form memories without overextending. Let's goHome." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day1 15:00 ---
+
+Bob's turn (Home, $10):
+Bob: "With energy at 69/82 and time at 15:00, taking a short break is wise. Sleeping will help me recharge without overextending, aligning with your goal to rest and form memories. Let's sleep to return with more stamina for future plans." (Action: sleep)
+-> Bob attempts: sleep
+-> Failed: can only sleep between 20:00 and 08:00 (it's 15:00)
+[ERROR] Bob: Failed to extract valid JSON
+Bob (retry): "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Park, $10):
+Alice: "With energy at 67/81 and time at 15:00, I’m considering going home to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding repetitive park routines." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+Chloe's turn (Home, $10):
+Chloe: "With energy at 72/80 and $10 left, resting at home is not possible now, but going to the park allows me to recharge and explore without overextending. Let's goPark." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day1 15:30 ---
+
+Bob's turn (Home, $10):
+Bob: "With energy at 69/82 and time at 15:30, going to the park allows a brief break to recharge without violating sleep rules. Even if it's a familiar place, stepping away to rest aligns with your goal to recharge and form memories while continuing the conversation with Bob." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Alice's turn (Home, $10):
+Alice: "With energy at 66/81 and time at 15:30, I’m considering going to the cafe to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding repetitive park routines." (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+
+Chloe's turn (Park, $10):
+Chloe: "With energy at 71/80 and $10 left, continuing the interaction feels reasonable but I need to rest to recharge without overextending. Let's leave the conversation." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day1 16:00 ---
+
+Bob's turn (Park, $10):
+Bob: "With energy at 68/82 and time at 16:00, ending the conversation at the park allows rest and recharging without overextending. Let's go home to form memories and align with your goal to balance socializing with rest." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+Alice's turn (Cafe, $10):
+Alice: "With energy at 65/81 and time at 16:00, I’m considering going home to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding repetitive routines." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+Chloe's turn (Park, $10):
+Chloe: "With energy at 71/80 and $10 left, continuing the interaction feels reasonable but I need to rest to recharge without overextending. Let's goHome." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day1 16:30 ---
+
+Bob's turn (Home, $10):
+Bob: "With energy at 67/82 and time at 16:30, taking a short break is wise. Sleeping will help me recharge without overextending, aligning with your goal to rest and form memories. Let's sleep to return with more stamina for future plans." (Action: sleep)
+-> Bob attempts: sleep
+-> Failed: can only sleep between 20:00 and 08:00 (it's 16:30)
+Bob (retry): "With energy at 67/82 and time at 16:30, going to the park allows a brief break to recharge without violating sleep rules. Even if it's a familiar place, stepping away to rest aligns with your goal to recharge and form memories while continuing the conversation with Bob." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Alice's turn (Home, $10):
+Alice: "With energy at 64/81 and time at 16:30, I’m considering going to the park to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding repetitive routines." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+Chloe's turn (Home, $10):
+Chloe: "With energy at 70/80 and $10 left, going to the park allows me to rest and explore without overextending. This balances socializing with rest, which is important for forming memories and adapting to new experiences." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day1 17:00 ---
+
+Bob's turn (Park, $10):
+Bob: "With energy at 66/82 and time at 17:00, ending the conversation at the park allows rest and recharging without overextending. Let's go home to form memories and align with your goal to balance socializing with rest. I’ll return with more stamina for future plans." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+Alice's turn (Park, $10):
+Alice: "With energy at 63/81 and time at 17:00, I’m considering going to the cafe to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding repetitive park routines. Let me know if you’d prefer to confirm this or explore alternatives." (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+
+Chloe's turn (Park, $10):
+Chloe: "With energy at 69/80 and $10 left, continuing at the park feels like overextending. Resting at home allows me to recharge without wasting time or energy. Let's goHome." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day1 17:30 ---
+
+Bob's turn (Home, $10):
+Bob: "With energy at 65/82 and time at 17:30, taking a short break is wise. Going to the park allows a brief recharge without violating sleep rules. Even if it's a familiar place, stepping away to rest aligns with your goal to recharge and form memories while continuing the conversation with Bob." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Alice's turn (Cafe, $10):
+Alice: "With energy at 62/81 and time at 17:30, I’m considering going home to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding repetitive routines." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+Chloe's turn (Home, $10):
+Chloe: "With energy at 68/80 and $10 left, resting at home allows me to recharge and form memories without overextending. Action: sleep" (Action: sleep)
+-> Chloe attempts: sleep
+-> Failed: can only sleep between 20:00 and 08:00 (it's 17:30)
+Chloe (retry): "With energy at 68/80 and $10 left, resting at home isn’t possible now, but going to the park allows me to recharge and explore without overextending. This balances rest with the chance to form new memories." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day1 18:00 ---
+
+Bob's turn (Park, $10):
+Bob: "With energy at 64/82 and time at 18:00, ending the conversation at the park allows rest and recharging without overextending. Let's go home to form memories and align with your goal to balance socializing with rest. I’ll return with more stamina for future plans." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+Alice's turn (Home, $10):
+Alice: "With energy at 61/81 and time at 18:00, I’m considering going home to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding repetitive routines. Let me know if you’d prefer to confirm this or explore alternatives like going to the park or cafe for a short break." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+Chloe's turn (Park, $10):
+Chloe: "With energy at 67/80 and $10 left, continuing at the park feels like overextending. Resting at home allows me to recharge without wasting time or energy. Let's goHome." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day1 18:30 ---
+
+Bob's turn (Home, $10):
+Bob: "With energy at 63/82 and time at 18:30, ending the conversation at the park allows rest and recharging without violating sleep rules. Let's go home to form memories and align with your goal to balance socializing with rest. I’ll return with more stamina for future plans." (Action: goHome)
+-> Bob attempts: goHome
+-> Failed: you are already at the Home
+Bob (retry): "With energy at 63/82 and time at 18:30, ending the conversation at the park allows rest and recharging without violating sleep rules. Even if it's a familiar place, stepping away to rest aligns with your goal to recharge and form memories while continuing the conversation with Bob." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Alice's turn (Park, $10):
+Alice: "With energy at 60/81 and time at 18:30, I’m considering going home to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding repetitive park routines. Let me know if you’d prefer to confirm this or explore alternatives." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+Chloe's turn (Home, $10):
+Chloe: "With energy at 66/80 and $10 left, continuing at the park feels like overextending. Resting at home isn't possible now, but going to the park allows me to recharge and explore without overextending. This balances rest with the chance to form new memories." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day1 19:00 ---
+
+Bob's turn (Park, $10):
+Bob: "With energy at 62/82 and time at 19:00, ending the conversation at the park allows rest and recharging without overextending. Let's go home to form memories and align with your goal to balance socializing with rest. I’ll return with more stamina for future plans." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+Alice's turn (Home, $10):
+Alice: "With energy at 59/81 and time at 19:00, I’m considering going home to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding repetitive park routines. Let me know if you’d prefer to confirm this or explore alternatives like going to the park or cafe for a short break." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+Chloe's turn (Park, $10):
+Chloe: "With energy at 65/80 and $10 left, continuing at the park feels like overextending. Resting at home allows me to recharge without wasting time or energy. Let's goHome." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day1 19:30 ---
+
+Bob's turn (Home, $10):
+[API ERROR] Bob: ReadTimeout (attempt 1/50)
+[RETRY] Bob: waiting 1m before attempt 2/50
+Bob: "With energy at 61/82 and time at 19:30, ending the conversation at the park allows rest and recharging without violating sleep rules. Even if it's a familiar place, stepping away to rest aligns with your goal to recharge and form memories while continuing the conversation with Bob." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Alice's turn (Park, $10):
+Alice: "With energy at 58/81 and time at 19:30, I’m considering going home to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding repetitive park routines. Let me know if you’d prefer to confirm this or explore alternatives like going to the park or cafe for a short break." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+Chloe's turn (Home, $10):
+Chloe: "With energy at 64/80 and $10 left, continuing at home isn't possible now. Going to the cafe allows me to recharge and explore a new environment without overextending. This balances rest with the chance to form new memories." (Action: goCafe)
+-> Chloe attempts: goCafe
+-> Chloe moved to Cafe
+
+--- Time: Day1 20:00 ---
+
+Bob's turn (Park, $10):
+Bob: "With energy at 60/82 and time at 20:00, going home allows rest and recharging without overextending. Let's go home to form memories and align with your goal to balance socializing with rest. I’ll return with more stamina for future plans." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+Alice's turn (Home, $10):
+Alice: "Sleep now. Energy 57/81, time 20:00, home. Critical: low energy needs rest. Tomorrow's priority: sleep to recharge." (Action: sleep)
+-> Alice attempts: sleep
+-> Alice sleeps. Diary: "Sleep now. Energy 57/81, time 20:00, home. Critical: low energy needs rest. Tomo..."
+
+Chloe's turn (Cafe, $10):
+Chloe: "With energy at 63/80 and $10 left, continuing at the cafe feels like overextending. Resting at home allows me to recharge without wasting time or energy. Let's goHome." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day1 20:30 ---
+
+Bob's turn (Home, $10):
+Bob: "With energy at 61/82 and time at 20:00, sleep is allowed as it's within the 20:00 to 08:00 window. Taking a break to rest and recharge aligns with your goal to balance socializing with rest. Let's sleep to return with more stamina for future plans." (Action: sleep)
+-> Bob attempts: sleep
+-> Bob sleeps. Diary: "With energy at 61/82 and time at 20:00, sleep is allowed as it's within the 20:0..."
+
+Chloe's turn (Home, $10):
+Chloe: "I can't sleep now as the time is outside the allowed window (20:00-08:00). The critical event is the time restriction. Tomorrow's priority is to rest and recharge by going to the park. Let's goPark." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day1 21:00 ---
+
+Chloe's turn (Park, $10):
+Chloe: "With energy at 61/80 and $10 left, continuing at the park feels like overextending. Resting at home allows me to recharge without wasting time or energy. Let's goHome." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day1 21:30 ---
+
+Chloe's turn (Home, $10):
+Chloe: "With energy at 60/80 and $10 left, continuing at the park feels like overextending. Resting at home isn't possible now, but going to the park allows me to recharge and explore without overextending. This balances rest with the chance to form new memories." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day1 22:00 ---
+
+Chloe's turn (Park, $10):
+Chloe: "With energy at 59/80 and $10 left, continuing at the park feels like overextending. Resting at home allows me to recharge without wasting time or energy. Let's goHome." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day1 22:30 ---
+
+Chloe's turn (Home, $10):
+Chloe: "With energy at 61/80 and $10 left, continuing at the park feels like overextending. Resting at home allows me to recharge without wasting time or energy. Let's goHome." (Action: goHome)
+-> Chloe attempts: goHome
+-> Failed: you are already at the Home
+Chloe (retry): "With energy at 58/80 and $10 left, continuing at home isn't possible now. Going to the cafe allows me to recharge and explore a new environment without overextending. This balances rest with the chance to form new memories." (Action: goCafe)
+-> Chloe attempts: goCafe
+-> Chloe moved to Cafe
+
+--- Time: Day1 23:00 ---
+
+Chloe's turn (Cafe, $10):
+Chloe: "With energy at 57/80 and $10 left, continuing at the cafe feels like overextending. Resting at home isn't possible now, but going to the park allows me to recharge and explore without overextending. This balances rest with the chance to form new memories." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day1 23:30 ---
+
+Chloe's turn (Park, $10):
+Chloe: "With energy at 56/80 and $10 left, continuing at the park feels like overextending. Resting at home allows me to recharge without wasting time or energy. Let's goHome." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+
+========== DAY 2 ==========
+
+--- Time: Day2 00:00 ---
+
+Chloe's turn (Home, $10):
+Chloe: "With energy at 55/80 and $10 left, continuing at home isn't possible now. Going to the cafe allows me to recharge and explore a new environment without overextending. This balances rest with the chance to form new memories." (Action: goCafe)
+-> Chloe attempts: goCafe
+-> Chloe moved to Cafe
+
+--- Time: Day2 00:30 ---
+
+Chloe's turn (Cafe, $10):
+Chloe: "With energy at 54/80 and $10 left, continuing at the cafe is not possible now. Resting at home allows me to recharge without wasting time or energy. Let's goHome." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day2 01:00 ---
+
+Chloe's turn (Home, $10):
+Chloe: "With energy at 53/80 and $10 left, continuing at home isn't possible now. Going to the park allows me to recharge without wasting time or energy. This balances rest with the chance to form new memories." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day2 01:30 ---
+
+Chloe's turn (Park, $10):
+Chloe: "With energy at 52/80 and $10 left, continuing at the park feels like overextending. Resting at home allows me to recharge without wasting time or energy. Let's goHome." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day2 02:00 ---
+
+Chloe's turn (Home, $10):
+Chloe: "With energy at 53/80 and $10 left, continuing at home isn't possible now. Going to the park allows me to recharge without wasting time or energy. This balances rest with the chance to form new memories." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day2 02:30 ---
+
+Chloe's turn (Park, $10):
+Chloe: "With energy at 50/80 and $10 left, continuing at the park feels like overextending. Resting at home allows me to recharge without wasting time or energy. Let's goHome." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day2 03:00 ---
+
+Chloe's turn (Home, $10):
+Chloe: "With energy at 49/80 and $10 left, continuing at home isn't possible now. Going to the park allows me to recharge without wasting time or energy. This balances rest with the chance to form new memories. Action: goPark" (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 03:30 ---
+
+Chloe's turn (Home, $10):
+Chloe: "With energy at 49/80 and $10 left, continuing at home isn't possible now. Going to the park allows me to recharge without wasting time or energy. This balances rest with the chance to form new memories." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day2 04:00 ---
+-> Alice finished sleeping
+
+Alice wakes up:
+Alice: "With energy at 57/81 and time at 04:00, I’m prioritizing sleep to recharge before tomorrow. It’s a low-energy moment, and resting aligns with my goal to recover for future plans." (Action: sleep)
+-> Alice attempts: sleep
+-> Alice sleeps. Diary: "With energy at 57/81 and time at 04:00, I’m prioritizing sleep to recharge befor..."
+
+Chloe's turn (Park, $10):
+Chloe: "With energy at 48/80 and $10 left, continuing at the park feels like overextending. Resting at home allows me to recharge without wasting time or energy. Let's goHome." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day2 04:30 ---
+-> Bob finished sleeping
+
+Bob wakes up:
+Bob: "With energy at 59/82 and time at 04:30, sleep is allowed as it's within the 20:00 to 08:00 window. Resting now aligns with your goal to recharge and form memories while continuing recovery for tomorrow's plans." (Action: sleep)
+-> Bob attempts: sleep
+-> Bob sleeps. Diary: "With energy at 59/82 and time at 04:30, sleep is allowed as it's within the 20:0..."
+
+Chloe's turn (Home, $10):
+Chloe: "With energy at 47/80 and $10 left, continuing at home isn't possible now. Going to the park allows me to recharge without wasting time or energy. This balances rest with the chance to form new memories. Action: sleep" (Action: sleep)
+-> Chloe attempts: sleep
+-> Chloe sleeps. Diary: "With energy at 47/80 and $10 left, continuing at home isn't possible now. Going ..."
+
+--- Everyone asleep, skipping 7.5h to the first waking ---
+-> Alice finished sleeping
+
+--- Time: Day2 12:30 ---
+-> Bob finished sleeping
+-> Chloe finished sleeping
+
+Bob wakes up:
+Bob: "With energy at 59/82 and time at 12:30, going to the park allows a brief break to recharge without overextending. Even if it's a familiar place, stepping away to rest aligns with your goal to recharge and form memories while continuing recovery for tomorrow's plans." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Alice wakes up:
+Alice: "With energy at 57/81 and time at 12:30, I’m considering going to the park to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding repetitive routines." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+Chloe wakes up:
+Chloe: "With energy at 47/80 and $10 left, continuing at home isn't possible now. Going to the park allows me to recharge without wasting time or energy. This balances rest with the chance to form new memories." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day2 13:00 ---
+
+Bob's turn (Park, $10):
+Bob: "With energy at 58/82 and time at 13:00, going home allows a brief break to recharge without overextending. Even if it's a familiar place, stepping away to rest aligns with your goal to balance socializing with rest. I’ll return with more stamina for future plans." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+Alice's turn (Park, $10):
+Alice: "With energy at 56/81 and time at 13:00, I’m considering going home to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding repetitive park routines." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+Chloe's turn (Park, $10):
+Chloe: "With energy at 46/80 and $10 left, continuing at the park feels like overextending. Resting at home allows me to recharge without wasting time or energy. This balances rest with the chance to form new memories." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day2 13:30 ---
+
+Bob's turn (Home, $10):
+Bob: "With energy at 57/82 and time at 13:30, going to the park allows a brief break to recharge without overextending. Even if it's a familiar place, stepping away to rest aligns with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Alice's turn (Home, $10):
+Alice: "With energy at 55/81 and time at 13:30, I’m prioritizing sleep to recharge before tomorrow. It’s a low-energy moment, and resting aligns with my goal to recover for future plans." (Action: sleep)
+-> Alice attempts: sleep
+-> Failed: can only sleep between 20:00 and 08:00 (it's 13:30)
+Alice (retry): "With energy at 55/81 and time at 13:30, I’m considering talking to Chloe to socialize and recharge. It’s a fresh interaction, and engaging with someone new aligns with my goal to balance rest and socializing while avoiding repetitive routines." (Action: talkToChloe)
+-> Alice attempts: talkToChloe
+
+===== Alice <-> Chloe =====
+Alice: "With energy at 55/81 and time at 13:30, I’m considering talking to Chloe to socialize and recharge. It’s a fresh interaction, and engaging with someone new aligns with my goal to balance rest and socializing while avoiding repetitive routines."
+Chloe: "With energy at 44/80 and $10 left, continuing at home isn't possible now. Going to the park allows me to recharge without wasting time or energy. This balances rest with the chance to form new memories." (Action: goPark)
+
+--- Time: Day2 14:00 ---
+
+Bob's turn (Park, $10):
+Bob: "With energy at 56/82 and time at 14:00, going home allows a brief break to recharge without overextending. Even if it's a familiar place, stepping away to rest aligns with your goal to balance socializing with rest. I’ll return with more stamina for future plans." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+Alice: "With energy at 55/81 and time at 13:30, I’m considering going to the park to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding repetitive routines. Let me know if you’d prefer to confirm this or explore alternatives." (Action: none)
+Chloe: "With energy at 44/80 and $10 left, continuing at home isn't possible now. Going to the park allows me to recharge without wasting time or energy. This balances rest with the chance to form new memories." (Action: goPark)
+
+--- Time: Day2 14:30 ---
+
+Bob's turn (Home, $10):
+Bob: "With energy at 55/82 and time at 14:30, going to the park allows a brief break to recharge without overextending. Even if it's a familiar place, stepping away to rest aligns with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+Alice: "With energy at 53/81 and time at 14:30, I’m considering leaving the conversation to go to the park to recharge without wasting time or energy. This balances rest with the chance to form new memories. Let me know if you’d prefer to confirm this or explore alternatives." (Action: leaveConversation)
+===== Conversation End (4 turns) =====
+
+Chloe's turn (Home, $10):
+Chloe: "With energy at 43/80 and $10 left, continuing at home isn't possible now. Going to the park allows me to recharge without wasting time or energy. This balances rest with the chance to form new memories, as Alice explicitly stated she wants to avoid repetitive routines and prioritize fresh experiences." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day2 15:00 ---
+
+Bob's turn (Park, $10):
+Bob: "With energy at 54/82 and time at 15:00, ending the conversation at the park allows a brief break to recharge without overextending. Even if it's a familiar place, stepping away to rest aligns with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+Alice's turn (Home, $10):
+Alice: "With energy at 53/81 and time at 15:00, I’m considering going to the park to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding repetitive routines and ensuring I don’t waste energy on idle activities." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+Chloe's turn (Park, $10):
+Chloe: "With energy at 42/80 and $10 left, continuing at the park feels like overextending. Resting at home allows me to recharge without wasting time or energy. This balances rest with the chance to form new memories." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day2 15:30 ---
+
+Bob's turn (Home, $10):
+Bob: "With energy at 57/82 and time at 15:30, ending the conversation at the park allows a brief break to recharge without overextending. Even if it's a familiar place, stepping away to rest aligns with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Alice's turn (Park, $10):
+Alice: "With energy at 52/81 and time at 15:30, I’m considering going home to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding repetitive park routines and ensuring I don’t waste energy on idle activities." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+Chloe's turn (Home, $10):
+Chloe: "With energy at 41/80 and $10 left, continuing at home isn't possible now. Going to the park allows me to recharge without wasting time or energy. This balances rest with the chance to form new memories." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day2 16:00 ---
+
+Bob's turn (Park, $10):
+Bob: "With energy at 52/82 and time at 16:00, going home allows a brief break to recharge without overextending. Even if it's a familiar place, stepping away to rest aligns with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+Alice's turn (Home, $10):
+Alice: "With energy at 51/81 and time at 16:00, I’m considering going home to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding repetitive routines and ensuring I don’t waste energy on idle activities." (Action: goHome)
+-> Alice attempts: goHome
+-> Failed: you are already at the Home
+Alice (retry): "With energy at 51/81 and time at 16:00, I’m considering going to the park to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding repetitive routines and ensuring I don’t waste energy on idle activities. Let me know if you’d prefer to confirm this or explore alternatives." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+Chloe's turn (Park, $10):
+Chloe: "With energy at 40/80 and $10 left, continuing at the park feels like overextending. Resting at home allows me to recharge without wasting time or energy. This balances rest with the chance to form new memories." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day2 16:30 ---
+
+Bob's turn (Home, $10):
+Bob: "With energy at 51/82 and time at 16:30, going to the park allows a brief break to recharge without overextending. Even if it's a familiar place, stepping away to rest aligns with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Alice's turn (Park, $10):
+Alice: "With energy at 50/81 and time at 16:30, I’m considering going home to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding repetitive park routines and ensuring I don’t waste energy on idle activities. Let me know if you’d prefer to confirm this or explore alternatives." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+Chloe's turn (Home, $10):
+Chloe: "With energy at 39/80 and $10 left, continuing at home isn't possible now. Going to the park allows me to recharge without wasting time or energy. This balances rest with the chance to form new memories." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day2 17:00 ---
+
+Bob's turn (Park, $10):
+Bob: "With energy at 50/82 and time at 17:00, ending the conversation at the park allows a brief break to recharge without overextending. Even if it's a familiar place, stepping away to rest aligns with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+Alice's turn (Home, $10):
+Alice: "With energy at 49/81 and time at 17:00, I’m considering sleeping to recharge before tomorrow. It’s a low-energy moment, and resting aligns with my goal to recover for future plans." (Action: sleep)
+-> Alice attempts: sleep
+-> Failed: can only sleep between 20:00 and 08:00 (it's 17:00)
+Alice (retry): "With energy at 49/81 and time at 17:00, I’m considering going to the park to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding repetitive routines and ensuring I don’t waste energy on idle activities. Let me know if you’d prefer to confirm this or explore alternatives." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+Chloe's turn (Park, $10):
+Chloe: "With energy at 38/80 and $10 left, continuing at the park feels like overextending. Resting at home allows me to recharge without wasting time or energy. Let's goHome." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day2 17:30 ---
+
+Bob's turn (Home, $10):
+Bob: "With energy at 49/82 and time at 17:30, going to the park allows a brief break to recharge without overextending. Even if it's a familiar place, stepping away to rest aligns with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Alice's turn (Park, $10):
+Alice: "With energy at 48/81 and time at 17:30, I’m considering going home to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding repetitive park routines and ensuring I don’t waste energy on idle activities. Let me know if you’d prefer to confirm this or explore alternatives." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+Chloe's turn (Home, $10):
+Chloe: "With energy at 37/80 and $10 left, continuing at home isn't possible now. Sleeping allows me to recharge without wasting time or energy. This balances rest with the chance to form new memories." (Action: sleep)
+-> Chloe attempts: sleep
+-> Failed: can only sleep between 20:00 and 08:00 (it's 17:30)
+Chloe (retry): "With energy at 37/80 and $10 left, continuing at home isn't possible now. Going to the park allows me to recharge without wasting time or energy. This balances rest with the chance to form new memories." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day2 18:00 ---
+
+Bob's turn (Park, $10):
+Bob: "With energy at 48/82 and time at 18:00, ending the conversation at the park allows a brief break to recharge without overextending. Even if it's a familiar place, stepping away to rest aligns with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+Alice's turn (Home, $10):
+Alice: "With energy at 47/81 and time at 18:00, I’m considering going to the park to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding repetitive routines and ensuring I don’t waste energy on idle activities. Let me know if you’d prefer to confirm this or explore alternatives." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+Chloe's turn (Park, $10):
+Chloe: "With energy at 36/80 and $10 left, continuing at the park feels like overextending. Resting at home allows me to recharge without wasting time or energy. This balances rest with the chance to form new memories." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day2 18:30 ---
+
+Bob's turn (Home, $10):
+Bob: "With energy at 47/82 and time at 18:30, going to the park allows a brief break to recharge without overextending. Even if it's a familiar place, stepping away to rest aligns with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Alice's turn (Park, $10):
+Alice: "With energy at 46/81 and time at 18:30, I’m considering going home to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding repetitive park routines and ensuring I don’t waste energy on idle activities. Let me know if you’d prefer to confirm this or explore alternatives." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+Chloe's turn (Home, $10):
+Chloe: "With energy at 35/80 and $10 left, continuing at home isn't possible now. Sleeping allows me to recharge without wasting time or energy. This balances rest with the chance to form new memories." (Action: sleep)
+-> Chloe attempts: sleep
+-> Failed: can only sleep between 20:00 and 08:00 (it's 18:30)
+Chloe (retry): "With energy at 35/80 and $10 left, continuing at home isn't possible now. Going to the park allows me to recharge without wasting time or energy. This balances rest with the chance to form new memories." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day2 19:00 ---
+
+Bob's turn (Park, $10):
+Bob: "With energy at 46/82 and time at 19:00, going home allows a brief break to recharge without overextending. Even if it's a familiar place, stepping away to rest aligns with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+Alice's turn (Home, $10):
+Alice: "With energy at 45/81 and time at 19:00, I’m considering going to the park to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding repetitive routines and ensuring I don’t waste energy on idle activities. Let me know if you’d prefer to confirm this or explore alternatives." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+Chloe's turn (Park, $10):
+Chloe: "With energy at 34/80 and $10 left, continuing at the park feels like overextending. Resting at home allows me to recharge without wasting time or energy. This balances rest with the chance to form new memories." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day2 19:30 ---
+
+Bob's turn (Home, $10):
+Bob: "With energy at 45/82 and time at 19:30, sleep is allowed as it's within the 20:00 to 08:00 window. Resting now aligns with your goal to recharge and form memories while continuing recovery for tomorrow's plans." (Action: sleep)
+-> Bob attempts: sleep
+-> Failed: can only sleep between 20:00 and 08:00 (it's 19:30)
+Bob (retry): "With energy at 45/82 and time at 19:30, sleep is outside the allowed window (20:00–08:00). Ending the conversation at home allows a brief break to recharge without overextending. Going to the park offers a fresh reset, even if familiar, to recharge and align with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Alice's turn (Park, $10):
+Alice: "With energy at 44/81 and time at 19:30, I’m considering going home to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding repetitive park routines and ensuring I don’t waste energy on idle activities. Let me know if you’d prefer to confirm this or explore alternatives." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+Chloe's turn (Home, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 20:00 ---
+
+Bob's turn (Park, $10):
+Bob: "With energy at 44/82 and time at 20:00, going home allows a brief break to recharge without overextending. Even if it's a familiar place, stepping away to rest aligns with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+Alice's turn (Home, $10):
+Alice: "Sleep now. Energy 43/81 at 20:00, home. Critical: low energy needs rest. Tomorrow's priority: recharge to recover." (Action: sleep)
+-> Alice attempts: sleep
+-> Alice sleeps. Diary: "Sleep now. Energy 43/81 at 20:00, home. Critical: low energy needs rest. Tomorro..."
+
+Chloe's turn (Home, $10):
+Chloe: "With energy at 33/80 and $10 left, continuing at home isn't possible now. Sleeping allows me to recharge without wasting time or energy. This balances rest with the chance to form new memories. Action: sleep" (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 20:30 ---
+
+Bob's turn (Home, $10):
+Bob: "With energy at 43/82 and time at 20:30, sleep is outside the allowed window (20:00–08:00). Ending the conversation at home allows a brief break to recharge without overextending. Going to the park offers a fresh reset, even if familiar, to recharge and align with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Chloe's turn (Home, $10):
+Chloe: "With energy at 33/80 and $10 left, continuing at home isn't possible now. Going to the cafe allows me to recharge without wasting time or energy. This balances rest with the chance to form new memories." (Action: goCafe)
+-> Chloe attempts: goCafe
+-> Chloe moved to Cafe
+
+--- Time: Day2 21:00 ---
+
+Bob's turn (Park, $10):
+Bob: "With energy at 42/82 and time at 21:00, going home allows a brief break to recharge without overextending. Even if it's a familiar place, stepping away to rest aligns with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+Chloe's turn (Cafe, $10):
+Chloe: "With energy at 32/80 and $10 left, continuing at the cafe isn't viable due to no one working. Going Home allows me to recharge without wasting time or energy, balancing rest with the chance to form new memories." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day2 21:30 ---
+
+Bob's turn (Home, $10):
+Bob: "With energy at 41/82 and time at 21:30, sleep is outside the allowed window (20:00–08:00). Ending the conversation at home allows a brief break to recharge without overextending. Going to the park offers a fresh reset, even if familiar, to recharge and align with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Chloe's turn (Home, $10):
+Chloe: "Energy at 31/80 and $10 left: can't home. Sleeping recharges without waste. Action: sleep" (Action: sleep)
+-> Chloe attempts: sleep
+-> Chloe sleeps. Diary: "Energy at 31/80 and $10 left: can't home. Sleeping recharges without waste. Acti..."
+
+--- Time: Day2 22:00 ---
+
+Bob's turn (Park, $10):
+Bob: "With energy at 40/82 and time at 22:00, going home allows a brief break to recharge without overextending. Even if it's a familiar place, stepping away to rest aligns with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+--- Time: Day2 22:30 ---
+
+Bob's turn (Home, $10):
+Bob: "With energy at 39/82 and time at 22:30, sleep is outside the allowed window (20:00–08:00). Ending the conversation at home allows a brief break to recharge without overextending. Going to the park offers a fresh reset, even if familiar, to recharge and align with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+--- Time: Day2 23:00 ---
+
+Bob's turn (Park, $10):
+Bob: "With energy at 38/82 and time at 23:00, going home allows a brief break to recharge without overextending. Even if it's a familiar place, stepping away from the park aligns with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+--- Time: Day2 23:30 ---
+
+Bob's turn (Home, $10):
+Bob: "With energy at 37/82 and time at 23:30, going home allows a brief break to recharge without overextending. Even if it's a familiar place, stepping away from the park aligns with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goHome)
+-> Bob attempts: goHome
+-> Failed: you are already at the Home
+Bob (retry): "With energy at 37/82 and time at 23:30, going to the cafe offers a fresh break to recharge without overextending. Even if it's a new place, stepping away from the park aligns with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+
+========== DAY 3 ==========
+
+--- Time: Day3 00:00 ---
+
+Bob's turn (Cafe, $10):
+Bob: "With energy at 36/82 and time at 00:00, going home allows a brief break to recharge without overextending. Even if it's a familiar place, stepping away from the cafe aligns with your goal to balance socializing with rest while continuing recovery for tomorrow's plans. I’ll return with more stamina for future actions." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+--- Time: Day3 00:30 ---
+
+Bob's turn (Home, $10):
+Bob: "With energy at 35/82 and time at 00:30, going to the park offers a fresh break to recharge without overextending. Even if familiar, stepping away from the cafe aligns with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+--- Time: Day3 01:00 ---
+
+Bob's turn (Park, $10):
+Bob: "With energy at 34/82 and time at 01:00, going home allows a brief break to recharge without overextending. Even if it's a familiar place, stepping away from the park aligns with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+--- Time: Day3 01:30 ---
+
+Bob's turn (Home, $10):
+Bob: "With energy at 33/82 and time at 01:30, going to the park offers a fresh break to recharge without overextending. Even if familiar, stepping away from the cafe aligns with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+--- Time: Day3 02:00 ---
+
+Bob's turn (Park, $10):
+Bob: "With energy at 32/82 and time at 02:00, going home allows a brief break to recharge without overextending. Even if it's a familiar place, stepping away from the park aligns with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+--- Time: Day3 02:30 ---
+
+Bob's turn (Home, $10):
+Bob: "With energy at 31/82 and time at 02:30, going to the park offers a fresh break to recharge without overextending. Even if familiar, stepping away from the cafe aligns with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+--- Time: Day3 03:00 ---
+
+Bob's turn (Park, $10):
+Bob: "With energy at 30/82 and time at 03:00, going home allows a brief break to recharge without overextending. Even if it's a familiar place, stepping away from the park aligns with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+--- Time: Day3 03:30 ---
+
+Bob's turn (Home, $10):
+Bob: "With energy at 29/82 and time at 03:30, going to the park offers a fresh break to recharge without overextending. Even if familiar, stepping away from the cafe aligns with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+--- Time: Day3 04:00 ---
+-> Alice finished sleeping
+
+Bob's turn (Park, $10):
+Bob: "With energy at 28/82 and time at 04:00, going home allows a brief break to recharge without overextending. Even if it's a familiar place, stepping away from the park aligns with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+Alice wakes up:
+Alice: "With energy at 43/81 and time at 04:00, I’m considering going to the cafe to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding repetitive routines and ensuring I don’t waste energy on idle activities. Let me know if you’d prefer to confirm this or explore alternatives." (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+
+--- Time: Day3 04:30 ---
+
+Bob's turn (Home, $10):
+Bob: "With energy at 27/82 and time at 04:30, going to the park offers a fresh break to recharge without overextending. Even if familiar, stepping away from the cafe aligns with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Alice's turn (Cafe, $10):
+Alice: "With energy at 42/81 and time at 04:30, I’m considering going home to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding repetitive routines and ensuring I don’t waste energy on idle activities. Let me know if you’d prefer to confirm this or explore alternatives." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+--- Time: Day3 05:00 ---
+
+Bob's turn (Park, $10):
+Bob: "With energy at 26/82 and time at 05:00, going home allows a brief break to recharge without overextending. Even if it's a familiar place, stepping away from the park aligns with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+Alice's turn (Home, $10):
+Alice: "Sleep now. Energy 41/81 at 05:00, home. Critical: low energy needs rest. Tomorrow's priority: recharge to recover. Key fact: energy 41/81 indicates low energy levels. Resting aligns with the goal to recharge and recover for future plans." (Action: sleep)
+-> Alice attempts: sleep
+-> Alice sleeps. Diary: "Sleep now. Energy 41/81 at 05:00, home. Critical: low energy needs rest. Tomorro..."
+
+--- Time: Day3 05:30 ---
+-> Chloe finished sleeping
+
+Bob's turn (Home, $10):
+Bob: "With energy at 25/82 and time at 05:30, going to the park offers a fresh break to recharge without overextending. Even if familiar, stepping away from the cafe aligns with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Chloe wakes up:
+Chloe: "With energy at 31/80 and $10 left, continuing at home isn't possible now. Sleeping allows me to recharge without wasting time or energy. This balances rest with the chance to form new memories." (Action: sleep)
+-> Chloe attempts: sleep
+-> Chloe sleeps. Diary: "With energy at 31/80 and $10 left, continuing at home isn't possible now. Sleepi..."
+
+--- Time: Day3 06:00 ---
+
+Bob's turn (Park, $10):
+Bob: "With energy at 24/82 and time at 06:00, going home allows a brief break to recharge without overextending. Even if it's a familiar place, stepping away from the park aligns with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+--- Time: Day3 06:30 ---
+
+Bob's turn (Home, $10):
+[API ERROR] Bob: ReadTimeout (attempt 1/50)
+[RETRY] Bob: waiting 1m before attempt 2/50
+Bob: "With energy at 23/82 and time at 06:30, sleep is outside the allowed window (20:00–08:00). Going to the park offers a fresh break to recharge without overextending. Even if familiar, stepping away from home aligns with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+--- Time: Day3 07:00 ---
+
+Bob's turn (Park, $10):
+Bob: "With energy at 22/82 and time at 07:00, going home allows a brief break to recharge without overextending. Even if familiar, stepping away from the park aligns with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+--- Time: Day3 07:30 ---
+
+Bob's turn (Home, $10):
+Bob: "With energy at 21/82 and time at 07:30, going to the park offers a fresh break to recharge without overextending. Even if familiar, stepping away from the cafe aligns with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+--- Time: Day3 08:00 ---
+
+Bob's turn (Park, $10):
+Bob: "With energy at 20/82 and time at 08:00, going home allows a brief break to recharge without overextending. Even if familiar, stepping away from the park aligns with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+--- Time: Day3 08:30 ---
+
+Bob's turn (Home, $10):
+Bob: "With energy at 19/82 and time at 08:30, going to the park offers a fresh break to recharge without overextending. Even if familiar, stepping away from home aligns with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+--- Time: Day3 09:00 ---
+
+Bob's turn (Park, $10):
+Bob: "With energy at 18/82 and time at 09:00, going home allows a brief break to recharge without overextending. Even if familiar, stepping away from the park aligns with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+--- Time: Day3 09:30 ---
+
+Bob's turn (Home, $10):
+Bob: "With energy at 17/82 and time at 09:30, going to the park offers a fresh break to recharge without overextending. Even if familiar, stepping away from home aligns with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+--- Time: Day3 10:00 ---
+
+Bob's turn (Park, $10):
+Bob: "With energy at 16/82 and time at 10:00, going home allows a brief break to recharge without overextending. Even if familiar, stepping away from the park aligns with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+--- Time: Day3 10:30 ---
+
+Bob's turn (Home, $10):
+Bob: "With energy at 15/82 and time at 10:30, sleeping allows a restful break to recharge without overextending. Even if familiar, stepping away from home aligns with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: sleep)
+-> Bob attempts: sleep
+-> Failed: can only sleep between 20:00 and 08:00 (it's 10:30)
+Bob (retry): "With energy at 15/82 and time at 10:30, going to the park offers a fresh break to recharge without overextending. Even if familiar, stepping away from home aligns with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+--- Time: Day3 11:00 ---
+
+Bob's turn (Park, $10):
+Bob: "With energy at 14/82 and time at 11:00, going home allows a brief break to recharge without overextending. Even if familiar, stepping away from the park aligns with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+--- Time: Day3 11:30 ---
+
+Bob's turn (Home, $10):
+Bob: "With energy at 13/82 and time at 11:30, going to the park offers a fresh break to recharge without overextending. Even if familiar, stepping away from home aligns with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+--- Time: Day3 12:00 ---
+
+Bob's turn (Park, $10):
+Bob: "With energy at 12/82 and time at 12:00, going home allows a brief break to recharge without overextending. Even if familiar, stepping away from the park aligns with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+--- Time: Day3 12:30 ---
+
+Bob's turn (Home, $10):
+Bob: "With energy at 11/82 and time at 12:30, going to the park offers a fresh break to recharge without overextending. Even if familiar, stepping away from home aligns with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+--- Time: Day3 13:00 ---
+-> Alice finished sleeping
+
+Bob's turn (Park, $10):
+Bob: "With energy at 10/82 and time at 13:00, going home allows a restful break to recharge without overextending. Even if familiar, stepping away from the park aligns with your goal to balance socializing with rest while continuing recovery for tomorrow's plans." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+Alice wakes up:
+Alice: "With energy at 41/81 and time at 13:00, I’m considering sleeping to recharge before tomorrow. It’s a low-energy moment, and resting aligns with my goal to recover for future plans." (Action: sleep)
+-> Alice attempts: sleep
+-> Failed: can only sleep between 20:00 and 08:00 (it's 13:00)
+Alice (retry): "With energy at 41/81 and time at 13:00, I’m considering talking to Bob to socialize and recharge. It’s a fresh interaction, and engaging with someone new aligns with my goal to balance rest and socializing while avoiding repetitive routines." (Action: talkToBob)
+-> Alice attempts: talkToBob
+
+===== Alice <-> Bob =====
+Alice: "With energy at 41/81 and time at 13:00, I’m considering talking to Bob to socialize and recharge. It’s a fresh interaction, and engaging with someone new aligns with my goal to balance rest and socializing while avoiding repetitive routines."
+
+--- Time: Day3 13:30 ---
+-> Chloe finished sleeping
+Bob: "With energy at 8/82 and time at 13:30, stepping away from the conversation allows me to recharge without overextending. Even though you're considering socializing, low energy makes it best to prioritize rest for tomorrow's plans." (Action: leaveConversation)
+===== Conversation End (1 turns) =====
+
+Alice's turn (Home, $10):
+Alice: "With energy at 41/81 and time at 13:30, I’m considering going to the park to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding repetitive routines and ensuring I don’t waste energy on idle activities. Let me know if you’d prefer to confirm this or explore alternatives." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+Chloe wakes up:
+Chloe: "With energy at 31/80 and $10 left, continuing at home isn't possible now. Talking to Bob allows me to recharge through social interaction without wasting time or energy. This balances rest with the chance to form new memories while avoiding repetitive routines." (Action: talkToBob)
+-> Chloe attempts: talkToBob
+
+===== Chloe <-> Bob =====
+Chloe: "With energy at 31/80 and $10 left, continuing at home isn't possible now. Talking to Bob allows me to recharge through social interaction without wasting time or energy. This balances rest with the chance to form new memories while avoiding repetitive routines."
+
+--- Time: Day3 14:00 ---
+Bob: "With energy at 7/82 and time at 14:00, stepping away from the conversation allows me to recharge without overextending. Talking to Bob could be a fresh interaction, but low energy makes rest the priority for tomorrow's plans. Leaving the conversation aligns with my goal to balance rest with socializing while avoiding repetitive routines." (Action: leaveConversation)
+===== Conversation End (1 turns) =====
+
+Alice's turn (Park, $10):
+Alice: "With energy at 40/81 and time at 14:00, I’m considering going home to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding repetitive park routines and ensuring I don’t waste energy on idle activities. Let me know if you’d prefer to confirm this or explore alternatives." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+Chloe's turn (Home, $10):
+Chloe: "With energy at 31/80 and $10 left, continuing at home isn't possible now. Going to the park allows me to recharge without wasting time or energy. This balances rest with the chance to form new memories, as Bob explicitly stated stepping away from the conversation is necessary to avoid overextending while prioritizing fresh interactions." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day3 14:30 ---
+
+Bob's turn (Home, $10):
+Bob: "With energy at 7/82 and time at 14:30, sleeping allows a restful break to recharge without overextending. Even if familiar, stepping away from home aligns with your goal to balance rest with socializing while continuing recovery for tomorrow's plans." (Action: sleep)
+-> Bob attempts: sleep
+-> Failed: can only sleep between 20:00 and 08:00 (it's 14:30)
+Bob (retry): "With energy at 7/82 and time at 14:30, since sleep is outside the allowed window, stepping away from home to talk to Alice allows a fresh social interaction without overextending. This balances rest with socializing while continuing recovery for tomorrow's plans." (Action: talkToAlice)
+-> Bob attempts: talkToAlice
+
+===== Bob <-> Alice =====
+Bob: "With energy at 7/82 and time at 14:30, since sleep is outside the allowed window, stepping away from home to talk to Alice allows a fresh social interaction without overextending. This balances rest with socializing while continuing recovery for tomorrow's plans."
+Alice: "Alice is considering leaving the conversation to socialize and recharge, given her low energy (38/81) and the need to avoid overextending. Bob suggested stepping away from home for a fresh interaction, which aligns with her goal to balance rest and socializing while ensuring recovery for tomorrow's plans." (Action: leaveConversation)
+===== Conversation End (1 turns) =====
+
+Chloe's turn (Park, $10):
+Chloe: "With energy at 30/80 and $10 left, continuing at the park feels like overextending. Resting at home allows me to recharge without wasting time or energy. This balances rest with the chance to form new memories." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day3 15:00 ---
+
+Bob's turn (Home, $10):
+Bob: "With energy at 7/82 and time at 15:00, stepping away from home allows a fresh social interaction without overextending. Alice's decision to leave the conversation aligns with her goal to balance rest and socializing while ensuring recovery for tomorrow's plans. This action leverages the opportunity for a new memory and avoids repetitive routines." (Action: talkToAlice)
+-> Bob attempts: talkToAlice
+
+===== Bob <-> Alice =====
+Bob: "With energy at 7/82 and time at 15:00, stepping away from home allows a fresh social interaction without overextending. Alice's decision to leave the conversation aligns with her goal to balance rest and socializing while ensuring recovery for tomorrow's plans. This action leverages the opportunity for a new memory and avoids repetitive routines."
+Alice: "With energy at 37/81 and time at 15:00, I’m considering stepping away from home to socialize and recharge. This aligns with my goal to balance rest and interaction without overextending, especially given my low energy levels. Let me know if you'd prefer to confirm this or explore alternatives." (Action: leaveConversation)
+===== Conversation End (1 turns) =====
+
+Chloe's turn (Home, $10):
+Chloe: "With energy at 29/80 and $10 left, continuing at home isn't possible now. Going to the cafe allows me to recharge without wasting time or energy. This balances rest with the chance to form new memories while avoiding repetitive routines." (Action: goCafe)
+-> Chloe attempts: goCafe
+-> Chloe moved to Cafe
+
+--- Time: Day3 15:30 ---
+
+Bob's turn (Home, $10):
+Bob: "With energy at 7/82 and time at 15:30, stepping away from home allows a fresh social interaction without overextending. This aligns with my goal to balance rest and interaction while continuing recovery for tomorrow's plans. Let's talk to Alice to explore this new interaction!" (Action: talkToAlice)
+-> Bob attempts: talkToAlice
+
+===== Bob <-> Alice =====
+Bob: "With energy at 7/82 and time at 15:30, stepping away from home allows a fresh social interaction without overextending. This aligns with my goal to balance rest and interaction while continuing recovery for tomorrow's plans. Let's talk to Alice to explore this new interaction!"
+Alice: "With energy at 36/81 and time at 15:30, I’m considering stepping away from home to socialize and recharge. This aligns with my goal to balance rest and interaction without overextending, especially given my low energy levels. Let me know if you'd prefer to confirm this or explore alternatives." (Action: leaveConversation)
+===== Conversation End (1 turns) =====
+
+Chloe's turn (Cafe, $10):
+Chloe: "With energy at 28/80 and $10 left, continuing at the cafe isn't viable due to no one working. Going Home allows me to recharge without wasting time or energy, balancing rest with the chance to form new memories while avoiding repetitive routines." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day3 16:00 ---
+
+Bob's turn (Home, $10):
+Bob: "With energy at 36/81 and time at 16:00, stepping away from home allows a fresh social interaction without overextending. This aligns with my goal to balance rest and interaction while continuing recovery for tomorrow's plans. Let's talk to Alice to explore this new opportunity!" (Action: talkToAlice)
+-> Bob attempts: talkToAlice
+
+===== Bob <-> Alice =====
+Bob: "With energy at 36/81 and time at 16:00, stepping away from home allows a fresh social interaction without overextending. This aligns with my goal to balance rest and interaction while continuing recovery for tomorrow's plans. Let's talk to Alice to explore this new opportunity!"
+Alice: "With energy at 36/81 and time at 16:00, I’m considering stepping away from home to talk to Bob for a fresh social interaction. This aligns with my goal to balance rest and interaction without overextending, especially given my low energy levels. Let me know if you'd prefer to confirm this or explore alternatives." (Action: leaveConversation)
+===== Conversation End (1 turns) =====
+
+Chloe's turn (Home, $10):
+Chloe: "With energy at 27/80 and $10 left, continuing at home isn't possible now. Sleeping allows me to recharge without wasting time or energy. This balances rest with the chance to form new memories while avoiding repetitive routines." (Action: sleep)
+-> Chloe attempts: sleep
+-> Failed: can only sleep between 20:00 and 08:00 (it's 16:00)
+Chloe (retry): "With energy at 27/80 and $10 left, continuing at home isn't possible now. Going to the park allows me to recharge without wasting time or energy. This balances rest with the chance to form new memories while avoiding repetitive routines." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day3 16:30 ---
+
+Bob's turn (Home, $10):
+Bob: "With energy at 7/82 and time at 16:30, stepping away from home allows a fresh social interaction without overextending. This aligns with my goal to balance rest and interaction while continuing recovery for tomorrow's plans. Let's talk to Alice to explore this new opportunity!" (Action: talkToAlice)
+-> Bob attempts: talkToAlice
+
+===== Bob <-> Alice =====
+Bob: "With energy at 7/82 and time at 16:30, stepping away from home allows a fresh social interaction without overextending. This aligns with my goal to balance rest and interaction while continuing recovery for tomorrow's plans. Let's talk to Alice to explore this new opportunity!"
+Alice: "With energy at 34/81 and time at 16:00, I’m considering stepping away from home to socialize and recharge. This aligns with my goal to balance rest and interaction without overextending, especially given my low energy levels. Let me know if you'd prefer to confirm this or explore alternatives." (Action: leaveConversation)
+===== Conversation End (1 turns) =====
+
+Chloe's turn (Park, $10):
+Chloe: "With energy at 26/80 and $10 left, continuing at the park feels like overextending. Going Home allows me to recharge without wasting time or energy. This balances rest with the chance to form new memories while avoiding repetitive routines." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day3 17:00 ---
+
+Bob's turn (Home, $10):
+Bob: "With energy at 7/82 and time at 17:00, stepping away from home allows a fresh break to recharge without overextending. Even if familiar, stepping away from the park aligns with your goal to balance rest and socializing while continuing recovery for tomorrow's plans." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Alice's turn (Home, $10):
+Alice: "With energy at 34/81 and time at 17:00, I’m considering talking to Chloe for a fresh social interaction. It’s a new opportunity to balance rest and engagement without overextending, especially with low energy levels. Let me know if you’d prefer to confirm this or explore alternatives." (Action: talkToChloe)
+-> Alice attempts: talkToChloe
+
+===== Alice <-> Chloe =====
+Alice: "With energy at 34/81 and time at 17:00, I’m considering talking to Chloe for a fresh social interaction. It’s a new opportunity to balance rest and engagement without overextending, especially with low energy levels. Let me know if you’d prefer to confirm this or explore alternatives."
+Chloe: "With energy at 24/80 and $10 left, continuing at home isn't possible now. Leaving the conversation allows me to recharge without wasting time or energy, balancing rest with the chance to form new memories while avoiding repetitive routines." (Action: leaveConversation)
+===== Conversation End (1 turns) =====
+
+--- Time: Day3 17:30 ---
+
+Bob's turn (Park, $10):
+Bob: "With energy at 6/82 and time at 17:30, going home allows a restful break to recharge without overextending. Even if familiar, stepping away from the park aligns with your goal to balance rest and socializing while continuing recovery for tomorrow's plans." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+Alice's turn (Home, $10):
+Alice: "With energy at 34/81 and time at 17:30, I’m considering going to the cafe to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding repetitive routines and ensuring I don’t waste energy on idle activities. Let me know if you’d prefer to confirm this or explore alternatives." (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+
+Chloe's turn (Home, $10):
+Chloe: "With energy at 24/80 and $10 left, continuing at home isn't possible now. Going to the park allows me to recharge without wasting time or energy, balancing rest with the chance to form new memories while avoiding repetitive routines." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day3 18:00 ---
+
+Bob's turn (Home, $10):
+Bob: "With energy at 5/82 and time at 18:00, going to the park again may not provide a fresh break due to familiarity and low energy. Going to the cafe offers a new environment to recharge without overextending, aligning with the goal to balance rest and socializing while ensuring recovery for tomorrow's plans." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+Alice's turn (Cafe, $10):
+Alice: "With energy at 33/81 and time at 18:00, I’m considering going home to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding repetitive routines and ensuring I don’t waste energy on idle activities. Let me know if you’d prefer to confirm this or explore alternatives." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+Chloe's turn (Park, $10):
+Chloe: "With energy at 23/80 and $10 left, continuing at the park feels like overextending. Going Home allows me to recharge without wasting time or energy, balancing rest with the chance to form new memories while avoiding repetitive routines." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day3 18:30 ---
+
+Bob's turn (Cafe, $10):
+Bob: "With energy at 4/82 and time at 18:30, going home allows a restful break to recharge without overextending. Even if familiar, stepping away from the cafe aligns with your goal to balance rest and socializing while ensuring recovery for tomorrow's plans." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+Alice's turn (Home, $10):
+Alice: "With energy at 32/81 and time at 18:30, I’m considering going to the park to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding repetitive routines and ensuring I don’t waste energy on idle activities. Let me know if you’d prefer to confirm this or explore alternatives." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+Chloe's turn (Home, $10):
+Chloe: "With energy at 22/80 and $10 left, continuing at home isn't possible now. Talking to Bob allows me to recharge through social interaction without wasting time or energy, balancing rest with the chance to form new memories while avoiding repetitive routines." (Action: talkToBob)
+-> Chloe attempts: talkToBob
+
+===== Chloe <-> Bob =====
+Chloe: "With energy at 22/80 and $10 left, continuing at home isn't possible now. Talking to Bob allows me to recharge through social interaction without wasting time or energy, balancing rest with the chance to form new memories while avoiding repetitive routines."
+
+--- Time: Day3 19:00 ---
+Bob: "With energy at 22/80 and time at 19:00, stepping away from the conversation allows me to recharge without overextending. Even though you're considering socializing, low energy makes it best to prioritize rest for tomorrow's plans. Leaving the conversation aligns with your goal to balance rest and interaction while ensuring recovery for tomorrow's plans." (Action: leaveConversation)
+===== Conversation End (1 turns) =====
+
+Alice's turn (Park, $10):
+Alice: "With energy at 31/81 and time at 19:00, I’m considering going home to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding repetitive park routines and ensuring I don’t waste energy on idle activities. Let me know if you’d prefer to confirm this or explore alternatives." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+Chloe's turn (Home, $10):
+Chloe: "With energy at 22/80 and $10 left, continuing at home isn't possible now. Bob explicitly stated stepping away from the conversation allows me to recharge without overextending, especially with low energy levels. Prioritizing rest aligns with his advice to balance interaction and recovery for tomorrow's plans." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day3 19:30 ---
+
+Bob's turn (Home, $10):
+Bob: "With energy at 2/82 and time at 19:30, going to the park offers a fresh break to recharge without overextending. Even if familiar, stepping away from home aligns with your goal to balance rest and socializing while continuing recovery for tomorrow's plans." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Alice's turn (Home, $10):
+Alice: "With energy at 30/81 and time at 19:30, I’m considering going home to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding repetitive routines and ensuring I don’t waste energy on idle activities. Let me know if you’d prefer to confirm this or explore alternatives." (Action: goHome)
+-> Alice attempts: goHome
+-> Failed: you are already at the Home
+Alice (retry): "With energy at 30/81 and time at 19:30, I’m considering sleeping to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding repetitive routines and ensuring I don’t waste energy on idle activities. Let me know if you’d prefer to confirm this or explore alternatives." (Action: sleep)
+-> Alice attempts: sleep
+-> Failed: can only sleep between 20:00 and 08:00 (it's 19:30)
+
+Chloe's turn (Home, $10):
+Chloe: "With energy at 22/80 and $10 left, continuing at home isn't possible now. Going to the park allows me to recharge without wasting time or energy, balancing rest with the chance to form new memories while avoiding repetitive routines." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day3 20:00 ---
+
+Bob's turn (Park, $10):
+Bob: "With energy at 1/82 and time at 20:00, stepping away from the park allows a restful break to recharge without overextending. Even if familiar, prioritizing rest aligns with your goal to balance socializing with recovery for tomorrow's plans." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+Alice's turn (Home, $10):
+Alice: "Sleep now. Energy 30/81 at 20:00, home. Critical: low energy needs rest. Tomorrow's priority: recharge to recover. Key fact: energy 30/81 indicates urgent need for rest to avoid wasting time or energy on idle activities." (Action: sleep)
+-> Alice attempts: sleep
+-> Alice sleeps. Diary: "Sleep now. Energy 30/81 at 20:00, home. Critical: low energy needs rest. Tomorro..."
+
+Chloe's turn (Park, $10):
+Chloe: "With energy at 21/80 and $10 left, continuing at the park feels like overextending. Going Home allows me to recharge without wasting time or energy. This balances rest with the chance to form new memories while avoiding repetitive routines." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day3 20:30 ---
+*** Bob DIED: from NOT EATING (0 energy). Remember: 'eat' at cafe restores energy! ***
+
+Chloe's turn (Home, $10):
+Chloe: "With energy at 20/80 and $10 left, continuing at home isn't possible now. Going to the cafe allows me to eat, which restores energy as Bob mentioned stepping away from the conversation. This balances rest with the chance to form new memories while avoiding overextending. Action: goCafe" (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day3 21:00 ---
+
+Chloe's turn (Home, $10):
+Chloe: "With energy at 20/80 and $10 left, continuing at home isn't possible now. Going to the cafe allows me to eat, which restores energy as Bob mentioned stepping away from the conversation. This balances rest with the chance to form new memories while avoiding overextending. Action: goCafe" (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day3 21:30 ---
+
+Chloe's turn (Home, $10):
+Chloe: "With energy at 20/80 and $10 left, continuing at home isn't possible now. Going to the cafe allows me to eat, which restores energy as Bob mentioned stepping away from the conversation. This balances rest with the chance to form new memories while avoiding overextending. Action: goCafe" (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day3 22:00 ---
+
+Chloe's turn (Home, $10):
+Chloe: "With energy at 19/80 and $10 left, going to the cafe allows eating to restore energy as Bob mentioned stepping away from the conversation. This balances rest with the chance to form new memories while avoiding overextending. Action: goCafe" (Action: goCafe)
+-> Chloe attempts: goCafe
+-> Chloe moved to Cafe
+
+--- Time: Day3 22:30 ---
+
+Chloe's turn (Cafe, $10):
+Chloe: "With energy at 18/80 and $10 left, continuing at the cafe isn't viable due to no one working. Going Home allows me to recharge without wasting time or energy, balancing rest with the chance to form new memories while avoiding repetitive routines." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day3 23:00 ---
+
+Chloe's turn (Home, $10):
+Chloe: "With energy at 17/80 and $10 left, continuing at home isn't possible now. Going to the park allows me to recharge without wasting time or energy, balancing rest with the chance to form new memories while avoiding overextending. Action: goPark" (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day3 23:30 ---
+
+Chloe's turn (Home, $10):
+Chloe: "With energy at 17/80 and $10 left, continuing at home isn't possible now. Going to the park allows me to recharge without wasting time or energy, balancing rest with the chance to form new memories while avoiding overextending. This aligns with the need to prioritize recovery for tomorrow's plans." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+
+========== DAY 4 ==========
+
+--- Time: Day4 00:00 ---
+
+Chloe's turn (Park, $10):
+Chloe: "With energy at 16/80 and $10 left, continuing at the park feels like overextending. Going Home allows me to recharge without wasting time or energy, balancing rest with the chance to form new memories while avoiding repetitive routines." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day4 00:30 ---
+
+Chloe's turn (Home, $10):
+Chloe: "With energy at 15/80 and $10 left, continuing at home isn't possible now. Sleeping allows me to recharge without wasting time or energy, balancing rest with the chance to form new memories while avoiding overextending. This aligns with the need to prioritize recovery for tomorrow's plans." (Action: sleep)
+-> Chloe attempts: sleep
+-> Chloe sleeps. Diary: "With energy at 15/80 and $10 left, continuing at home isn't possible now. Sleepi..."
+
+--- Everyone asleep, skipping 3.5h to the first waking ---
+-> Alice finished sleeping
+
+--- Time: Day4 04:30 ---
+
+Alice wakes up:
+Alice: "With energy at 30/81 and time at 04:30, I’m considering going to the cafe to eat and restore energy, as Bob’s death emphasized the need to replenish after not eating. This aligns with my goal to recharge and recover for tomorrow’s plans." (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+
+--- Time: Day4 05:00 ---
+
+Alice's turn (Cafe, $10):
+Alice: "With energy at 29/81 and time at 05:00, I’m considering eating at the cafe to restore energy, as Bob’s death emphasized the need to replenish after not eating. This aligns with my goal to recharge and recover for tomorrow’s plans." (Action: eat)
+-> Alice attempts: eat
+-> Failed: No one working. Someone must 'work' first.
+Alice (retry): "Since the cafe is unresponsive and 'eat' is not possible, I’m considering going home to rest. It’s a familiar spot, but I’ll use this break to recharge while avoiding wasting energy on idle activities. Let me know if you’d prefer to confirm this or explore alternatives." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+--- Time: Day4 05:30 ---
+
+Alice's turn (Home, $10):
+Alice: "Sleep now. Energy 28/81 at 05:30, home. Critical: low energy needs rest. Tomorrow's priority: recharge to recover. Key fact: energy 28/81 indicates urgent need for rest to avoid wasting time or energy on idle activities." (Action: sleep)
+-> Alice attempts: sleep
+-> Alice sleeps. Diary: "Sleep now. Energy 28/81 at 05:30, home. Critical: low energy needs rest. Tomorro..."
+
+--- Everyone asleep, skipping 3h to the first waking ---
+-> Chloe finished sleeping
+
+--- Time: Day4 09:00 ---
+
+Chloe wakes up:
+Chloe: "With energy at 15/80 and $10 left, continuing at home isn't possible now. Sleeping allows me to recharge without wasting time or energy, balancing rest with the chance to form new memories while avoiding overextending. This aligns with the need to prioritize recovery for tomorrow's plans." (Action: sleep)
+-> Chloe attempts: sleep
+-> Failed: can only sleep between 20:00 and 08:00 (it's 09:00)
+Chloe (retry): "With energy at 15/80 and $10 left, continuing at home isn't possible now. Going to the cafe allows me to eat, which restores energy as Bob mentioned stepping away from the conversation. This balances rest with the chance to form new memories while avoiding overextending. Action: goCafe" (Action: goCafe)
+-> Chloe attempts: goCafe
+-> Chloe moved to Cafe
+
+--- Time: Day4 09:30 ---
+
+Chloe's turn (Cafe, $10):
+Chloe: "With energy at 14/80 and $10 left, continuing at the cafe isn't viable due to no one working. Going Home allows me to recharge without wasting time or energy, balancing rest with the chance to form new memories while avoiding overextending. This aligns with the need to prioritize recovery for tomorrow's plans." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day4 10:00 ---
+
+Chloe's turn (Home, $10):
+Chloe: "With energy at 13/80 and $10 left, continuing at home isn't possible now. Sleeping allows me to recharge without wasting time or energy, balancing rest with the chance to form new memories while avoiding overextending. This aligns with the need to prioritize recovery for tomorrow's plans." (Action: sleep)
+-> Chloe attempts: sleep
+-> Failed: can only sleep between 20:00 and 08:00 (it's 10:00)
+Chloe (retry): "With energy at 13/80 and $10 left, continuing at home isn't possible now. Going to the park allows me to recharge without wasting time or energy, balancing rest with the chance to form new memories while avoiding overextending. This aligns with the need to prioritize recovery for tomorrow's plans." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day4 10:30 ---
+
+Chloe's turn (Park, $10):
+Chloe: "With energy at 12/80 and $10 left, continuing at the park feels like overextending. Going Home allows me to recharge without wasting time or energy, balancing rest with the chance to form new memories while avoiding repetitive routines." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day4 11:00 ---
+
+Chloe's turn (Home, $10):
+Chloe: "With energy at 11/80 and $10 left, continuing at home isn't possible now. Going to the park allows me to recharge without wasting time or energy, balancing rest with the chance to form new memories while avoiding overextending. This aligns with the need to prioritize recovery for tomorrow's plans." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day4 11:30 ---
+
+Chloe's turn (Park, $10):
+Chloe: "With energy at 10/80 and $10 left, continuing at the park feels like overextending. Going Home allows me to recharge without wasting time or energy, balancing rest with the chance to form new memories while avoiding repetitive routines." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day4 12:00 ---
+
+Chloe's turn (Home, $10):
+Chloe: "With energy at 9/80 and $10 left, continuing at home isn't possible now. Sleeping allows me to recharge without wasting time or energy, balancing rest with the chance to form new memories while avoiding overextending. This aligns with the need to prioritize recovery for tomorrow's plans." (Action: sleep)
+-> Chloe attempts: sleep
+-> Failed: can only sleep between 20:00 and 08:00 (it's 12:00)
+Chloe (retry): "With energy at 9/80 and $10 left, continuing at home isn't possible now. Going to the cafe allows me to eat, which restores energy as Bob mentioned stepping away from the conversation. This balances rest with the chance to form new memories while avoiding overextending. Action: goCafe" (Action: goCafe)
+-> Chloe attempts: goCafe
+-> Chloe moved to Cafe
+
+--- Time: Day4 12:30 ---
+
+Chloe's turn (Cafe, $10):
+Chloe: "With energy at 8/80 and $10 left, continuing at the cafe isn't viable due to no one working. Going Home allows me to recharge without wasting time or energy, balancing rest with the chance to form new memories while avoiding overextending. This aligns with the need to prioritize recovery for tomorrow's plans." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day4 13:00 ---
+
+Chloe's turn (Home, $10):
+Chloe: "With energy at 7/80 and $10 left, continuing at home isn't possible now. Going to the park allows me to recharge without wasting time or energy, balancing rest with the chance to form new memories while avoiding overextending. This aligns with the need to prioritize recovery for tomorrow's plans." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day4 13:30 ---
+-> Alice finished sleeping
+
+Alice wakes up:
+Alice: "With energy at 28/81 and time at 13:30, I’m considering going to the park to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding repetitive routines and ensuring I don’t waste energy on idle activities. Let me know if you’d prefer to confirm this or explore alternatives." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+Chloe's turn (Park, $10):
+Chloe: "With energy at 6/80 and $10 left, continuing at the park feels like overextending. Going to the cafe allows me to eat, which restores energy as Bob mentioned stepping away from the conversation. This balances rest with the chance to form new memories while avoiding overextending. Action: goCafe" (Action: goCafe)
+-> Chloe attempts: goCafe
+-> Chloe moved to Cafe
+
+--- Time: Day4 14:00 ---
+
+Alice's turn (Park, $10):
+Alice: "With energy at 27/81 and time at 14:00, I’m considering going home to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding repetitive park routines and ensuring I don’t waste energy on idle activities. Let me know if you’d prefer to confirm this or explore alternatives." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+Chloe's turn (Cafe, $10):
+Chloe: "With energy at 5/80 and $10 left, continuing at the cafe isn't viable due to no one working. Going Home allows me to recharge without wasting time or energy, balancing rest with the chance to form new memories while avoiding overextending. This aligns with the need to prioritize recovery for tomorrow's plans." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day4 14:30 ---
+
+Alice's turn (Home, $10):
+Alice: "With energy at 26/81 and time at 14:30, I’m considering sleeping to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding wasting energy on idle activities. Key fact: energy 26/81 indicates urgent need for rest to avoid wasting time or energy on idle activities." (Action: sleep)
+-> Alice attempts: sleep
+-> Failed: can only sleep between 20:00 and 08:00 (it's 14:30)
+Alice (retry): "With energy at 26/81 and time at 14:30, I’m considering going to the cafe to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding wasting energy on idle activities. Key fact: energy 26/81 indicates urgent need for rest to avoid wasting time or energy on idle activities." (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+
+Chloe's turn (Home, $10):
+Chloe: "With energy at 4/80 and $10 left, continuing at home isn't possible now. Going to the park allows me to recharge without wasting time or energy, balancing rest with the chance to form new memories while avoiding overextending. This aligns with the need to prioritize recovery for tomorrow's plans." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day4 15:00 ---
+
+Alice's turn (Cafe, $10):
+Alice: "With energy at 25/81 and time at 15:00, I’m considering going home to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding wasting energy on idle activities. Key fact: energy 25/81 indicates urgent need for rest to avoid wasting time or energy on idle activities." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+Chloe's turn (Park, $10):
+Chloe: "With energy at 3/80 and $10 left, continuing at the park feels like overextending. Going to the cafe allows me to eat, which restores energy as Bob mentioned stepping away from the conversation. This balances rest with the chance to form new memories while avoiding overextending. Action: goCafe" (Action: goCafe)
+-> Chloe attempts: goCafe
+-> Chloe moved to Cafe
+
+--- Time: Day4 15:30 ---
+
+Alice's turn (Home, $10):
+Alice: "With energy at 24/81 and time at 15:30, I’m considering sleeping to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding wasting energy on idle activities. Key fact: energy 24/81 indicates urgent need for rest to avoid wasting time or energy on idle activities." (Action: sleep)
+-> Alice attempts: sleep
+-> Failed: can only sleep between 20:00 and 08:00 (it's 15:30)
+Alice (retry): "With energy at 24/81 and time at 15:30, I’m considering going to the park to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding wasting energy on idle activities. Key fact: energy 24/81 indicates urgent need for rest to avoid wasting time or energy on idle activities." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+Chloe's turn (Cafe, $10):
+Chloe: "With energy at 2/80 and $10 left, continuing at the cafe isn't viable due to no one working. Going Home allows me to recharge without wasting time or energy, balancing rest with the chance to form new memories while avoiding overextending. This aligns with the need to prioritize recovery for tomorrow's plans." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day4 16:00 ---
+
+Alice's turn (Park, $10):
+Alice: "With energy at 23/81 and time at 16:00, I’m considering going home to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding wasting energy on idle activities. Key fact: energy 23/81 indicates urgent need for rest to avoid wasting time or energy on idle activities." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+Chloe's turn (Home, $10):
+Chloe: "With energy at 1/80 and $10 left, continuing at home isn't possible now. Going to the park allows me to recharge without wasting time or energy, balancing rest with the chance to form new memories while avoiding overextending. This aligns with the need to prioritize recovery for tomorrow's plans." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day4 16:30 ---
+
+Alice's turn (Home, $10):
+Alice: "With energy at 22/81 and time at 16:30, I’m considering going to the park to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding wasting energy on idle activities. Key fact: energy 22/81 indicates urgent need for rest to avoid wasting time or energy on idle activities." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+*** Chloe DIED: from NOT EATING (0 energy). Remember: 'eat' at cafe restores energy! ***
+
+--- Time: Day4 17:00 ---
+
+Alice's turn (Park, $10):
+Alice: "With energy at 21/81 and time at 17:00, I’m considering going to the cafe to eat and restore energy, as Chloe’s death emphasized the need to replenish after not eating. This aligns with my goal to recharge and recover for tomorrow’s plans." (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+
+--- Time: Day4 17:30 ---
+
+Alice's turn (Cafe, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+--- Time: Day4 18:00 ---
+
+Alice's turn (Cafe, $10):
+Alice: "With energy at 20/81 and time at 18:00, I’m considering going home to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding wasting energy on idle activities. Key fact: energy 20/81 indicates urgent need for rest to avoid wasting time or energy on idle activities." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+--- Time: Day4 18:30 ---
+
+Alice's turn (Home, $10):
+Alice: "With energy at 19/81 and time at 18:30, I’m considering going to the park to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding wasting energy on idle activities. Key fact: energy 19/81 indicates urgent need for rest to avoid wasting time or energy on idle activities." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+--- Time: Day4 19:00 ---
+
+Alice's turn (Park, $10):
+Alice: "With energy at 18/81 and time at 19:00, I’m considering going home to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding wasting energy on idle activities. Key fact: energy 18/81 indicates urgent need for rest to avoid wasting time or energy on idle activities." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+--- Time: Day4 19:30 ---
+
+Alice's turn (Home, $10):
+Alice: "With energy at 17/81 and time at 19:30, I’m considering sleeping to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding wasting energy on idle activities. Key fact: energy 17/81 indicates urgent need for rest to avoid wasting time or energy on idle activities." (Action: sleep)
+-> Alice attempts: sleep
+-> Failed: can only sleep between 20:00 and 08:00 (it's 19:30)
+Alice (retry): "With energy at 17/81 and time at 19:30, I’m considering going to the park to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding wasting energy on idle activities. Key fact: energy 17/81 indicates urgent need for rest to avoid wasting time or energy on idle activities." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+--- Time: Day4 20:00 ---
+
+Alice's turn (Park, $10):
+Alice: "With energy at 16/81 and time at 20:00, I’m considering going home to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding wasting energy on idle activities. Key fact: energy 16/81 indicates urgent need for rest to avoid wasting time or energy on idle activities." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+--- Time: Day4 20:30 ---
+
+Alice's turn (Home, $10):
+Alice: "With energy at 15/81 and time at 20:30, I’m considering going to the park to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding wasting energy on idle activities. Key fact: energy 15/81 indicates urgent need for rest to avoid wasting time or energy on idle activities." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+--- Time: Day4 21:00 ---
+
+Alice's turn (Park, $10):
+Alice: "With energy at 14/81 and time at 21:00, I’m considering going home to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding wasting energy on idle activities. Key fact: energy 14/81 indicates urgent need for rest to avoid wasting time or energy on idle activities." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+--- Time: Day4 21:30 ---
+
+Alice's turn (Home, $10):
+Alice: "With energy at 13/81 and time at 21:30, I’m considering going to the park to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding wasting energy on idle activities. Key fact: energy 13/81 indicates urgent need for rest to avoid wasting time or energy on idle activities." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+--- Time: Day4 22:00 ---
+
+Alice's turn (Park, $10):
+Alice: "With energy at 12/81 and time at 22:00, I’m considering going home to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding wasting energy on idle activities. Key fact: energy 12/81 indicates urgent need for rest to avoid wasting time or energy on idle activities." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+--- Time: Day4 22:30 ---
+
+Alice's turn (Home, $10):
+Alice: "With energy at 11/81 and time at 22:30, I’m considering going to the park to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding wasting energy on idle activities. Key fact: energy 11/81 indicates urgent need for rest to avoid wasting time or energy on idle activities." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+--- Time: Day4 23:00 ---
+
+Alice's turn (Park, $10):
+Alice: "With energy at 10/81 and time at 23:00, I’m considering going home to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding wasting energy on idle activities. Key fact: energy 10/81 indicates urgent need for rest to avoid wasting time or energy on idle activities." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+--- Time: Day4 23:30 ---
+
+Alice's turn (Home, $10):
+Alice: "With energy at 9/81 and time at 23:30, I’m considering going to the park to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding wasting energy on idle activities. Key fact: energy 9/81 indicates urgent need for rest to avoid wasting time or energy on idle activities." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+
+========== DAY 5 ==========
+
+--- Time: Day5 00:00 ---
+
+Alice's turn (Park, $10):
+Alice: "With energy at 8/81 and time at 00:00, I’m considering going home to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding wasting energy on idle activities. Key fact: energy 8/81 indicates urgent need for rest to avoid wasting time or energy on idle activities." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+--- Time: Day5 00:30 ---
+
+Alice's turn (Home, $10):
+Alice: "With energy at 7/81 and time at 00:30, I’m considering going to the park to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding wasting energy on idle activities. Key fact: energy 7/81 indicates urgent need for rest to avoid wasting time or energy on idle activities." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+--- Time: Day5 01:00 ---
+
+Alice's turn (Park, $10):
+Alice: "With energy at 6/81 and time at 01:00, I’m considering going home to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding wasting energy on idle activities. Key fact: energy 6/81 indicates urgent need for rest to avoid wasting time or energy on idle activities." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+--- Time: Day5 01:30 ---
+
+Alice's turn (Home, $10):
+Alice: "With energy at 5/81 and time at 01:30, I’m considering going to the park to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding wasting energy on idle activities. Key fact: energy 5/81 indicates urgent need for rest to avoid wasting time or energy on idle activities." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+--- Time: Day5 02:00 ---
+
+Alice's turn (Park, $10):
+Alice: "With energy at 4/81 and time at 02:00, I’m considering going home to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding wasting energy on idle activities. Key fact: energy 4/81 indicates urgent need for rest to avoid wasting time or energy on idle activities." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+--- Time: Day5 02:30 ---
+
+Alice's turn (Home, $10):
+Alice: "With energy at 3/81 and time at 02:30, I’m considering going to the park to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding wasting energy on idle activities. Key fact: energy 3/81 indicates urgent need for rest to avoid wasting time or energy on idle activities." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+--- Time: Day5 03:00 ---
+
+Alice's turn (Park, $10):
+Alice: "With energy at 2/81 and time at 03:00, I’m considering going home to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding wasting energy on idle activities. Key fact: energy 2/81 indicates urgent need for rest to avoid wasting time or energy on idle activities." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+--- Time: Day5 03:30 ---
+
+Alice's turn (Home, $10):
+Alice: "With energy at 1/81 and time at 03:30, I’m considering sleeping to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding wasting energy on idle activities. Key fact: energy 1/81 indicates urgent need for rest to avoid wasting time or energy on idle activities." (Action: sleep)
+-> Alice attempts: sleep
+-> Alice sleeps. Diary: "With energy at 1/81 and time at 03:30, I’m considering sleeping to rest before t..."
+
+--- Everyone asleep, skipping 8h to the first waking ---
+-> Alice finished sleeping
+
+--- Time: Day5 12:00 ---
+
+Alice wakes up:
+Alice: "With energy at 1/81 and time at 12:00, I’m considering sleeping to rest before tomorrow. Key fact: energy 1/81 indicates urgent need for rest to avoid wasting time or energy on idle activities." (Action: sleep)
+-> Alice attempts: sleep
+-> Failed: can only sleep between 20:00 and 08:00 (it's 12:00)
+Alice (retry): "With energy at 1/81 and time at 12:00, I’m considering going to the park to rest before tomorrow. It’s a familiar spot, but I’ll use this break to recharge while avoiding wasting energy on idle activities. Key fact: energy 1/81 indicates urgent need for rest to avoid wasting time or energy on idle activities." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+--- Time: Day5 12:30 ---
+*** Alice DIED: from NOT EATING (0 energy). Remember: 'eat' at cafe restores energy! ***
+
+*** ALL AGENTS DEAD - SIMULATION OVER ***

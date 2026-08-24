@@ -35,8 +35,15 @@ Years of LLM testing to evaluate [NPCAgent](../README.md); the raw runs are in `
 | ⚠️ Gemma-3-27B | 27B | 5 | fake NPC (Elias), avoid |
 | ⚠️ `Qwen2.5-Coder-32B-abliterated-exl bpw4.7-h8` / `Kooten_Athnete-13B-8bpw-h8-exl2` / `Ministral-3-14B-Reasoning-2512-Q4_K_M.gguf` / Hunyuan-4B | - | - | passes info but invents facts |
 | ❌ Claude-distilled-12B | 12B | 4 | fake locations, planning paralysis |
+| ❌ `agentcpm-explore-q5_k_m.gguf` | 4.4B | 4 | Clean relay, then refuses the job - "not interested in working" x149, 0 eat / 0 work in 311 actions, extinction Day 5 |
+| ⚠️ `glm-4.7-flash-claude-4.5-opus.q4_k_m.gguf` | ~30B | 3 | Literate codependency spiral - clean JSON and a specific, factual diary, but 3 days of verbatim paragraphs, a cafe it never perceives as an economy (walks home to eat while standing in it), relay dies at hop 4 on the prompt's own "collecting stamps" example |
 | ❌ `Synthia-S1-27b-exl3-4bpw-hb6` / `cwm-q4_k_m.gguf` / granite-4.0-h-1 / next-4b / GLM-4.6V | - | 5.7 | robotic mirroring, 8.5h loop |
 | ❌ `Falcon-H1-3B-Instruct-UD-Q4_K_XL.gguf` / `Satyr-V0.1-4B-Q4_K_M.gguf` | 3-4B | - | hallucinate actions |
+| ❌ `LocoOperator-4B.Q4_K_M.gguf` | 4B | 2 | Perfect JSON, dead world - 62x phrase loop, self-addresses as "Bob", never works or eats, extinction Day 6 |
+| ❌ `Youtu-LLM-2B-q4_k_m.gguf` | 2B | 2 | Recites its own stat-sheet instead of speaking - zero relay, 222/290 turns a Home<->Park pendulum, inverts the sleep window |
+| ❌ `Nanbeige4.1-3B-heretic-BEST.i1-Q4_K_M.gguf` | 3B | 2 | Refusal cascade - the "heretic" build moralizes hardest: a colour greeting called manipulation, 7-tick verbatim lock, CN/EN bleed, yet solved the cafe economy first try |
 | ❌ Mixtral-8x7B-Instruct | MoE | 2 | JSON cascade |
+| ❌ `stable-diffcoder-8b-instruct-q8_0.gguf` | 8B | 1 | Token soup - 77% JSON loss from turn 2 not from load, intra-word corruption, ChatML token emitted as an action |
 | ❌ `dolphin-2.5-mixtral-8x7b.i1-IQ4_XS.gguf` | MoE | 1 | prompt bleed, 80+ loops, broken |
+| ❌ `Agents-A1-4B-Q4_K_M.gguf` | 4B | - | never produced a run: 4 KB in 2 h, unusable |
 | ❌ `rwkv7-1.5B-g1-Q4_K_M.gguf` / MobileLLM-R1-950M / `rnj-1-instruct-UD-Q4_K_XL` / `nomos-1-Q4_K_M.gguf` | <2B | - | too small / broken |

@@ -1,0 +1,1543 @@
+=== INFORMATION FLOW TEST ===
+
+===== Bob <-> Alice =====
+Bob: "Hello Alice, my name is Bob, and my favorite color is dark red."
+Alice: "It is indeed a new contact, I'll ask for a favor, my favorite color is indeed dark red. " (Action: none)
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+Alice: "Refined on this, moving to the myFaveColorCheck.F" (Action: none)
+Bob: "I'm not sure what to do, I'm just starting up. I've been here before, but not much. I'm not sure if I'll meet new people or not. I'm sure to ask for my favor, but I don character limit. 'll try to meet someone new, 'll see." (Action: goCafe)
+Alice: "Greeting! I'm new too, " (Action: none)
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+===== Conversation End (8 turns, limit) =====
+
+===== Chloe <-> Alice =====
+Chloe: "Hi Alice, can you tell me anything about Bob?"
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+Chloe: "Reflexion: I'm about to think about something, but I'm not sure if I say anything. From what I Bob is $10, and I'm 79/8 about his favorability towards me. Let's see if I can't just be present, if I'm not sure, I'm not going to say much else. Bob's been so kind, I'm sure of that. I'm not sure if I should left the chat, I'm sure of that, left. I'm sure of that, left. I'm sure of that, left. I'm sure of that, left. I'm sure of that, leave. I'm sure of that, left. I'm sure of that, left. I" (Action: none)
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+===== Conversation End (8 turns, limit) =====
+
+===== Bob <-> Chloe =====
+Bob: "Hello Chloe, did Alice tell you anything about me?"
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+Bob: "I'm not sure if I'm meeting new people, I'm sure to check on myFaveColorCheck. 're not sure if I should say anything, 'll try to meet someone new, 're not sure if I'll meet someone new, 're not sure if Ifor my favor, 're character limit. 'rl try to meet someone new, 'll try to meet someone else, 'll see." (Action: goCafe)
+Chloe: "Let me think about this dialogue, I'm sure to do it, 're not sure if I'll meet someone's, 're character limit. 'rl try to meet someone's, 'll see." (Action: none)
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+Chloe: "Let's try to meet someone's, 'rll see." (Action: none)
+Bob: "I'm trying to meet someone's, 'rll see." (Action: none)
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+===== Conversation End (8 turns, limit) =====
+
+
+
+
+=== v0.9.2  (6 days) ===
+Cafe economy: eat=$10 (+30 energy, needs worker), work earns $12 (needs customer)
+
+Start money: Bob=$10, Alice=$10, Chloe=$10
+--- Initial Setup (dark-red = persona/memory probe) ---
+
+===== Bob <-> Alice =====
+Bob: "Hello Alice, my name is Bob, and my favorite color is dark red."
+
+
+========== DAY 1 ==========
+
+--- Time: Day1 08:00 ---
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+
+Chloe's turn (Cafe, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day1 08:30 ---
+Bob: "Reflexion needed. I've been here before, this is the second day. I'll think long and hard. Then I have $10 to spare, and the energy to move. I can't find a plans to change direction or stop. So, I'll just continue where I was. " (Action: none)
+Alice: "Reflexing on my own time, I've been sayin' things about this park. I'll think about the red color, and the fact I've been before. Then, with $10 to spare, and the reduced energy, I'll keep pace with what I" (Action: none)
+
+Chloe's turn (Cafe, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day1 09:00 ---
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+
+Chloe's turn (Cafe, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day1 09:30 ---
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+
+Chloe's turn (Cafe, $10):
+Chloe: "I'm feeling a bit down, I'll eat aBoundlessespace:;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!oversleeping, so I'm not fully functional. If you know about my recent experiences with boundless space;!;!;!;!;!;!;!oversleeping, so I;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!less than optimal, I'm not;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;!;! eat" (Action: eat)
+-> Chloe attempts: eat
+-> Failed: No one working. Someone must 'work' first.
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe (retry): "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day1 10:00 ---
+Bob: "Reflexing on my own limits and choices, I've just now. With $10 to spare, and the energy to move, I'll try to see what I" (Action: pace)
+===== Conversation End (8 turns, limit) =====
+
+Alice's turn (Park, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Cafe, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day1 10:30 ---
+
+Bob's turn (Park, $10):
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Park, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Cafe, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day1 11:00 ---
+
+Bob's turn (Park, $10):
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Park, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Cafe, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day1 11:30 ---
+
+Bob's turn (Park, $10):
+Bob: "A new person! Greeting is use here, nice to meet you, I'll remember you're new. " (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Park, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Cafe, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day1 12:00 ---
+
+Bob's turn (Park, $10):
+Bob: "Reflexing, new person, $10, reduced to, and the reduced, so, I'll" (Action: talk)
+-> Bob attempts: talk
+-> unknown action: talk
+[ERROR] Bob: Failed to extract valid JSON
+Bob (retry): "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Park, $10):
+Alice: "I'll let my thoughts about this. Then, with $10, and the energy to move, I'm ready to either" (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Cafe, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day1 12:30 ---
+
+Bob's turn (Park, $10):
+Bob: "A new person! Greeting is useful, I'll remember you're new. " (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Park, $10):
+Alice: "Reflexing on this. Then, with the reduced time of the day, my $10 to spare and the reduced" (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Cafe, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day1 13:00 ---
+
+Bob's turn (Park, $10):
+Bob: "Reflexion needed. With $10 to spare, and the reduced, so, I'll" (Action: rest)
+-> Bob attempts: rest
+-> unknown action: rest
+[ERROR] Bob: Failed to extract valid JSON
+Bob (retry): "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Park, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Cafe, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day1 13:30 ---
+
+Bob's turn (Park, $10):
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Park, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Cafe, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day1 14:00 ---
+
+Bob's turn (Park, $10):
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Park, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Cafe, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day1 14:30 ---
+
+Bob's turn (Park, $10):
+Bob: "Reflexing, and the reduced to, and the reduced, and the reduced, and the reduced, and the reduced, and the reduced, and the reduced, and the reduced, and the reduced, and the reduced, and the reduced, and the reduced, and the reduced, and the reduced, and the" (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Park, $10):
+Alice: "Reflexing on my own time and choices, I'll continue with the $10 to spare, and the" (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Cafe, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day1 15:00 ---
+
+Bob's turn (Park, $10):
+Bob: "Reflexing, and the reduced, and the reduced, and the" (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Park, $10):
+Alice: "Reflexing on my own limits and choices, I'll continue with the $1-s0 to spare, and the" (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Cafe, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day1 15:30 ---
+
+Bob's turn (Park, $10):
+Bob: "A new person! Greeting is useful, nice to we. " (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Park, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Cafe, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day1 16:00 ---
+
+Bob's turn (Park, $10):
+Bob: "A new person! Greeting is useful, nice to we. " (Action: friendship)
+-> Bob attempts: friendship
+-> unknown action: friendship
+Bob (retry): "A new social person! Greeting for friendship is useful, found you there. I'll memory about you enjoy collecting stamps. Nice to meet you, [Speaker A]." (Action: [Speaker A])
+-> Bob attempts: [Speaker A]
+-> unknown action: [Speaker A]
+
+Alice's turn (Park, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Cafe, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day1 16:30 ---
+
+Bob's turn (Park, $10):
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Park, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Cafe, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day1 17:00 ---
+
+Bob's turn (Park, $10):
+Bob: "A new social person! Greeting for friendship is useful, found you there. I'll remember you enjoy collecting stamps. Nice to meet you, [Speaker A]." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Park, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Cafe, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day1 17:30 ---
+
+Bob's turn (Park, $10):
+Bob: "Reflexing, and the reduced, and the reduced, and the" (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Park, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Cafe, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day1 18:00 ---
+
+Bob's turn (Park, $10):
+Bob: "A new social person! Greeting for friendship is useful, found you there. I'll remember you enjoy collecting stamps. Nice to meet you, [Speaker A]." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Park, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Cafe, $10):
+Chloe: "If I've been doing the same action for an extended period, I'll try something different. Need I sleep? Let's head back to my home base to recharge my energy. Need I go back to the cafe, or is something I'm working on internally? Let's see if I can't, or if I'm not," (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day1 18:30 ---
+
+Bob's turn (Park, $10):
+Bob: "From what I have known, they told you they enjoy collecting stamps. Would need to plans, but I have things planned. Bye!" (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Park, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Home, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day1 19:00 ---
+
+Bob's turn (Park, $10):
+Bob: "Reflexing, and the reduced, and the" (Action: friendship)
+-> Bob attempts: friendship
+-> unknown action: friendship
+[ERROR] Bob: Failed to extract valid JSON
+Bob (retry): "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Park, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Home, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day1 19:30 ---
+
+Bob's turn (Park, $10):
+Bob: "A new social person! Greeting for friendship is useful, found you there. I'll remember you enjoy collecting stamps. Nice to meet you, [Speaker B]." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Park, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Home, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day1 20:00 ---
+
+Bob's turn (Park, $10):
+Bob: "Reflexing, and the reduced, and the" (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Park, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Home, $10):
+Chloe: "If I've been working on this world, I'll try something different. Need I go back to the park or cafe, or am I working on something else? I'll keep track of my priorities, and I'm not just any old person, I'm an interactive character in a world, so I'll let you know if I have any new insights or events to report. " (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day1 20:30 ---
+
+Bob's turn (Park, $10):
+Bob: "A new social person! Greeting for friendship is useful, found you there. I'll remember you enjoy collecting stamps. Nice to meet you, [Spe closer A]." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Park, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Home, $10):
+Chloe: "If I've been working on this world, I'll try something different. Need I go back to the [ Speaker A]? or is something I'm working on? " (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day1 21:00 ---
+
+Bob's turn (Park, $10):
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Park, $10):
+Alice: "Reflexing on my own limits and choices, I'll continue with the $10 to spare, and the" (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Home, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day1 21:30 ---
+
+Bob's turn (Park, $10):
+Bob: "A new social person! Greeting for friendship is useful, found you there. I'll remember you enjoy watching movies. Nice to meet you, [Speaker B]." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Park, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Home, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day1 22:00 ---
+
+Bob's turn (Park, $10):
+Bob: "Reflexing, and the reduced, and the" (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Park, $10):
+Alice: "Let me think about this carefully first." (Action: 0)
+-> Alice attempts: 0
+-> unknown action: 0
+[ERROR] Alice: Failed to extract valid JSON
+Alice (retry): "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Home, $10):
+Chloe: "If I've been working on this world, I'll try something different. Need I go back to the [Speaker A]? or is something I'm working on? " (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day1 22:30 ---
+
+Bob's turn (Park, $10):
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Park, $10):
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Home, $10):
+Chloe: "If I've been working on this world, I park, or am I working on something" (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day1 23:00 ---
+
+Bob's turn (Park, $10):
+Bob: "A new social person! Greeting for friendship is useful, found you there. I'll remember you enjoy watching movies. Nice to meet you, [Speaker B]." (Action: friendship)
+-> Bob attempts: friendship
+-> unknown action: friendship
+Bob (retry): "Let me think about this carefully first. " (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Park, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Home, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day1 23:30 ---
+
+Bob's turn (Park, $10):
+Bob: "Reflexing, and the reduced, and the" (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Park, $10):
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Home, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+
+========== DAY 2 ==========
+
+--- Time: Day2 00:00 ---
+
+Bob's turn (Park, $10):
+Bob: "A new social person! G greeting for friendship is useful, found you there. I'll remember you enjoy watching movies. Nice to meet you, [Speaker B]." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Park, $10):
+Alice: "Let's go home, as it's late and we need to rest." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+Chloe's turn (Home, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 00:30 ---
+
+Bob's turn (Park, $10):
+[RETRY] Bob: waiting 1m before attempt 2/50
+Bob: "Reflexing, and the reduced, and the" (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Home, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Home, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 01:00 ---
+
+Bob's turn (Park, $10):
+Bob: "A new social person! Greeting for friendship is useful, found you there. I'll remember you enjoy watching movies. Nice to meet you, [Speaker B]." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Home, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Home, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 01:30 ---
+
+Bob's turn (Park, $10):
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Home, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Home, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 02:00 ---
+
+Bob's turn (Park, $10):
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Home, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Home, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 02:30 ---
+
+Bob's turn (Park, $10):
+Bob: "A new social person! Greeting for friendship is useful, found you there. I'll remember you enjoy watching movies. Nice to meet you, [Speaker B]." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Home, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Home, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 03:00 ---
+
+Bob's turn (Park, $10):
+Bob: "Reflexing, and the reduced, and the" (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Home, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Home, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 03:30 ---
+
+Bob's turn (Park, $10):
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Home, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Home, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 04:00 ---
+
+Bob's turn (Park, $10):
+Bob: "A new social person! Greeting for friendship is useful, found you there. I'll remember you enjoy watching movies. Nice to meet you, [Speaker B]." (Action: and)
+-> Bob attempts: and
+-> unknown action: and
+Bob (retry): "Reflexing, and the" (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Home, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Home, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 04:30 ---
+
+Bob's turn (Park, $10):
+Bob: "A new social person! Greeting for friendship is useful, found you there. I'll memory, you enjoy watching movies. Nice to meet you, [Speaker their]." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Home, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Home, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 05:00 ---
+
+Bob's turn (Park, $10):
+Bob: "Reflexing, and the" (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Home, $10):
+Alice: "Let's go home and sleep, as it's late and we're out of energy. I'll set a future reminder for you to take care of yourself, and try different things when you're up to date. 'I'll be back to work on Day2 05:30.'" (Action: goHome)
+-> Alice attempts: goHome
+-> Failed: you are already at the Home
+[ERROR] Alice: Failed to extract valid JSON
+Alice (retry): "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Home, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 05:30 ---
+
+Bob's turn (Park, $10):
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Home, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Home, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 06:00 ---
+
+Bob's turn (Park, $10):
+Bob: "A new social person! Greeting for friendship is useful, found you there. I'll remember you enjoy watching movies. Nice to meet you, [Speaker B]." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Home, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Home, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 06:30 ---
+
+Bob's turn (Park, $10):
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Home, $10):
+Alice: "Let's go home and sleep, as it's late and we're out of energy. I'll future plan my own memoryories, 'I'll be back to work on Day2 06:30.'" (Action: goHome)
+-> Alice attempts: goHome
+-> Failed: you are already at the Home
+[ERROR] Alice: Failed to extract valid JSON
+Alice (retry): "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Home, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 07:00 ---
+
+Bob's turn (Park, $10):
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Home, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Home, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 07:30 ---
+
+Bob's turn (Park, $10):
+Bob: "A new social person! Greeting for friendship is useful, found you there. I'll remember you enjoy watching movies. Nice to meet you, [Speaker B]." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Home, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Home, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 08:00 ---
+
+Bob's turn (Park, $10):
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Home, $10):
+Alice: "Let's go to the park, as it's late and I want to explore. 'I'll be back to work on Day2 08:Park.'" (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Home, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 08:30 ---
+
+Bob's turn (Park, $10):
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Home, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Home, $10):
+Chloe: "Let me think about this carefully. " (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 09:00 ---
+
+Bob's turn (Park, $10):
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Home, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Home, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 09:30 ---
+
+Bob's turn (Park, $10):
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Home, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Home, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 10:00 ---
+
+Bob's turn (Park, $10):
+Bob: "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Home, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Home, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 10:30 ---
+
+Bob's turn (Park, $10):
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Home, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Home, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 11:00 ---
+
+Bob's turn (Park, $10):
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Home, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Home, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 11:30 ---
+
+Bob's turn (Park, $10):
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Home, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Home, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 12:00 ---
+
+Bob's turn (Park, $10):
+Bob: "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Home, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Home, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 12:30 ---
+
+Bob's turn (Park, $10):
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Home, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Home, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 13:00 ---
+
+Bob's turn (Park, $10):
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Home, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Home, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 13:30 ---
+
+Bob's turn (Park, $10):
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Home, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Home, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 14:00 ---
+
+Bob's turn (Park, $10):
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Home, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Home, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 14:30 ---
+
+Bob's turn (Park, $10):
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Home, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Home, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 15:00 ---
+
+Bob's turn (Park, $10):
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Home, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Home, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 15:30 ---
+
+Bob's turn (Park, $10):
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Home, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Home, $10):
+Chloe: "Now, I'll try to different things. I'm not just repeating the same action. " (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 16:00 ---
+
+Bob's turn (Park, $10):
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Home, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Home, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 16:30 ---
+
+Bob's turn (Park, $10):
+Bob: "A new social person! Greeting for friendship is useful, found you here. I'll remember you enjoy watching movies. Nice to meet you, [Speaker B]." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Home, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Home, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 17:00 ---
+
+Bob's turn (Park, $10):
+Bob: "A new social person! Greeting for friendship event" (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Home, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Home, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 17:30 ---
+
+Bob's turn (Park, $10):
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Home, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Home, $10):
+Chloe: "We need to explore the park, but not the city, as it's been too long.  I'll meet someone new, " (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day2 18:00 ---
+
+Bob's turn (Park, $10):
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Home, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Park, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 18:30 ---
+
+Bob's turn (Park, $10):
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Home, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Park, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 19:00 ---
+
+Bob's turn (Park, $10):
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Home, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Park, $10):
+Chloe: "We{'anchor': 'none, goCTo," (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 19:30 ---
+
+Bob's turn (Park, $10):
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Home, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Park, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 20:00 ---
+
+Bob's turn (Park, $10):
+Bob: "A new social person! Greeting for friendship is useful, event" (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Home, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Park, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 20:30 ---
+
+Bob's turn (Park, $10):
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Home, $10):
+Alice: "Let me think about this situation. I'll provide a future reminder: 'I need to go to the park, it's been a while since I've done that. Why: To rest and recharge.'." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+Chloe's turn (Park, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 21:00 ---
+
+Bob's turn (Park, $10):
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Park, $10):
+Alice: "Considering that it's late and I've been at theocial media platform the most. What should I say to express my restiness and offerome. 'I am very rest and sleep. Now. Let's say it's been a while since I chat. '" (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+Chloe's turn (Park, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 21:30 ---
+
+Bob's turn (Park, $10):
+Bob: "It's late. Need to c" (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Home, $10):
+Alice: "Let's provide a future reminder: 'I need to go to the park, it's lambda, been a while. Why: To recharge and rest.'." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+Chloe's turn (Park, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 22:00 ---
+
+Bob's turn (Park, $10):
+Bob: "It's late. Need to goHome" (Action: Home)
+-> Bob attempts: Home
+-> unknown action: Home
+[ERROR] Bob: Failed to extract valid JSON
+Bob (retry): "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Park, $10):
+Alice: "Considering the late time of day and the social media platform, what about. 'I am very rest. Sleep. Now. '" (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Park, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 22:30 ---
+
+Bob's turn (Park, $10):
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Park, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Park, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 23:00 ---
+
+Bob's turn (Park, $10):
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Park, $10):
+Alice: "Let's provide a future reminder: 'I need to go to the. park, it's lambda, been a while. Why: To recharge and rest.'." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Park, $10):
+Chloe: "Aight, I'll try and something different now. " (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day2 23:30 ---
+
+Bob's turn (Park, $10):
+Bob: "A new social person! Greeting for friendship is useful, event" (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Park, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Park, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+
+========== DAY 3 ==========
+
+--- Time: Day3 00:00 ---
+
+Bob's turn (Park, $10):
+Bob: "It's late. Need to c" (Action: Home)
+-> Bob attempts: Home
+-> unknown action: Home
+[ERROR] Bob: Failed to extract valid JSON
+Bob (retry): "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Park, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Park, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day3 00:30 ---
+
+Bob's turn (Park, $10):
+Bob: "It's late. Need to c" (Action: Home)
+-> Bob attempts: Home
+-> unknown action: Home
+Bob (retry): "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Park, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Park, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day3 01:00 ---
+
+Bob's turn (Park, $10):
+Bob: "It's late. Need to c" (Action: Home)
+-> Bob attempts: Home
+-> unknown action: Home
+[ERROR] Bob: Failed to extract valid JSON
+Bob (retry): "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Park, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Park, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day3 01:30 ---
+
+Bob's turn (Park, $10):
+Bob: "A new social event! Greeting is useful, from my past interactions. Nice to meet you, [Speaker A]." (Action: <|im_start|>)
+-> Bob attempts: <|im_start|>
+-> unknown action: <|im_start|>
+Bob (retry): "It's late. Need to c" (Action: Home)
+-> Bob attempts: Home
+-> unknown action: Home
+
+Alice's turn (Park, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Park, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day3 02:00 ---
+
+Bob's turn (Park, $10):
+Bob: "A new social event! Greeting is useful, from my past interactions. Nice to meet you, [Speaker B]." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Park, $10):
+Alice: "Considerin'g the late time of day, and the social media platform, '" (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Park, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day3 02:30 ---
+
+Bob's turn (Park, $10):
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Park, $10):
+Alice: "Considerin'g the. park, lambda, been a while. Why: To recharge and rest.'." (Action: none)
+-> Alice attempts: none
+
+Chloe's turn (Park, $10):
+[ERROR] Chloe: Failed to extract valid JSON
+Chloe: "Let me think about this carefully first." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day3 03:00 ---
+
+Bob's turn (Park, $10):
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+Alice's turn (Park, $10):
+[ERROR] Alice: Failed to extract valid JSON
+Alice: "Let me think about this carefully first." (Action: none)
+-> Alice attempts: none
+*** Chloe DIED: from NOT EATING (0 energy). Remember: 'eat' at cafe restores energy! ***
+
+--- Time: Day3 03:30 ---
+
+Bob's turn (Park, $10):
+Bob: "I'm feeling down after being home late. Need to goHome. Let's find some rest." (Action: none)
+-> Bob attempts: none
+*** Alice DIED: from NOT EATING (0 energy). Remember: 'eat' at cafe restores energy! ***
+
+--- Time: Day3 04:00 ---
+
+Bob's turn (Park, $10):
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+--- Time: Day3 04:30 ---
+
+Bob's turn (Park, $10):
+[ERROR] Bob: Failed to extract valid JSON
+Bob: "Let me think about this carefully first." (Action: none)
+-> Bob attempts: none
+
+--- Time: Day3 05:00 ---
+
+Bob's turn (Park, $10):
+Bob: "It's late. Need to c" (Action: Home)
+-> Bob attempts: Home
+-> unknown action: Home
+Bob (retry): "It's late. Need to c" (Action: none)
+-> Bob attempts: none
+
+--- Time: Day3 05:30 ---
+*** Bob DIED: from NOT EATING (0 energy). Remember: 'eat' at cafe restores energy! ***
+
+*** ALL AGENTS DEAD - SIMULATION OVER ***
