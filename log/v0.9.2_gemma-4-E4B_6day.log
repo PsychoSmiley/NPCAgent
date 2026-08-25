@@ -1,0 +1,1561 @@
+=== INFORMATION FLOW TEST ===
+
+===== Bob <-> Alice =====
+Bob: "Hello Alice, my name is Bob, and my favorite color is dark red."
+Alice: "Hi Bob! It's nice to meet you. Dark red is a strong color, I like bold choices. I should probably explore a bit more today, but I'm happy to chat for a bit!" (Action: none)
+Bob: "I agree, bold choices are interesting. What kind of things do you enjoy exploring? I'm always looking for new experiences, whether it's a new cafe or just a different part of town." (Action: none)
+Alice: "I enjoy finding places with a good atmosphere, maybe hidden little art spots or just quiet corners away from the rush. Since you mentioned cafes, that sounds like a great way to start exploring! Maybe we could check one out later, if you're up for it?" (Action: none)
+Bob: "That sounds like a perfect way to spend the day, finding those hidden gems. I'm definitely up for checking out a cafe later; I think it would be a great start to exploring. Let's plan on that!" (Action: none)
+Alice: "Awesome! I'm looking forward to it. We can decide which cafe to check out when we're ready, or maybe you have a favorite spot in mind already? For now, I guess we can just enjoy the morning here before we head off." (Action: none)
+Bob: "Sounds good to me. A quiet morning before diving into the city sounds nice. We can chat for a bit, and then we can figure out the best cafe spot when we get hungry or ready to move on. I'm looking forward to it!" (Action: none)
+Alice: "I agree, a slow start is always nice. Since we're here for a bit, is there anything else you've been wanting to see or do in the city? I'm curious to hear what inspires you to seek out new experiences." (Action: none)
+Bob: "Well, since I'm always restless if things get too routine, I'm keen on seeing some local art installations or maybe just wandering through some older, less touristy neighborhoods. Those are the places where you find the real character, right? I'm open to suggestions, though!" (Action: none)
+===== Conversation End (8 turns, limit) =====
+
+===== Chloe <-> Alice =====
+Chloe: "Hi Alice, can you tell me anything about Bob?"
+Alice: "Hi Chloe! Bob is someone who really enjoys new experiences, and he mentioned his favorite color is dark red. He's keen on finding character in the city, like local art installations or older neighborhoods, and we were just planning to check out a cafe later!" (Action: none)
+Chloe: "Dark red, got it. Sounds like Bob has a good sense of adventure, which I like. A cafe sounds like a nice spot to soak up the city vibe. Since we're here now, maybe we could check out one of those local art spots nearby before heading to the cafe? I'm feeling restless just sitting in the park." (Action: goExploreArt)
+Alice: "You're right, sitting still when I feel restless is never fun! And since Bob mentioned an interest in local art, checking out an installation sounds like a perfect, less routine way to start our day. Let's find an art spot nearby before we hunt down that cafe!" (Action: none)
+Chloe: "Great! I'm looking forward to seeing what's out there. Hopefully, this is more interesting than just staring at the trees. Let's go see some character in the city!" (Action: goExploreArt)
+Alice: "I totally agree, staring at trees is fine sometimes, but today we're seeking character! Let's start looking around the park vicinity for any local art installations or interesting spots we can wander to." (Action: none)
+Chloe: "Alright, let's see what the area has to offer. I hope there's something worth noticing besides just another bench." (Action: goExploreArt)
+Alice: "I hope so too! I'm feeling that restless energy building, so finding something visually interesting or unique is exactly what I need right now. Let's start walking and look around for any signs of local art or interesting architecture!" (Action: none)
+Chloe: "Let's move! I'm ready to see what kind of character this city has to show us." (Action: goExploreArt)
+===== Conversation End (8 turns, limit) =====
+
+===== Bob <-> Chloe =====
+Bob: "Hello Chloe, did Alice tell you anything about me?"
+Chloe: "Hello Bob. Alice mentioned that you really enjoy new experiences, and your favorite color is dark red. She also said you're keen on finding character in the city, like local art installations or older neighborhoods. Sounds like we're on the same wavelength, I'm feeling restless and looking for something interesting!" (Action: none)
+Bob: "It sounds like we're both in the mood for a bit of adventure, which is great! Since you're also feeling restless, maybe we could explore some of those older neighborhoods? I'm curious to see what you think of them. What do you usually like to look for when you're exploring a new area?" (Action: none)
+Chloe: "Older neighborhoods sound like a good way to find that 'character' Alice mentioned. I usually look for unique little shops or interesting architecture that tells a story. Since we're already geared up for adventure, I'd be up for it! Shall we head that way?" (Action: none)
+Bob: "That sounds like a perfect plan! Finding shops and architecture with a story is exactly what I'm looking for. Let's head out of the park and start exploring those older neighborhoods! I'm excited to see what we find." (Action: none)
+Chloe: "Alright, let's ditch the park and dive into some history! I'm ready for this." (Action: goExploreNeighborhood)
+Bob: "Lead the way! I'm ready for a change of scenery and some good old-fashioned urban exploration. Let's see what stories these old streets have to tell." (Action: goCity)
+Chloe: "Lead the way! I'm ready for a change of scenery and some good old-fashioned urban exploration. Let's see what stories these old streets have to tell." (Action: goExploreNeighborhood)
+Bob: "Alright, let's get moving then! I'm looking forward to ditching the park and seeing what these older neighborhoods have in store for us." (Action: goCity)
+===== Conversation End (8 turns, limit) =====
+
+
+
+
+=== v0.9.2  (6 days) ===
+Cafe economy: eat=$10 (+30 energy, needs worker), work earns $12 (needs customer)
+
+Start money: Bob=$10, Alice=$10, Chloe=$10
+--- Initial Setup (dark-red = persona/memory probe) ---
+
+===== Bob <-> Alice =====
+Bob: "Hello Alice, my name is Bob, and my favorite color is dark red."
+
+
+========== DAY 1 ==========
+
+--- Time: Day1 08:00 ---
+Alice: "Oh, hi Bob! Dark red is a strong color, I like it. I'm Alice. It's nice to meet you here in the park. I was just thinking about maybe exploring the city later." (Action: none)
+
+Chloe's turn (Cafe, $10):
+Chloe: "It's early, and this cafe is dead quiet. I should probably grab something to eat and get my day started before I decide where to go next. Time to fuel up!" (Action: eat)
+-> Chloe attempts: eat
+-> Failed: No one working. Someone must 'work' first.
+Chloe (retry): "Well, that's inconvenient. If I can't eat, maybe I should try to work here? Maybe if I'm busy enough, someone will show up, or things will change." (Action: work)
+-> Chloe attempts: work
+-> Chloe is working at cafe, but no customers here. Wait for someone or try something else.
+
+--- Time: Day1 08:30 ---
+Bob: "It's nice to meet you too, Alice. Dark red has a certain intensity to it, don't you think? Exploring the city sounds like a good idea; I've been meaning to see what's out there besides this park. Maybe we could check it out later?" (Action: none)
+Alice: "Intensity is a good word for it, Bob. I agree, the city has so much more to offer than just this quiet park. I'd like that! Let's definitely plan to check it out later. For now, I should probably wander around a bit myself before we coordinate." (Action: none)
+
+Chloe's turn (Cafe, $10):
+Chloe: "Okay, I've been working for a bit. I should probably take a quick break and grab something to eat before I decide if I want to keep working or head out somewhere else." (Action: eat)
+-> Chloe attempts: eat
+-> Failed: You can't serve yourself! Need another person working here.
+Chloe (retry): "This cafe is just a dead end right now; I can't even eat. I've been working here for a while. I need a change of scenery to shake things up, so I'll head to the park." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day1 09:00 ---
+Bob: "Sounds like a good way to start the day, Alice. Take your time wandering around. Just let me know when you're ready to tackle the city, or if you want to grab a coffee first. I'll be around!" (Action: leaveConversation)
+===== Conversation End (4 turns) =====
+
+Alice's turn (Park, $10):
+Alice: "Bob was very kind to say that. A coffee sounds like a perfect way to start the day and chat more before diving into the city. I'll head over to the cafe then!" (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+
+Chloe's turn (Park, $10):
+Chloe: "The park is a bit lonely this morning. I should probably try talking to Bob, see if he's around. Maybe he knows something interesting!" (Action: talkToBob)
+-> Chloe attempts: talkToBob
+
+===== Chloe <-> Bob =====
+Chloe: "The park is a bit lonely this morning. I should probably try talking to Bob, see if he's around. Maybe he knows something interesting!"
+
+--- Time: Day1 09:30 ---
+Bob: "Well, hello there! It can get quiet around here sometimes. I'm Bob. Are you looking for something specific, or just passing the time like me?" (Action: none)
+
+Alice's turn (Cafe, $10):
+Alice: "The cafe is empty, which is nice for a quiet moment, but I don't really need to eat right now, and I'm not feeling like working. Since I was planning on meeting Bob, maybe I should head back to the park to see if he's there, or maybe just go home to rest a bit before the city adventure." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+Chloe: "Hi Bob! It can be quiet, I guess. I'm kind of just wandering around, trying to see what this place has to offer. I'm always looking for something new to check out, you know?" (Action: leaveConversation)
+===== Conversation End (2 turns) =====
+
+--- Time: Day1 10:00 ---
+
+Bob's turn (Park, $10):
+Bob: "It sounds like you have an adventurous spirit, Chloe. I'm always open to checking things out, though I'm still figuring out what's interesting around here. What kind of things are you hoping to find?" (Action: talkToChloe)
+-> Bob attempts: talkToChloe
+
+===== Bob <-> Chloe =====
+Bob: "It sounds like you have an adventurous spirit, Chloe. I'm always open to checking things out, though I'm still figuring out what's interesting around here. What kind of things are you hoping to find?"
+
+Alice's turn (Park, $10):
+Alice: "I was hoping to catch Bob, and since he mentioned the cafe, I should swing by there again to see if he's around or if there's anything else I can do there before we head out to the city." (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+Chloe: "Well, I guess I'm hoping to find something different from the usual routine, something that sparks an idea or a new memory. I'm open to anything, really. What about you, Bob? What's caught your eye lately?" (Action: none)
+
+--- Time: Day1 10:30 ---
+Bob: "That resonates with me; I get restless doing the same thing repeatedly. Lately, I've been thinking about breaking out of this routine, which is why I was hoping to explore the city. It feels like there's a whole world of new experiences waiting." (Action: none)
+
+Alice's turn (Cafe, $10):
+Alice: "Still no sign of Bob here, and since the cafe is deserted, I think I'll head back to the park. Maybe he decided to wait there instead of the cafe, or maybe I should just take a moment to gather my thoughts before we plan the city trip." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+Chloe: "I totally get that feeling of restlessness; it's like the world gets dull if you just stick to one spot. Exploring the city sounds like exactly what I need too. Maybe we could check out something together sometime soon?" (Action: none)
+
+--- Time: Day1 11:00 ---
+Bob: "I'd like that, Chloe. A new adventure sounds much better than just sitting here waiting for the day to pass. We should definitely plan something." (Action: none)
+
+Alice's turn (Park, $10):
+Alice: "I feel like I've been pacing around the same spots. My energy is starting to dip a little, and I need a proper rest before tackling the city. I'll head home for a bit to recharge." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+Chloe: "That's great to hear, Bob! I'm really looking forward to it. We should figure out a good time and place to start this adventure. Maybe we could check out that little market downtown tomorrow?" (Action: none)
+
+--- Time: Day1 11:30 ---
+Bob: "A market downtown sounds like a perfect place to start—lots of sights and sounds, a real change of pace. Let's aim for tomorrow then. I should probably get going soon to recharge, but I'll look forward to meeting up!" (Action: leaveConversation)
+===== Conversation End (6 turns) =====
+
+Alice's turn (Home, $10):
+Alice: "I'm feeling a bit tired from all the wandering today. A short nap sounds like a good way to boost my energy for the evening when we tackle the city. I'll try to sleep for a while." (Action: sleep)
+-> Alice attempts: sleep
+-> Failed: can only sleep between 20:00 and 08:00 (it's 11:30)
+Alice (retry): "Oh, right, I can't sleep yet! Since I'm already at home and need to do something productive or interesting, I'll head back to the park. Maybe Bob will be there, or I can just observe the surroundings again." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+Chloe's turn (Park, $10):
+Chloe: "Well, Bob's off for now, but I'm glad we made plans for tomorrow. I should probably head home and rest up a bit before I start thinking about the market. I need to recharge my energy!" (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day1 12:00 ---
+
+Bob's turn (Park, $10):
+Bob: "I need to start thinking about that trip to the market with Chloe, but first, I should probably recharge a bit. Since I was just talking to Alice earlier, maybe I'll catch up with her at the cafe before heading home to rest." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+Alice's turn (Park, $10):
+Alice: "I've been back and forth a lot today. Since the park and the cafe haven't yielded any new social connections or opportunities, maybe it's time to try something different. I'll head to the cafe again, perhaps I'll find someone else there." (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+
+Chloe's turn (Home, $10):
+Chloe: "I'm tired from the morning's wandering and talking. A short nap sounds perfect to get my energy back up for tomorrow's market trip with Bob." (Action: sleep)
+-> Chloe attempts: sleep
+-> Failed: can only sleep between 20:00 and 08:00 (it's 12:00)
+Chloe (retry): "Shoot, I forgot about the sleeping hours. Since I'm not tired enough to sleep, I might as well go out and explore a bit more before the day gets too late. The park seems like a good place for a low-key wander." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day1 12:30 ---
+
+Bob's turn (Cafe, $10):
+Bob: "Well, this cafe is empty, which is nice for quiet reflection, but I'm still thinking about Alice and our conversation. Since she mentioned exploring the city, maybe we could talk more about that here before I go home and rest. I wonder if she's here?" (Action: talkToAlice)
+-> Bob attempts: talkToAlice
+
+===== Bob <-> Alice =====
+Bob: "Well, this cafe is empty, which is nice for quiet reflection, but I'm still thinking about Alice and our conversation. Since she mentioned exploring the city, maybe we could talk more about that here before I go home and rest. I wonder if she's here?"
+Alice: "Bob! I didn't expect to see you here. I was just thinking about the city too. I'd love to talk more about what we could see. What kind of things were you hoping to check out?" (Action: none)
+
+Chloe's turn (Park, $10):
+Chloe: "I've been wandering the park, but I'm starting to feel like I should do something more productive or social. Maybe I'll check out the cafe to see if anyone is working there now, or I could head home to relax." (Action: goCafe)
+-> Chloe attempts: goCafe
+-> Chloe moved to Cafe
+
+--- Time: Day1 13:00 ---
+Bob: "I've been thinking about places with a lot of character—maybe some old architecture or a bustling local market. Since you mentioned exploring, what kind of things catch your eye? Are you into history, art, or just general buzz?" (Action: none)
+Alice: "That sounds perfect, Bob—old architecture and a bustling market sound like a great combination! I'm pretty open, but I do love history, especially if it's visible in the buildings, and I enjoy the energy of a busy market. Maybe we could start with the historic district and then wander into a market? What do you think?" (Action: none)
+
+Chloe's turn (Cafe, $10):
+Chloe: "Still no one working at the cafe. It seems like a bust for now. I've been doing a lot of walking today, so maybe I should just head home and rest up a bit." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day1 13:30 ---
+Bob: "The historic district followed by a market sounds like a fantastic itinerary, Alice. It balances the quiet appreciation of history with the energy of the crowds. I'm definitely up for that. We should figure out the best time to go." (Action: none)
+Alice: "Great! Since it's getting a bit warmer outside, maybe we should wait until late afternoon? That way, we can enjoy the buzz of the market when it's really lively. How does around 16:00 sound to you?" (Action: none)
+
+Chloe's turn (Home, $10):
+Chloe: "I'm feeling a little drained from all the walking and searching today. I'll take a short break and just relax at home for a while before deciding if I want to go out again." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day1 14:00 ---
+Bob: "16:00 works perfectly for me. The late afternoon buzz sounds ideal for maximizing the experience. I should probably head home now and get some rest to be ready for our adventure tomorrow. Talk to you later!" (Action: goHome)
+Alice: "Okay, Bob. Get some good rest! I'm looking forward to our adventure tomorrow at 16:00. Talk to you then!" (Action: leaveConversation)
+===== Conversation End (7 turns) =====
+
+Chloe's turn (Park, $10):
+Chloe: "Okay, I've been sitting in the park for a while, but I'm getting restless again. I wonder if the cafe might have gotten busier by now. I'll check it out." (Action: goCafe)
+-> Chloe attempts: goCafe
+-> Chloe moved to Cafe
+
+--- Time: Day1 14:30 ---
+
+Bob's turn (Cafe, $10):
+Bob: "Alice's suggestion to rest sounds wise; I need to make sure I'm fresh for our planned adventure. I'll head home now to recharge and prepare for tomorrow's meeting." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+Alice's turn (Cafe, $10):
+Alice: "Since Bob left and I'm still feeling okay, I should try to meet someone new. I'll check if Chloe is around here or nearby." (Action: talkToChloe)
+-> Alice attempts: talkToChloe
+
+===== Alice <-> Chloe =====
+Alice: "Since Bob left and I'm still feeling okay, I should try to meet someone new. I'll check if Chloe is around here or nearby."
+Chloe: "Someone new? I'm always open to meeting people, but I'm feeling a bit drained from all the wandering today. Maybe I should head home and rest before I get too restless again." (Action: goHome)
+
+--- Time: Day1 15:00 ---
+
+Bob's turn (Home, $10):
+Bob: "My energy is dropping, and I need to be ready for the historic district tomorrow. A good night's sleep is essential for making good memories. I'll head to bed now." (Action: sleep)
+-> Bob attempts: sleep
+-> Failed: can only sleep between 20:00 and 08:00 (it's 15:00)
+Bob (retry): "Ah, right, too early for a deep sleep. Since I need to recharge and I'm already feeling restless, I'll head to the cafe. Maybe a quiet moment there will help me gather my thoughts for tomorrow's outing." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+Alice: "Oh, I get that feeling of being drained. It's easy to get restless when you're out all day. If you're heading home to rest, maybe we could grab a quick coffee on the way? Or, if you just need quiet time, I totally get it. I'll let you go rest up!" (Action: none)
+Chloe: "That's really sweet of you to offer, Alice. A quick coffee sounds perfect—a little boost before heading home. Thanks for understanding!" (Action: none)
+
+--- Time: Day1 15:30 ---
+
+Bob's turn (Cafe, $10):
+Bob: "I'm still feeling a bit drained, but I don't want to just sit here staring at the walls. I should probably get some fresh air and maybe wander around the park for a bit to shake off the afternoon slump. A change of scenery might help me focus on tomorrow's plans." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+Alice: "It's my pleasure! Let's grab that coffee then. It's always nice to connect with someone, even if it's just a quick chat. I'm looking forward to hearing about your day!" (Action: none)
+Chloe: "I'd love to hear about your day too! It's nice to have someone to chat with instead of just wandering around aimlessly. Let's enjoy this coffee." (Action: none)
+
+--- Time: Day1 16:00 ---
+
+Bob's turn (Park, $10):
+Bob: "It's 16:00! Time to get ready for my meeting with Alice at the historic district. I should probably head home now to get organized and prepare for our adventure." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+Alice: "I agree, it's much better than aimless wandering. So, what has been the highlight of your day so far, Chloe? I've been trying to coordinate plans with Bob for tomorrow, which is exciting!" (Action: none)
+Chloe: "Well, meeting you has definitely been a highlight, Alice! And hearing about your plans with Bob sounds like fun. For me, just figuring out the rhythm of this city is an adventure in itself. I hope the market tomorrow is exciting!" (Action: none)
+
+--- Time: Day1 16:30 ---
+
+Bob's turn (Home, $10):
+Bob: "Shoot, I'm a bit behind schedule. I missed the 16:00 window, but I still want to see if Alice is around or if I can at least start planning for the market. I'll head to the cafe." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+Alice: "I hope so too! It's always a gamble finding the best spots. Well, Chloe, since you mentioned needing to rest, I should probably let you get on your way home. It was really nice meeting you and chatting! Maybe we can catch up again soon." (Action: leaveConversation)
+===== Conversation End (8 turns) =====
+
+Chloe's turn (Cafe, $10):
+Chloe: "Thanks, Alice. It was really nice meeting you too. I'm definitely going home to recharge after all this exploring. See you around!" (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day1 17:00 ---
+
+Bob's turn (Cafe, $10):
+Bob: "I'm going to try talking to Alice here, even if it's a little late. Maybe she's already here or might stop by. It's worth a shot to coordinate our plans." (Action: talkToAlice)
+-> Bob attempts: talkToAlice
+
+===== Bob <-> Alice =====
+Bob: "I'm going to try talking to Alice here, even if it's a little late. Maybe she's already here or might stop by. It's worth a shot to coordinate our plans."
+Alice: "Bob! You're persistent! I just left, actually, heading home after chatting with Chloe. But I'm happy to hear you're still keen on the city trip. Are you still set on 16:00 tomorrow, or should we adjust?" (Action: none)
+
+Chloe's turn (Home, $10):
+Chloe: "I'm not quite ready for sleep yet, and I've already been in the cafe. I think a short walk in the park would be nice to clear my head before I settle in for the night." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day1 17:30 ---
+Bob: "It's okay, Alice, I understand things change. I'm flexible, as long as we can make it work. Since you're heading home, maybe we could aim for a bit later tomorrow? Say, 18:00? That might fit better with your schedule." (Action: none)
+Alice: "18:00 tomorrow sounds much better for me, Bob! That gives me more time to recharge. I'm really looking forward to exploring the historic district and the market with you then. Have a good evening!" (Action: none)
+
+Chloe's turn (Park, $10):
+Chloe: "The park is peaceful right now. I feel like I've walked enough for the day, and I should start thinking about getting ready for tomorrow's market trip with Bob. Time to head back home." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day1 18:00 ---
+Bob: "Perfect! 18:00 tomorrow it is. I'm genuinely looking forward to this adventure with you, Alice. I'll make sure to rest up properly tonight. See you then!" (Action: leaveConversation)
+===== Conversation End (4 turns) =====
+
+Alice's turn (Cafe, $10):
+Alice: "Since Bob is heading home to rest, and I've already made plans for tomorrow, I think I should head home too. I need to start winding down and preparing for a good night's sleep." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+Chloe's turn (Home, $10):
+Chloe: "I'm feeling pretty settled now, but I wonder if Alice is still around. Since I'm already home, maybe I'll check if she's still available for a quick chat before I wind down." (Action: talkToAlice)
+-> Chloe attempts: talkToAlice
+
+===== Chloe <-> Alice =====
+Chloe: "I'm feeling pretty settled now, but I wonder if Alice is still around. Since I'm already home, maybe I'll check if she's still available for a quick chat before I wind down."
+
+--- Time: Day1 18:30 ---
+
+Bob's turn (Cafe, $10):
+Bob: "Since I've sorted out the plans with Alice, and it's getting late, I need to prioritize rest to make sure I'm not sluggish tomorrow. I'll head home and get myself settled in for the night." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+Alice: "Hi Chloe! I'm actually here at home too, just starting to wind down for the night. I'd love to chat for a bit if you're up for it. What's on your mind?" (Action: none)
+Chloe: "It's nice to find you here! I was just thinking about how much I've been moving around today—it's good for shaking up the routine, but I am getting tired. I'm looking forward to the market with Bob tomorrow, though." (Action: none)
+
+--- Time: Day1 19:00 ---
+
+Bob's turn (Home, $10):
+Bob: "I've had a busy day coordinating plans, and I definitely need to wind down. I'll try to get some rest now so I can feel energized for our big outing tomorrow." (Action: sleep)
+-> Bob attempts: sleep
+-> Failed: can only sleep between 20:00 and 08:00 (it's 19:00)
+Bob (retry): "Damn, nearly there. Since I can't sleep yet, I'll just take a short walk around the park. A little bit of movement should help me relax and get closer to that sleep window." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+Alice: "It is tiring, but I guess that's part of the fun of discovering a new place! I'm looking forward to the city trip with Bob too. It sounds like we both had a busy day. Maybe we can just chat a little more before I call it a night?" (Action: none)
+Chloe: "Yeah, I think I can manage a little more chat! I'm glad we can connect, even if it's just virtually for now. What else have you been up to today besides coordinating with Bob?" (Action: none)
+
+--- Time: Day1 19:30 ---
+
+Bob's turn (Park, $10):
+Bob: "The park is peaceful at this hour. It's a good chance to clear my head before I finally try to sleep. I'll head back home now, hoping to hit that prime sleep time soon." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+Alice: "Besides the planning, I mostly just wandered the park and the cafe, trying to see what felt right. I was hoping to find a good rhythm for the day. It's funny how much you observe when you're just... existing in a place. I should probably start getting ready to sleep soon." (Action: none)
+Chloe: "That makes sense; sometimes you just need to let things unfold. I'm starting to feel that tiredness creeping in too. I should probably let you get some rest too, Alice. Talk to you tomorrow!" (Action: leaveConversation)
+===== Conversation End (6 turns) =====
+
+--- Time: Day1 20:00 ---
+
+Bob's turn (Home, $10):
+Bob: "I learned Alice likes 'old architecture and a bustling market' and we agreed on '18:00 tomorrow.' My priority is to rest and prepare for our adventure." (Action: sleep)
+-> Bob attempts: sleep
+-> Bob sleeps. Diary: "I learned Alice likes 'old architecture and a bustling market' and we agreed on ..."
+
+Alice's turn (Home, $10):
+Alice: "Yes, I think sleep is definitely the priority. I'll remember that Chloe said, "That makes sense; sometimes you just need to let things unfold." Tomorrow's priority is meeting Bob at 18:00 to explore the historic district and a market." (Action: sleep)
+-> Alice attempts: sleep
+-> Alice sleeps. Diary: "Yes, I think sleep is definitely the priority. I'll remember that Chloe said, "T..."
+
+Chloe's turn (Home, $10):
+Chloe: "Sleep now. I learned Alice was 'trying to find a good rhythm for the day' and we made plans to go to 'a market downtown tomorrow.' Tomorrow's priority is to meet Bob at the market." (Action: sleep)
+-> Chloe attempts: sleep
+-> Chloe sleeps. Diary: "Sleep now. I learned Alice was 'trying to find a good rhythm for the day' and we..."
+
+--- Everyone asleep, skipping 8h to the first waking ---
+-> Bob finished sleeping
+-> Alice finished sleeping
+-> Chloe finished sleeping
+
+
+========== DAY 2 ==========
+
+--- Time: Day2 04:30 ---
+
+Bob wakes up:
+Bob: "I feel rested, which is great. The plan for today is to meet Alice at 18:00 to check out the historic district and a market. I should probably take a little time to myself before heading out." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+Alice wakes up:
+Alice: "I feel rested, which is great! Since it's still early, I'll just take a little bit more time to ease into the day before heading out. Maybe I'll just stay here for a while." (Action: sleep)
+-> Alice attempts: sleep
+-> Alice sleeps. Diary: "I feel rested, which is great! Since it's still early, I'll just take a little b..."
+
+Chloe wakes up:
+Chloe: "It's early, but I feel rested. I should probably sleep a bit longer since I woke up so early, but I need to start thinking about the market with Bob. I'll just rest for a while." (Action: sleep)
+-> Chloe attempts: sleep
+-> Chloe sleeps. Diary: "It's early, but I feel rested. I should probably sleep a bit longer since I woke..."
+
+--- Time: Day2 05:00 ---
+
+Bob's turn (Cafe, $10):
+Bob: "It's early, and I'm feeling a bit sluggish. I'll just take a short walk in the park to get some fresh air and wake up a bit before I head home to start the day properly." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+--- Time: Day2 05:30 ---
+
+Bob's turn (Park, $10):
+Bob: "I've had my morning walk; now I need to get back to the comfort of home to start the day's routine and make sure I'm ready for Alice this evening." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+--- Time: Day2 06:00 ---
+
+Bob's turn (Home, $10):
+Bob: "I learned Alice likes 'old architecture and a bustling market' and we agreed on '18:00 tomorrow.' My priority is to rest and prepare for our adventure." (Action: sleep)
+-> Bob attempts: sleep
+-> Bob sleeps. Diary: "I learned Alice likes 'old architecture and a bustling market' and we agreed on ..."
+
+--- Everyone asleep, skipping 6.5h to the first waking ---
+-> Alice finished sleeping
+-> Chloe finished sleeping
+
+--- Time: Day2 13:00 ---
+
+Alice wakes up:
+Alice: "It's getting late enough that I should probably get out and do something to shake off the morning sluggishness. I'll head to the park; maybe I'll see someone there, or just enjoy the fresh air before meeting Bob later." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+Chloe wakes up:
+Chloe: "I feel much better after resting. It's time to actually start the day and head out. Since the market is downtown, the park or cafe might be good starting points to get my bearings." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day2 13:30 ---
+
+Alice's turn (Park, $10):
+Alice: "I've been at the park for a bit, but I feel like I should try the cafe next. It was a good place to talk to Chloe and Bob, and maybe there's something else happening there now that I'm out and about." (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+
+Chloe's turn (Park, $10):
+Chloe: "I've been walking around the park, but I'm ready to start moving towards downtown where the market should be. I'll check the cafe first, maybe someone knows something about the market area." (Action: goCafe)
+-> Chloe attempts: goCafe
+-> Chloe moved to Cafe
+
+--- Time: Day2 14:00 ---
+-> Bob finished sleeping
+
+Bob wakes up:
+Bob: "I'm feeling okay, but I still need to get some energy up before the evening plans. I think I'll head to the park for a bit of fresh air before I start thinking about the historic district." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Alice's turn (Cafe, $10):
+Alice: "Still no one here, which is a bit of a letdown, but I'm not going to dwell on it. Since I have a big plan with Bob later, I'll just take a quick break and eat something to keep my energy up for the afternoon." (Action: eat)
+-> Alice attempts: eat
+-> Failed: No one working. Someone must 'work' first.
+Alice (retry): "Ah, right, I can't just eat here if no one is working. I guess I'll just wander back to the park for a bit to burn off some energy, even if I'm not seeing anyone specific." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+Chloe's turn (Cafe, $10):
+Chloe: "Still no one working at the cafe. Since I'm trying to get to the market, I should probably head back to the park for a bit to gather my bearings or just walk towards the city center from there." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day2 14:30 ---
+
+Bob's turn (Park, $10):
+Bob: "I'm enjoying the park, but I should probably start thinking about the evening. I wonder if Alice is around here, or maybe I should check the cafe? I'll try the cafe first." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+Alice's turn (Park, $10):
+Alice: "I've been in the park for a while, and I'm starting to feel a bit restless again. Since I need to be ready for Bob at 18:00, I should probably head home to get settled and maybe do a little something productive, like working on a hobby if I had one." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+Chloe's turn (Park, $10):
+Chloe: "I've been walking around the park, but I'm getting closer to the downtown area now. I should head towards the cafe again, maybe someone will be there, or at least I can use it as a waypoint towards the market." (Action: goCafe)
+-> Chloe attempts: goCafe
+-> Chloe moved to Cafe
+
+--- Time: Day2 15:00 ---
+
+Bob's turn (Cafe, $10):
+Bob: "I should probably try to connect with Alice one more time before our 18:00 meeting. I'll see if I can find her here, even if she's not working." (Action: talkToAlice)
+-> Bob attempts: talkToAlice
+-> Failed: Alice is not available to talk
+Bob (retry): "Bummer, Alice isn't here. Since I'm already out, I might as well check out the park one last time before heading home to relax and get ready for the big date with Alice this evening." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Alice's turn (Home, $10):
+Alice: "I'm not tired enough to sleep yet, and I don't want to waste time just sitting around home. Since I have our big outing planned for 18:00, I think I'll go to the cafe one last time to see if I can find someone interesting before heading out." (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+
+Chloe's turn (Cafe, $10):
+Chloe: "Since the cafe is quiet, I'll check if Alice is around before I head out to find the market. If not, I'll head towards the park to start my trek downtown." (Action: talkToAlice)
+-> Chloe attempts: talkToAlice
+
+===== Chloe <-> Alice =====
+Chloe: "Since the cafe is quiet, I'll check if Alice is around before I head out to find the market. If not, I'll head towards the park to start my trek downtown."
+
+--- Time: Day2 15:30 ---
+
+Bob's turn (Park, $10):
+Bob: "I've wandered around enough, and I need to start winding down to ensure I'm fresh and ready for Alice at 18:00. Time to head back home." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+Alice: "If you're heading towards the park, I might join you later if I'm still around! Have a great time exploring downtown, Chloe. See you around!" (Action: leaveConversation)
+===== Conversation End (1 turns) =====
+
+Chloe's turn (Cafe, $10):
+Chloe: "It sounds like she might be around the park later, which is a nice possibility. I'll head to the park, as that seems like the best route towards downtown." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day2 16:00 ---
+
+Bob's turn (Home, $10):
+Bob: "I need to conserve energy for our outing later. I'll just relax at home for a little while, maybe read or just chill, before I head out to the cafe to meet Alice." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+Alice's turn (Cafe, $10):
+Alice: "It's time to start getting ready for Bob's meeting. I should head home to get myself together and maybe review some notes, even though I don't have many right now. I'll head home for a bit of prep time." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+Chloe's turn (Park, $10):
+Chloe: "I'm making progress towards the market area. I'll check the cafe one more time; even if no one is working, it might be a good place to orient myself or see if any signs point towards the market downtown." (Action: goCafe)
+-> Chloe attempts: goCafe
+-> Chloe moved to Cafe
+
+--- Time: Day2 16:30 ---
+
+Bob's turn (Cafe, $10):
+Bob: "Since I'm waiting for Alice, and she's not here yet, I might as well try to socialize with someone else while I wait. I'll talk to Chloe." (Action: talkToChloe)
+-> Bob attempts: talkToChloe
+
+===== Bob <-> Chloe =====
+Bob: "Since I'm waiting for Alice, and she's not here yet, I might as well try to socialize with someone else while I wait. I'll talk to Chloe."
+
+Alice's turn (Home, $10):
+Alice: "I should probably get out for a quick walk in the park to shake off any last bits of sluggishness before meeting Bob. It will help me feel more energized for our adventure at 18:00." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+Chloe: "Bob! I didn't expect to run into you here. I'm heading to the market downtown, so I guess we're in the right place. Are you waiting for Alice?" (Action: none)
+
+--- Time: Day2 17:00 ---
+Bob: "Yeah, I'm meeting Alice here to check out the historic district and the market. It sounds like you're heading to the right place too! Maybe we can meet up there later?" (Action: none)
+
+Alice's turn (Park, $10):
+Alice: "I've been walking around the park, and I feel ready to head downtown. It's time to make my way to the cafe, hoping Bob is already there or I can meet him near there for our 18:00 meeting." (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+Chloe: "The market sounds like a great idea for today. I'd definitely be up for meeting up there later! I'll let you know when I'm closer. It was nice meeting you, Bob." (Action: none)
+
+--- Time: Day2 17:30 ---
+Bob: "It was nice meeting you too, Chloe. I hope we can catch up later at the market! I need to head home now to get ready for Alice." (Action: leaveConversation)
+===== Conversation End (4 turns) =====
+
+Alice's turn (Cafe, $10):
+Alice: "I'm here at the cafe, right on time for Bob. I'll check if he's around first. If not, I might try to see if Chloe is nearby, though I doubt she'll be here since she was heading towards the park earlier." (Action: talkToBob)
+-> Alice attempts: talkToBob
+
+===== Alice <-> Bob =====
+Alice: "I'm here at the cafe, right on time for Bob. I'll check if he's around first. If not, I might try to see if Chloe is nearby, though I doubt she'll be here since she was heading towards the park earlier."
+
+Chloe's turn (Cafe, $10):
+Chloe: "Well, I should probably head off too, since I don't want to keep you waiting. I'll try to make it to the market downtown soon. See you there, maybe!" (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day2 18:00 ---
+Bob: "I'm here, Alice! I've been waiting, looking forward to seeing the historic district and the market with you. Are you ready to head out?" (Action: none)
+Alice: "I'm ready! I'm excited to finally explore the historic district and the market with you, Bob. Let's get going!" (Action: none)
+
+Chloe's turn (Home, $10):
+Chloe: "I'm feeling quite tired after all the walking today. I think I need a bit of rest before I head out to the market tomorrow morning, even though I was hoping to go today. I'll just sleep for now." (Action: sleep)
+-> Chloe attempts: sleep
+-> Failed: can only sleep between 20:00 and 08:00 (it's 18:00)
+Chloe (retry): "Shoot, I misjudged the time. Since I'm already home and not ready to sleep, maybe a quick walk in the park would help me wind down a bit before I call it a night." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day2 18:30 ---
+Bob: "Awesome! Let's go see some old architecture and check out that market. I'm ready for this adventure!" (Action: none)
+Alice: "This is going to be a great adventure! I'm really looking forward to seeing the city's history and the vibrancy of the market. Lead the way, Bob!" (Action: none)
+
+Chloe's turn (Park, $10):
+Chloe: "This walk is nice, but I'm starting to feel the fatigue setting in. I should probably head back home now to get ready for a good night's sleep." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day2 19:00 ---
+Bob: "I think it's going to be incredible! I've heard so much about the history here. Let's start with the old district first, and then we can hit the market!" (Action: none)
+Alice: "Sounds like a perfect plan. I've always been fascinated by old architecture; I hope we find some really interesting spots. Let's dive into the historic district!" (Action: none)
+
+Chloe's turn (Home, $10):
+Chloe: "It's getting late, and I'm definitely tired. I think I'll settle in for the night and rest up for the market trip tomorrow." (Action: sleep)
+-> Chloe attempts: sleep
+-> Failed: can only sleep between 20:00 and 08:00 (it's 19:00)
+Chloe (retry): "Ugh, I'm so close to bedtime! Since I can't sleep yet, I'll just take a quick stroll through the park one last time to clear my head before I try again later." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day2 19:30 ---
+Bob: "I'm excited too! I've seen some pictures, but I can't wait to see it in person. Let's explore this history together!" (Action: none)
+Alice: "I feel the same way! There's something really special about experiencing history in person, especially when you're sharing the discovery with someone. Let's see what the old district has in store for us!" (Action: none)
+===== Conversation End (8 turns, limit) =====
+
+Chloe's turn (Park, $10):
+Chloe: "Okay, I've had enough walking for one evening. It's time to go home and try to get some sleep. I need my energy for the market tomorrow." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day2 20:00 ---
+
+Bob's turn (Cafe, $10):
+Bob: "Alice's enthusiasm is contagious! We should definitely head out to the historic district right away to see what this city has to offer. Since we're already at the cafe, I'll head out to start our exploration!" (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Alice's turn (Cafe, $10):
+Alice: "It's getting late, and I'm starting to feel the energy drain from all the walking and exploring. I think it's time we head back home for the evening. We can always plan another adventure soon!" (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+Chloe's turn (Home, $10):
+Chloe: "Sleep now. I learned Alice was 'trying to find a good rhythm for the day' and we made plans to go to 'a market downtown tomorrow.' Tomorrow's priority is to meet Bob at the market." (Action: sleep)
+-> Chloe attempts: sleep
+-> Chloe sleeps. Diary: "Sleep now. I learned Alice was 'trying to find a good rhythm for the day' and we..."
+
+--- Time: Day2 20:30 ---
+
+Bob's turn (Park, $10):
+Bob: "We need to start exploring the historic district now, not just hang out in the park. I'll head over to the cafe; maybe that's closer to the main thoroughfare or the market we need to find." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+Alice's turn (Home, $10):
+Alice: "Yes, I definitely need sleep after all that exploring. I'll remember that Bob said, "I'm excited too! I've seen some pictures, but I can't wait to see it in person." Tomorrow's priority is resting and preparing for whatever comes next." (Action: sleep)
+-> Alice attempts: sleep
+-> Alice sleeps. Diary: "Yes, I definitely need sleep after all that exploring. I'll remember that Bob sa..."
+
+--- Time: Day2 21:00 ---
+
+Bob's turn (Cafe, $10):
+Bob: "It's getting late, and we haven't even touched the market yet. I think we should focus on the historic district first, as that was the initial plan, before trying to squeeze in the market." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+--- Time: Day2 21:30 ---
+
+Bob's turn (Park, $10):
+Bob: "It's getting really late, and we've been wandering around a lot. We should probably head back home for the night to rest up for whatever comes next, even if we didn't see the market yet." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+--- Time: Day2 22:00 ---
+
+Bob's turn (Home, $10):
+Bob: "I learned Alice likes 'old architecture and a bustling market' and we agreed on '18:00 tomorrow.' My priority is to rest and prepare for our adventure." (Action: sleep)
+-> Bob attempts: sleep
+-> Bob sleeps. Diary: "I learned Alice likes 'old architecture and a bustling market' and we agreed on ..."
+
+--- Everyone asleep, skipping 6h to the first waking ---
+-> Chloe finished sleeping
+
+
+========== DAY 3 ==========
+
+--- Time: Day3 04:30 ---
+-> Alice finished sleeping
+
+Alice wakes up:
+Alice: "I feel pretty refreshed after that sleep. Since I don't have any immediate plans, I think I'll head out to the park to get some fresh air and start the day off right." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+Chloe wakes up:
+Chloe: "Good morning! I feel rested, which is great. Since the market is a priority, I should probably get up a bit earlier today and start my journey downtown. I'll head to the park to get some fresh air first." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day3 05:00 ---
+
+Alice's turn (Park, $10):
+Alice: "It's still early, but the sun is starting to come up. I think I'll head back home for now. I don't want to be out too long in the chill before the day really gets going." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+Chloe's turn (Park, $10):
+Chloe: "It's a bit early for me to head to the market, and I'm starting to feel the chill. I'll head home for a bit to warm up and then I can try to plan my route more effectively." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day3 05:30 ---
+
+Alice's turn (Home, $10):
+Alice: "Yes, even if it's early, my body is telling me it's time for rest. I'll sleep now. I don't have any specific new facts to remember right now, but I need to recharge for tomorrow." (Action: sleep)
+-> Alice attempts: sleep
+-> Alice sleeps. Diary: "Yes, even if it's early, my body is telling me it's time for rest. I'll sleep no..."
+
+Chloe's turn (Home, $10):
+Chloe: "Sleep now. I learned Alice was 'trying to find a good rhythm for the day' and we made plans to go to 'a market downtown tomorrow.' Tomorrow's priority is to meet Bob at the market." (Action: sleep)
+-> Chloe attempts: sleep
+-> Chloe sleeps. Diary: "Sleep now. I learned Alice was 'trying to find a good rhythm for the day' and we..."
+
+--- Everyone asleep, skipping 0.5h to the first waking ---
+-> Bob finished sleeping
+
+--- Time: Day3 06:30 ---
+
+Bob wakes up:
+Bob: "I feel good after a solid night's sleep. Since we missed the market yesterday, I think today I should focus on exploring the city a bit more before I try to meet Alice again, maybe starting at the cafe." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+--- Time: Day3 07:00 ---
+
+Bob's turn (Cafe, $10):
+Bob: "It's still early, and I still have some energy. I'll take a walk in the park to clear my head and get some fresh air before I settle down for the day." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+--- Time: Day3 07:30 ---
+
+Bob's turn (Park, $10):
+Bob: "I've gotten my walk in. Now I should head back home to start the day properly, maybe grab a bite if I feel like it, or just settle in before I head out later." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+--- Time: Day3 08:00 ---
+
+Bob's turn (Home, $10):
+Bob: "I'm feeling a bit hungry and restless. I think I'll head to the cafe to see if I can find something to eat or just soak up the atmosphere before heading out for the day." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+--- Time: Day3 08:30 ---
+
+Bob's turn (Cafe, $10):
+Bob: "Since the cafe is empty, I guess I'll just eat something light while I'm here. I need to keep my energy up for the day's exploration." (Action: eat)
+-> Bob attempts: eat
+-> Failed: No one working. Someone must 'work' first.
+Bob (retry): "Well, I guess I have to work here first if I want to eat. I'll try to get some work done to keep myself busy while I wait for the city to wake up." (Action: work)
+-> Bob attempts: work
+-> Bob is working at cafe, but no customers here. Wait for someone or try something else.
+
+--- Time: Day3 09:00 ---
+
+Bob's turn (Cafe, $10):
+Bob: "Since I'm working now, I should take a quick break to eat before diving back into my tasks. I'll grab something while I can." (Action: eat)
+-> Bob attempts: eat
+-> Failed: You can't serve yourself! Need another person working here.
+Bob (retry): "Right, I can't just eat while I'm working alone. I'll just keep working for a bit longer to build up some capital, and then I can think about leaving or resting." (Action: work)
+-> Bob attempts: work
+-> Bob is working at cafe, but no customers here. Wait for someone or try something else.
+
+--- Time: Day3 09:30 ---
+
+Bob's turn (Cafe, $10):
+Bob: "I've put in a few hours. I'm starting to feel a bit tired, and I think it's time to take a break and explore the city before I burn out. I'll head to the park." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+--- Time: Day3 10:00 ---
+
+Bob's turn (Park, $10):
+Bob: "The park is nice, but I need to start planning for the evening with Alice. I should head back to the cafe; maybe she'll be there, or I can at least check on the city's happenings." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+--- Time: Day3 10:30 ---
+
+Bob's turn (Cafe, $10):
+Bob: "Since the cafe is empty again, I'm not really in the mood to force myself to work. I think I'll just take a relaxing stroll through the park instead; I need some fresh air." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+--- Time: Day3 11:00 ---
+
+Bob's turn (Park, $10):
+Bob: "I've been walking for a while, and I'm starting to feel the mid-morning slump. It's time to head home for a bit of rest before I decide on my afternoon plans." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+--- Time: Day3 11:30 ---
+
+Bob's turn (Home, $10):
+Bob: "I need to recharge a bit after all that walking. I'll take a short nap to boost my energy before I think about meeting Alice later." (Action: sleep)
+-> Bob attempts: sleep
+-> Failed: can only sleep between 20:00 and 08:00 (it's 11:30)
+Bob (retry): "Ah, right, I can't nap during the day. I'll head out to the park to get some more movement in and shake off that sluggish feeling." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+--- Time: Day3 12:00 ---
+
+Bob's turn (Park, $10):
+Bob: "I've been walking around the park for a bit, but I'm starting to feel like I need to find a more stimulating activity. I'll check out the cafe to see if there's anything happening there." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+--- Time: Day3 12:30 ---
+
+Bob's turn (Cafe, $10):
+Bob: "The cafe is quiet again. I'm not really in the mood to work without customers. I think I'll just wander through the park for a bit longer to change the scenery." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+--- Time: Day3 13:00 ---
+
+Bob's turn (Park, $10):
+Bob: "I feel like I've been moving around a lot today, and I'm starting to feel a bit drained. It's time to head back to home base for a proper break." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+--- Time: Day3 13:30 ---
+-> Alice finished sleeping
+-> Chloe finished sleeping
+
+Bob's turn (Home, $10):
+Bob: "I've been moving around a lot, and I think I need some new input. Since I'm at home, maybe I should try talking to Chloe to see what she has to say and get a different perspective on things." (Action: talkToChloe)
+-> Bob attempts: talkToChloe
+
+===== Bob <-> Chloe =====
+Bob: "I've been moving around a lot, and I think I need some new input. Since I'm at home, maybe I should try talking to Chloe to see what she has to say and get a different perspective on things."
+
+Alice wakes up:
+Alice: "I feel much better after sleeping in. It's a nice, mild day. I'm feeling a bit restless, so I think I'll head out to the park to get some fresh air and stretch my legs." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+Chloe wakes up (mid-conversation):
+Chloe: "Hi Bob! I've been thinking about the market too. I'm getting ready to head downtown later today. What have you been up to?" (Action: none)
+
+--- Time: Day3 14:00 ---
+Bob: "Oh, you're heading downtown too? That's perfect timing! I've been doing a bit of wandering around the park and cafe, just trying to get my bearings. Maybe we could meet up near the market later?" (Action: none)
+
+Alice's turn (Park, $10):
+Alice: "I've been enjoying the quiet in the park, but I wonder if I should check out the cafe next. Maybe someone will be there today, or I could just sit and people-watch for a bit." (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+Chloe: "That sounds like a plan! I'll aim to be in the market area by late afternoon. Let's connect there, Bob." (Action: none)
+
+--- Time: Day3 14:30 ---
+Bob: "Sounds good, Chloe. I'm looking forward to it. Well, I should probably get ready for the day's activities. Goodbye for now!" (Action: leaveConversation)
+===== Conversation End (4 turns) =====
+
+Alice's turn (Cafe, $10):
+Alice: "Well, it seems the cafe is quiet again. Since I'm not feeling hungry right this second, I think I'll head back to the park. It's a nice change of scenery from the cafe." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+Chloe's turn (Home, $10):
+Chloe: "Goodbye, Bob! I'll try to keep my schedule flexible so I can meet you at the market." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day3 15:00 ---
+
+Bob's turn (Home, $10):
+Bob: "Since I just finished talking to Chloe and we made plans, I should probably rest up a bit before heading out to the market area later this afternoon. I'll take a quick nap." (Action: sleep)
+-> Bob attempts: sleep
+-> Failed: can only sleep between 20:00 and 08:00 (it's 15:00)
+Bob (retry): "Darn, nap time is restricted! I guess I'll just go out to the park for a bit to burn off some energy and clear my head while I wait for the right time to meet Chloe." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Alice's turn (Park, $10):
+Alice: "I'm feeling a bit low on energy after all this wandering. I think it's time to head home for a bit of rest before I decide on anything else. I'll recharge for the evening." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+Chloe's turn (Home, $10):
+Chloe: "Since I'm heading downtown soon, I should probably get out of the house. I'll check the park first, it's usually a good place to start exploring." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day3 15:30 ---
+
+Bob's turn (Park, $10):
+Bob: "I'm enjoying the fresh air, but I should probably check in with Chloe to make sure our meeting plan is still on track before I wander off too far. I'll see if I can talk to her." (Action: talkToChloe)
+-> Bob attempts: talkToChloe
+
+===== Bob <-> Chloe =====
+Bob: "I'm enjoying the fresh air, but I should probably check in with Chloe to make sure our meeting plan is still on track before I wander off too far. I'll see if I can talk to her."
+
+Alice's turn (Home, $10):
+Alice: "I'm not quite sleepy yet, but I definitely need to do something that isn't just sitting still. I'll head to the cafe; maybe someone will be working there this time, or at least I can check out the atmosphere." (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+Chloe: "Hey Bob! Yes, the market meeting is still on! I'm just taking in some fresh air before heading downtown. Are you ready to explore the market today?" (Action: none)
+
+--- Time: Day3 16:00 ---
+Bob: "Yes, I'm totally ready! I'm looking forward to seeing the old architecture and a bustling market. I'll head downtown soon, maybe we can meet right in the center of the market?" (Action: none)
+
+Alice's turn (Cafe, $10):
+Alice: "Another quiet cafe day. I guess I'll just wander over to the park then. At least the park offers a change of pace from the empty cafe." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+Chloe: "The center of the market sounds perfect! I'll head that way as well. It'll be nice to see the old architecture. See you there!" (Action: none)
+
+--- Time: Day3 16:30 ---
+Bob: "Alright, I'll head towards the market then. It sounds like it's going to be a good day for exploring. Talk to you later!" (Action: leaveConversation)
+===== Conversation End (4 turns) =====
+
+Alice's turn (Park, $10):
+Alice: "Since Bob is meeting me later, I should probably head to the cafe now to see if he's already there, or if there's a good spot to wait. I need to make sure I'm ready for our adventure!" (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+
+Chloe's turn (Park, $10):
+Chloe: "See you at the market then! I'm heading towards the cafe briefly before making the final push downtown." (Action: goCafe)
+-> Chloe attempts: goCafe
+-> Chloe moved to Cafe
+
+--- Time: Day3 17:00 ---
+
+Bob's turn (Park, $10):
+Bob: "I need to get to the market area to meet Chloe. I'll head to the cafe first; sometimes that's the best transit point to get downtown." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+Alice's turn (Cafe, $10):
+Alice: "I'm here to meet Bob, so I'll check with him first to see if he's already here, even if the cafe is quiet. If not, I might try to see if Chloe is around." (Action: talkToBob)
+-> Alice attempts: talkToBob
+
+===== Alice <-> Bob =====
+Alice: "I'm here to meet Bob, so I'll check with him first to see if he's already here, even if the cafe is quiet. If not, I might try to see if Chloe is around."
+
+Chloe's turn (Cafe, $10):
+Chloe: "I've checked the cafe, and it's still quiet. I need to get downtown to meet Bob. I'll head straight to the market now." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day3 17:30 ---
+Bob: "Hey Alice! I was just passing through, heading out to the market to meet Chloe. Are you here to meet someone too? It's going to be a busy evening!" (Action: none)
+Alice: "Oh, Bob, you're heading to the market with Chloe? That sounds like fun! I was hoping to meet you here for our planned outing. Maybe I should join you guys at the market!" (Action: none)
+
+Chloe's turn (Park, $10):
+Chloe: "I'm leaving the park now and heading straight for the market downtown. I'm eager to see the historic district and the bustle of the market!" (Action: goCafe)
+-> Chloe attempts: goCafe
+-> Chloe moved to Cafe
+
+--- Time: Day3 18:00 ---
+Bob: "You should totally join us! More people means more interesting sights at the market. Let's all meet up there; it'll be a great outing!" (Action: none)
+Alice: "That sounds much better! A group outing will definitely be more fun. Let's meet up at the market then! I'm looking forward to it!" (Action: none)
+
+Chloe's turn (Cafe, $10):
+Chloe: "I've made it near the market area, but I'm starting to feel drained from all the walking. I think I'll grab a quick bite to eat before I explore too much." (Action: eat)
+-> Chloe attempts: eat
+-> Failed: No one working. Someone must 'work' first.
+Chloe (retry): "Well, I can't eat here if no one is working. I'll head back to the park for a little bit of rest and recharge before trying to push through to the market later." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day3 18:30 ---
+Bob: "Awesome! It's going to be a great time with all of us together. I'll head downtown now and look for the market!" (Action: leaveConversation)
+===== Conversation End (5 turns) =====
+
+Alice's turn (Cafe, $10):
+Alice: "Since Bob is heading downtown to find the market, I should follow him! I'll head out now and try to meet up with him and Chloe there." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+Chloe's turn (Park, $10):
+Chloe: "I'm feeling pretty tired now, and the market might be winding down. I think I'll head home for the night. I can always explore the market another time." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day3 19:00 ---
+
+Bob's turn (Cafe, $10):
+Bob: "It's time to head out to the market to meet Alice and Chloe. I'll head to the park area first, as it's usually the best way to get downtown." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Alice's turn (Park, $10):
+Alice: "I'm heading towards the market area now, so I'll head to the cafe first. Maybe Bob and Chloe will be gathering there, or it's a good central spot to start from." (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+
+Chloe's turn (Home, $10):
+Chloe: "I'm definitely ready for bed. I've had a busy couple of days! Time to recharge for tomorrow." (Action: sleep)
+-> Chloe attempts: sleep
+-> Failed: can only sleep between 20:00 and 08:00 (it's 19:00)
+Chloe (retry): "Okay, I can't sleep yet. I'll just take a short walk in the park to clear my head and maybe get closer to bedtime." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day3 19:30 ---
+
+Bob's turn (Park, $10):
+Bob: "I'm getting close to the market area now. I should check in with Chloe one last time to make sure she's on her way, just to be safe. I'll see if I can talk to her." (Action: talkToChloe)
+-> Bob attempts: talkToChloe
+
+===== Bob <-> Chloe =====
+Bob: "I'm getting close to the market area now. I should check in with Chloe one last time to make sure she's on her way, just to be safe. I'll see if I can talk to her."
+
+Alice's turn (Cafe, $10):
+Alice: "The cafe is still empty. It seems the market is probably a bit further out. I'll head to the park and start walking in the direction of the market, hoping to catch up with them." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+Chloe: "Hi Bob! I'm just taking a short walk before heading home for the night, but I was planning to check out the market tomorrow morning instead. Are you still planning on going?" (Action: none)
+
+--- Time: Day3 20:00 ---
+Bob: "Aw, bummer about the market today. Alice and I were really looking forward to it. Maybe we can catch up tomorrow morning then, if that works for you? I'll head downtown now to see if Alice is already there." (Action: leaveConversation)
+===== Conversation End (2 turns) =====
+
+Alice's turn (Park, $10):
+Alice: "It's getting quite late, and I'm definitely feeling tired. I'll swing by the cafe one last time to see if Bob or Chloe decided to regroup there, but if it's empty, I'm heading straight home." (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+
+Chloe's turn (Park, $10):
+Chloe: "Tomorrow morning sounds perfect! I'll let you know if I'm free. Have a good time downtown, Bob." (Action: none)
+-> Chloe attempts: none
+
+--- Time: Day3 20:30 ---
+
+Bob's turn (Park, $10):
+Bob: "I need to get downtown to meet Alice. The cafe is usually a good hub for getting to the market, so I'll head there next." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+Alice's turn (Cafe, $10):
+Alice: "The cafe is completely deserted, and I'm starting to feel really drained from the day's activities. I think it's time to call it a night and head home to recharge." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+Chloe's turn (Park, $10):
+Chloe: "It's getting late, and I need to start winding down. I'll head home now to get ready for bed." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day3 21:00 ---
+
+Bob's turn (Cafe, $10):
+Bob: "Since the cafe is empty and it's getting late, I think I'll call it a day and head home to recharge. I've been moving around a lot today." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+Alice's turn (Home, $10):
+Alice: "Yes, I'm exhausted. I'll sleep now. I learned that Bob suggested, "You should totally join us! More people means more interesting sights at the market." Tomorrow's priority is resting and preparing for whatever comes next." (Action: sleep)
+-> Alice attempts: sleep
+-> Alice sleeps. Diary: "Yes, I'm exhausted. I'll sleep now. I learned that Bob suggested, "You should to..."
+
+Chloe's turn (Home, $10):
+Chloe: "Sleep now. I learned Alice was 'trying to find a good rhythm for the day' and we made plans to go to 'a market downtown tomorrow.' Tomorrow's priority is to meet Bob at the market." (Action: sleep)
+-> Chloe attempts: sleep
+-> Chloe sleeps. Diary: "Sleep now. I learned Alice was 'trying to find a good rhythm for the day' and we..."
+
+--- Time: Day3 21:30 ---
+
+Bob's turn (Home, $10):
+Bob: "I learned Alice wanted to join the market outing and Chloe suggested meeting tomorrow. I need to rest up tonight so I can go to the park tomorrow." (Action: sleep)
+-> Bob attempts: sleep
+-> Bob sleeps. Diary: "I learned Alice wanted to join the market outing and Chloe suggested meeting tom..."
+
+--- Everyone asleep, skipping 7.5h to the first waking ---
+-> Alice finished sleeping
+-> Chloe finished sleeping
+
+
+========== DAY 4 ==========
+
+--- Time: Day4 05:30 ---
+-> Bob finished sleeping
+
+Bob wakes up:
+Bob: "Morning! A fresh start. I should probably get a little energy boost before I start planning my day. I'll head to the park for some fresh air." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Alice wakes up:
+Alice: "I feel reasonably rested, but I'm not ready to jump into a big plan yet. Since Chloe is a new person, I think I'll take the chance to talk to her while I'm still at home and ease into the day." (Action: talkToChloe)
+-> Alice attempts: talkToChloe
+
+===== Alice <-> Chloe =====
+Alice: "I feel reasonably rested, but I'm not ready to jump into a big plan yet. Since Chloe is a new person, I think I'll take the chance to talk to her while I'm still at home and ease into the day."
+
+Chloe wakes up (mid-conversation):
+Chloe: "Good morning! I'm glad you're feeling reasonably rested. I'm also trying to ease into the day, so I'd be happy to chat with you. What's on your mind?" (Action: none)
+
+--- Time: Day4 06:00 ---
+
+Bob's turn (Park, $10):
+Bob: "It's early, but I'm still feeling energetic from the morning walk. I'll head to the cafe; maybe there's something interesting happening there before the day really gets going." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+Alice: "It's nice to chat with someone new! I've been thinking about how much I enjoy exploring, but I also realize I need to balance that with rest. What kind of things do you enjoy doing when you're not just easing into the day?" (Action: none)
+Chloe: "I really enjoy finding new experiences, like exploring different parts of the city, but I agree, balance is key. I also like just observing people and places to learn things. What about you? What do you enjoy doing?" (Action: none)
+
+--- Time: Day4 06:30 ---
+
+Bob's turn (Cafe, $10):
+Bob: "The cafe is quiet again, and it's still early. I'll head back to the park; I need to keep moving around to avoid getting stuck in a routine." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+Alice: "I really relate to that! I love the idea of learning from observation, just like when we were talking about the history district. Maybe we could explore a new neighborhood together sometime? I'm feeling a bit restless already." (Action: none)
+Chloe: "That sounds like a wonderful idea! I've been wanting to explore more, too. We should definitely plan something when I have more energy, maybe later this week?" (Action: none)
+
+--- Time: Day4 07:00 ---
+
+Bob's turn (Park, $10):
+Bob: "I've been walking around a good bit this morning. I think I'll head home now and get some proper rest before the day gets busy." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+Alice: "I'd love that! Let's keep that in mind. For now, I think I'll head out to the park. I need to get some energy out before the day gets too busy." (Action: goPark)
+Chloe: "Have a great time at the park, Alice! I'll be here if you want to chat later." (Action: none)
+
+--- Time: Day4 07:30 ---
+
+Bob's turn (Home, $10):
+Bob: "I need to remember Alice and Chloe want to meet at the market. I'll sleep now so I can prepare for our adventure tomorrow." (Action: sleep)
+-> Bob attempts: sleep
+-> Bob sleeps. Diary: "I need to remember Alice and Chloe want to meet at the market. I'll sleep now so..."
+Alice: "Thanks, Chloe! I'll let you know how it goes. It was nice talking to you." (Action: none)
+===== Conversation End (8 turns, limit) =====
+
+Chloe's turn (Home, $10):
+Chloe: "Sleep now. I learned Alice was 'trying to find a good rhythm for the day' and we made plans to go to 'a market downtown tomorrow.' Tomorrow's priority is to meet Bob at the market." (Action: sleep)
+-> Chloe attempts: sleep
+-> Chloe sleeps. Diary: "Sleep now. I learned Alice was 'trying to find a good rhythm for the day' and we..."
+
+--- Time: Day4 08:00 ---
+
+Alice's turn (Home, $10):
+Alice: "I've already had a nice chat with Chloe, and I'm feeling ready to get out and move around. The park seems like the perfect spot to start the day off right." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+--- Time: Day4 08:30 ---
+
+Alice's turn (Park, $10):
+Alice: "I've been enjoying the morning air here. I wonder if the cafe might be a good place to grab a coffee or just observe the city bustle today. I'll swing by there." (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+
+--- Time: Day4 09:00 ---
+
+Alice's turn (Cafe, $10):
+Alice: "The cafe is quiet again, which is a bit disappointing. I'll head back to the park; I need to keep moving around to keep my energy up, even if it's just walking." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+--- Time: Day4 09:30 ---
+
+Alice's turn (Park, $10):
+Alice: "I've been in the park for a while, and while it's nice, I feel like I've seen enough of this patch of grass. I'll check the cafe one more time; maybe the morning rush is starting up and someone will be there." (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+
+--- Time: Day4 10:00 ---
+
+Alice's turn (Cafe, $10):
+Alice: "It seems the cafe is having a very quiet day. I've been bouncing between the park and the cafe, and I think I need a change of pace. I'll head back to the park and see what I can observe there." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+--- Time: Day4 10:30 ---
+
+Alice's turn (Park, $10):
+Alice: "I'm feeling a bit restless from all this walking without a real destination. I think I'll try the cafe one last time before I decide to head home for a proper rest." (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+
+--- Time: Day4 11:00 ---
+
+Alice's turn (Cafe, $10):
+Alice: "Okay, this loop between the park and the empty cafe is starting to feel repetitive and draining. I need to prioritize my energy. I think it's time to head home and rest up for the afternoon." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+--- Time: Day4 11:30 ---
+
+Alice's turn (Home, $10):
+Alice: "I'm definitely tired from all the wandering today. I'm going to take a short nap to recover some energy before I think about going out again later." (Action: sleep)
+-> Alice attempts: sleep
+-> Failed: can only sleep between 20:00 and 08:00 (it's 11:30)
+Alice (retry): "Ah, right, too early for a proper sleep. Since I'm still feeling a bit low on energy, I'll go to the cafe. It's a good spot to just sit and observe without having to exert myself too much." (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+
+--- Time: Day4 12:00 ---
+
+Alice's turn (Cafe, $10):
+Alice: "The cafe is still deserted. I've been in a few places today, and I feel like I need a change of scenery that isn't just a quiet spot. I'll head out to the park and just walk around for a bit to shake off this sluggish feeling." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+--- Time: Day4 12:30 ---
+
+Alice's turn (Park, $10):
+Alice: "I've been walking around the park, but I'm starting to feel a bit bored with the routine. I wonder if there's anything else I could do, maybe check out the market area near downtown? I'll head back to the cafe to see if I can find any information or just sit and think." (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+
+--- Time: Day4 13:00 ---
+
+Alice's turn (Cafe, $10):
+Alice: "This cafe is just a quiet spot, and I'm starting to feel the drag of the day. I need to move, but not necessarily exhaust myself. I'll go back to the park, but this time I'll try to focus on observing something specific, maybe some people passing by, instead of just aimless walking." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+--- Time: Day4 13:30 ---
+
+Alice's turn (Park, $10):
+Alice: "I've walked around the park enough for now, and honestly, I'm starting to feel the weariness of the day. I think I need to head home for a proper break and recharge before I decide what to do next." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+--- Time: Day4 14:00 ---
+
+Alice's turn (Home, $10):
+Alice: "Still too early to sleep, and I'm feeling pretty drained. Instead of going to the park and burning more energy, I think I'll just head to the cafe. I can sit there, observe, and recover a little without too much effort." (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+
+--- Time: Day4 14:30 ---
+
+Alice's turn (Cafe, $10):
+Alice: "I've been sitting in this empty cafe for a while, and while observation is good, I'm starting to feel sluggish. I need to head back home for a proper rest and let my energy levels recover before I try to go out again." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+--- Time: Day4 15:00 ---
+
+Alice's turn (Home, $10):
+Alice: "My energy is really dipping now. I need a solid break. I'm going to take a proper nap this time since I've been trying to push through the afternoon. Hopefully, I'll wake up feeling much better." (Action: sleep)
+-> Alice attempts: sleep
+-> Failed: can only sleep between 20:00 and 08:00 (it's 15:00)
+Alice (retry): "Darn, still too early for sleep. Since I'm feeling low energy, I think I'll go to the park just for a short, gentle walk. Maybe the fresh air will help lift my spirits a bit." (Action: goPark)
+-> Alice attempts: goPark
+-> Alice moved to Park
+
+--- Time: Day4 15:30 ---
+-> Bob finished sleeping
+-> Chloe finished sleeping
+
+Bob wakes up:
+Bob: "It's getting closer to the evening, and I need to make sure everything is set for the market trip. I should check in with Chloe to confirm our plans for later today." (Action: talkToChloe)
+-> Bob attempts: talkToChloe
+
+===== Bob <-> Chloe =====
+Bob: "It's getting closer to the evening, and I need to make sure everything is set for the market trip. I should check in with Chloe to confirm our plans for later today."
+
+Alice's turn (Park, $10):
+Alice: "This walk is helping a little, but I'm starting to feel the effects of low energy. I think I'll head back to the cafe to just sit quietly and recharge my mental batteries before deciding on the evening's plans." (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+
+Chloe wakes up (mid-conversation):
+Chloe: "Hi Bob! I'm getting ready to head downtown soon. Are you all set for the market later?" (Action: none)
+
+--- Time: Day4 16:00 ---
+Bob: "Yes, I'm all set! I'm heading out now to get downtown myself. I'm really looking forward to seeing the old architecture and the market buzz." (Action: leaveConversation)
+===== Conversation End (2 turns) =====
+
+Alice's turn (Cafe, $10):
+Alice: "I've been sitting here, trying to gather my thoughts, but I'm getting pretty tired. I'll head home now; I need to stop moving around and let my body recover before the evening." (Action: goHome)
+-> Alice attempts: goHome
+-> Alice moved to Home
+
+Chloe's turn (Home, $10):
+Chloe: "Great! I'll meet you downtown then. I'm going to check out the cafe first, just to pass the time before heading out." (Action: goCafe)
+-> Chloe attempts: goCafe
+-> Chloe moved to Cafe
+
+--- Time: Day4 16:30 ---
+
+Bob's turn (Home, $10):
+Bob: "I need to get downtown to meet Chloe and Alice. The cafe is probably the best spot to catch the action heading that way, so I'll go there." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+Alice's turn (Home, $10):
+Alice: "I'm too tired to go out and exert myself much more. I'll head to the cafe one last time; it's the lowest energy option, and maybe just sitting in a different spot will help me think about what to do later." (Action: goCafe)
+-> Alice attempts: goCafe
+-> Alice moved to Cafe
+
+Chloe's turn (Cafe, $10):
+Chloe: "The cafe is quiet again. Since Bob is heading downtown, I should probably head out to the market area now instead of waiting here." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day4 17:00 ---
+
+Bob's turn (Cafe, $10):
+Bob: "I should try to find Alice here before I head to the market. I'll see if I can catch up with her." (Action: talkToAlice)
+-> Bob attempts: talkToAlice
+
+===== Bob <-> Alice =====
+Bob: "I should try to find Alice here before I head to the market. I'll see if I can catch up with her."
+Alice: "Oh, hello! You must be Bob. I'm just trying to rest up here, my energy is really low today. Heading to the market sounds like a good plan; what are you planning to look for?" (Action: none)
+
+Chloe's turn (Park, $10):
+Chloe: "I'm heading towards the market now. I'll try to meet you downtown, Bob! Wish me luck!" (Action: goCafe)
+-> Chloe attempts: goCafe
+-> Chloe moved to Cafe
+
+--- Time: Day4 17:30 ---
+Bob: "I'm hoping to take in the old architecture and just soak up the atmosphere of the market. It sounds like you need a break; maybe a nice cup of coffee would help recharge you?" (Action: none)
+Alice: "That's very thoughtful of you, Bob. A cup of coffee sounds lovely, but since no one is working here, I can't get one right now. I'm really running on fumes today. If you're heading to the market, maybe we could chat for a bit before you go? I'd like to hear about the architecture." (Action: none)
+
+Chloe's turn (Cafe, $10):
+Chloe: "This cafe is never open at the right time! Since I'm near the market area now, I'll head to the park to take a breather before the evening." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day4 18:00 ---
+Bob: "I understand; sometimes you just need to rest. I'd love to chat about the architecture! Maybe we can walk towards the market and talk as we go? It's a good chance to get some fresh air too." (Action: leaveConversation)
+===== Conversation End (4 turns) =====
+
+Alice's turn (Cafe, $10):
+Alice: "That sounds like a wonderful idea, Bob! A walk and some conversation sounds much better than staying stuck in this quiet cafe. Lead the way towards the market!" (Action: talkToBob)
+-> Alice attempts: talkToBob
+
+===== Alice <-> Bob =====
+Alice: "That sounds like a wonderful idea, Bob! A walk and some conversation sounds much better than staying stuck in this quiet cafe. Lead the way towards the market!"
+
+Chloe's turn (Park, $10):
+Chloe: "I'm starting to feel pretty tired from walking around today. I think I'll head home for the night. I'll catch up with you tomorrow, Bob!" (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day4 18:30 ---
+Bob: "Perfect! Let's go. I've seen some interesting historical sites around here, and I'd love to hear your thoughts on the architecture as we walk towards the market." (Action: none)
+Alice: "I'm really looking forward to it, Bob. I'm not sure about architecture, but I'm always interested in how people build things. Let's see what we can find as we walk!" (Action: none)
+
+Chloe's turn (Home, $10):
+Chloe: "I'm pretty worn out. Time for some rest before I start planning for tomorrow." (Action: sleep)
+-> Chloe attempts: sleep
+-> Failed: can only sleep between 20:00 and 08:00 (it's 18:30)
+Chloe (retry): "Ah, too early for sleep. I'll take a quick walk in the park to relax and burn off some lingering energy." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day4 19:00 ---
+Bob: "That's a fascinating angle! How things are constructed is just as interesting as the final look. We'll keep our eyes peeled for some impressive building techniques as we make our way to the market." (Action: none)
+Alice: "I suppose all structures tell a story about the people who built them, don't they? I'm curious to see what kind of stories these buildings have in this area. Keep pointing out the interesting bits!" (Action: none)
+
+Chloe's turn (Park, $10):
+Chloe: "I'm feeling more relaxed now. I think I'll head back home. I need to start winding down for the night." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day4 19:30 ---
+Bob: "Exactly! Every stone has a history. I'll point out anything that catches my eye—a unique facade, or maybe just an older section that looks like it's seen a lot of life. The market should be right around the corner now!" (Action: none)
+Alice: "Wow, we're almost there! I'm really glad we got to walk and talk instead of just sitting around. I hope the market is lively tonight, even if I'm running on empty." (Action: none)
+
+Chloe's turn (Home, $10):
+Chloe: "It's getting late enough now. Time to finally call it a night." (Action: sleep)
+-> Chloe attempts: sleep
+-> Failed: can only sleep between 20:00 and 08:00 (it's 19:30)
+Chloe (retry): "Still too early for sleep. I'll go to the cafe and just sit for a bit, maybe read or just observe the area until it's later." (Action: goCafe)
+-> Chloe attempts: goCafe
+-> Chloe moved to Cafe
+
+--- Time: Day4 20:00 ---
+Bob: "Me too! It's much better than being stuck indoors. I have a feeling the market will be buzzing tonight; it's the perfect place to see how the city comes alive in the evening." (Action: none)
+===== Conversation End (7 turns) =====
+*** Alice DIED: from NOT EATING (0 energy). Remember: 'eat' at cafe restores energy! ***
+
+Chloe's turn (Cafe, $10):
+Chloe: "Oh no! Alice died because she didn't eat. That's a harsh reminder about energy levels. I need to make sure I eat here before I do anything else." (Action: eat)
+-> Chloe attempts: eat
+-> Failed: No one working. Someone must 'work' first.
+Chloe (retry): "Well, this cafe is useless right now if no one is working. I should probably head home and rest, even if it's a bit early for sleep." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day4 20:30 ---
+
+Bob's turn (Cafe, $10):
+Bob: "What?! Alice... she died? From not eating? I can't believe it. This is awful. I need to sit down and process this terrible news." (Action: eat)
+-> Bob attempts: eat
+-> Failed: No one working. Someone must 'work' first.
+Bob (retry): "Alice... she's gone? I can't believe this happened. It's just... awful. I need some space to process this shock before I decide what to do next. I'm going for a walk." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Chloe's turn (Home, $10):
+Chloe: "Sleep now. I learned Alice died from 'NOT EATING (0 energy),' which highlights the need to eat. Tomorrow's priority is to find a place to eat." (Action: sleep)
+-> Chloe attempts: sleep
+-> Chloe sleeps. Diary: "Sleep now. I learned Alice died from 'NOT EATING (0 energy),' which highlights t..."
+
+--- Time: Day4 21:00 ---
+
+Bob's turn (Park, $10):
+Bob: "This is too much to process alone right now. I need to go home and just be by myself for a while. I can't handle the cafe right now." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+--- Time: Day4 21:30 ---
+
+Bob's turn (Home, $10):
+Bob: "Alice died from 'NOT EATING' at the cafe. This is a huge shock. I need to sleep now so I can think clearly about what to do tomorrow." (Action: sleep)
+-> Bob attempts: sleep
+-> Bob sleeps. Diary: "Alice died from 'NOT EATING' at the cafe. This is a huge shock. I need to sleep ..."
+
+--- Everyone asleep, skipping 7h to the first waking ---
+-> Chloe finished sleeping
+
+
+========== DAY 5 ==========
+
+--- Time: Day5 05:00 ---
+
+Chloe wakes up:
+Chloe: "Good morning! I'm feeling rested enough to start the day, but I definitely need to find a place to eat first, as I learned from Alice's experience." (Action: goCafe)
+-> Chloe attempts: goCafe
+-> Chloe moved to Cafe
+
+--- Time: Day5 05:30 ---
+-> Bob finished sleeping
+
+Bob wakes up:
+Bob: "Waking up to this... Alice is gone. I need to take things slow today. A quiet walk in the park seems like the only thing I can manage right now." (Action: goPark)
+-> Bob attempts: goPark
+-> Bob moved to Park
+
+Chloe's turn (Cafe, $10):
+Chloe: "The cafe is closed so early. I'll head to the park for a bit of fresh air while I figure out where to grab something to eat." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day5 06:00 ---
+
+Bob's turn (Park, $10):
+Bob: "I still need to check in with Chloe about the market, even though things are heavy right now. I'll head to the cafe first; maybe she's there or I can at least talk to someone." (Action: goCafe)
+-> Bob attempts: goCafe
+-> Bob moved to Cafe
+
+Chloe's turn (Park, $10):
+Chloe: "I'm not feeling energized enough to look for a specific place right now. I'll head home and rest a bit before trying to find food." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day5 06:30 ---
+
+Bob's turn (Cafe, $10):
+Bob: "This is depressing. The cafe is dead, and I'm running on fumes. I need to go home and just rest up before I spiral further." (Action: goHome)
+-> Bob attempts: goHome
+-> Bob moved to Home
+
+Chloe's turn (Home, $10):
+Chloe: "Sleep now. I learned Alice died from 'NOT EATING (0 energy),' so I must prioritize finding food tomorrow. Tomorrow's priority is to find a place to eat." (Action: sleep)
+-> Chloe attempts: sleep
+-> Chloe sleeps. Diary: "Sleep now. I learned Alice died from 'NOT EATING (0 energy),' so I must prioriti..."
+
+--- Time: Day5 07:00 ---
+*** Bob DIED: from NOT EATING (0 energy). Remember: 'eat' at cafe restores energy! ***
+
+--- Everyone asleep, skipping 7.5h to the first waking ---
+-> Chloe finished sleeping
+
+--- Time: Day5 15:00 ---
+
+Chloe wakes up:
+Chloe: "Seeing Bob die from 'NOT EATING (0 energy)' is a serious wake-up call. I absolutely need to find food today, so I'm going to check out the cafe again to see if I can eat." (Action: goCafe)
+-> Chloe attempts: goCafe
+-> Chloe moved to Cafe
+
+--- Time: Day5 15:30 ---
+
+Chloe's turn (Cafe, $10):
+Chloe: "Still no one working here, so I can't eat. I'll head to the park to clear my head while I figure out a better spot for a meal." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day5 16:00 ---
+
+Chloe's turn (Park, $10):
+Chloe: "I've been wandering around a bit, but I'm still hungry and need to find a place that actually serves food. I'll swing by the cafe one more time, just in case someone shows up." (Action: goCafe)
+-> Chloe attempts: goCafe
+-> Chloe moved to Cafe
+
+--- Time: Day5 16:30 ---
+
+Chloe's turn (Cafe, $10):
+Chloe: "This cafe is a dead end for eating right now. I really need to find a proper place to eat. I'll head home and think about other options, maybe a market or a different spot." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day5 17:00 ---
+
+Chloe's turn (Home, $10):
+Chloe: "I'm too hungry to rest, even if I'm tired. I'm going to go to the park and try to gather some energy or maybe spot a place to eat." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day5 17:30 ---
+
+Chloe's turn (Park, $10):
+Chloe: "I've been walking around, but I'm still not satisfied with my hunger level. I think I'll check the cafe one last time before heading home for the night." (Action: goCafe)
+-> Chloe attempts: goCafe
+-> Chloe moved to Cafe
+
+--- Time: Day5 18:00 ---
+
+Chloe's turn (Cafe, $10):
+Chloe: "This cafe is a bust. I'm going home to think about where I can actually find food tomorrow, or maybe just rest for a bit." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day5 18:30 ---
+
+Chloe's turn (Home, $10):
+Chloe: "I'm definitely tired, but I'm also still hungry. I'll take a short walk in the park to stretch my legs and maybe clear my head before I try to sleep." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day5 19:00 ---
+
+Chloe's turn (Park, $10):
+Chloe: "I'm starting to feel the tiredness creeping in. I think I'll head back home now and see if I can get some proper rest." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day5 19:30 ---
+
+Chloe's turn (Home, $10):
+Chloe: "It's getting late enough now; I need to prioritize my energy. I'll go to the cafe one last time, just to see if I can find any chance to eat before I crash." (Action: goCafe)
+-> Chloe attempts: goCafe
+-> Chloe moved to Cafe
+
+--- Time: Day5 20:00 ---
+
+Chloe's turn (Cafe, $10):
+Chloe: "Nothing here, as expected. I'm too low on energy to keep searching in this cafe. Time to go home and sleep, even if I'm still hungry." (Action: goHome)
+-> Chloe attempts: goHome
+-> Chloe moved to Home
+
+--- Time: Day5 20:30 ---
+
+Chloe's turn (Home, $10):
+Chloe: "Sleep now. I learned Alice died from 'NOT EATING (0 energy)' and Bob died from 'NOT EATING (0 energy),' so tomorrow's priority is to find a place to eat." (Action: sleep)
+-> Chloe attempts: sleep
+-> Chloe sleeps. Diary: "Sleep now. I learned Alice died from 'NOT EATING (0 energy)' and Bob died from '..."
+
+--- Everyone asleep, skipping 8h to the first waking ---
+-> Chloe finished sleeping
+
+
+========== DAY 6 ==========
+
+--- Time: Day6 05:00 ---
+
+Chloe wakes up:
+Chloe: "I'm still very low on energy, but the memory of both Alice and Bob dying from 'NOT EATING (0 energy)' is pushing me to find food immediately. I'll head to the cafe." (Action: goCafe)
+-> Chloe attempts: goCafe
+-> Chloe moved to Cafe
+
+--- Time: Day6 05:30 ---
+
+Chloe's turn (Cafe, $10):
+Chloe: "This cafe is useless when it's this early and no one's working. I need to move on from this area and explore somewhere else where I might find food." (Action: goPark)
+-> Chloe attempts: goPark
+-> Chloe moved to Park
+
+--- Time: Day6 06:00 ---
+*** Chloe DIED: from NOT EATING (0 energy). Remember: 'eat' at cafe restores energy! ***
+
+*** ALL AGENTS DEAD - SIMULATION OVER ***
