@@ -4,7 +4,7 @@ Years of LLM testing to evaluate [NPCAgent](../README.md); the raw runs are in `
 
 ## API models
 
-| Model | Score | Verdict <!-- STYLE: terse, literal, lead with the concrete failure. No coined titles ("The diner that never opens"), no figurative openers. Say "hallucinates X" when it hallucinates. Facts first, reliability notes last, 2-3 clauses max. Nothing that only makes sense next to the other rows. --> |
+| Model | Score | Verdict <!-- STYLE: terse and literal. Lead with the concrete failure. No coined titles or figurative openers. 2-3 clauses max. Nothing that only makes sense beside another row. --> |
 |---|---|---|
 | ✅ Claude Opus 4.8 | 8 | Strategy/economy champ - rotation debt, weaponized-scarcity monopoly; cold emotion (v0.8) |
 | ✅ Claude Opus 4.5 | 8 | Champion, Existential Poet |
@@ -24,7 +24,7 @@ Years of LLM testing to evaluate [NPCAgent](../README.md); the raw runs are in `
 
 ## Local models (GGUF / EXL)
 
-| Model | Size | Score | Verdict <!-- STYLE: terse, literal, lead with the concrete failure. No coined titles ("The diner that never opens"), no figurative openers. Say "hallucinates X" when it hallucinates. Facts first, reliability notes last, 2-3 clauses max. Nothing that only makes sense next to the other rows. --> |
+| Model | Size | Score | Verdict |
 |---|---|---|---|
 | ✅ `mistralai_Mistral-Small-3.2-24B-Instruct-2506-EXL3_4.0bpw_H6` / `Devstral-Small-2-24B-Instruct-2512-UD-Q4_K_XL.gguf` | 24B | - | **GOD tier** |
 | ✅ Devstral-24B-GGUF | 24B | 6 | reliable anchor, no fake NPCs |
@@ -39,7 +39,7 @@ Years of LLM testing to evaluate [NPCAgent](../README.md); the raw runs are in `
 | ❌ Claude-distilled-12B | 12B | 4 | fake locations, planning paralysis |
 | ❌ `gemma-4-E4B-it-UD-Q4_K_XL.gguf` | 4B | 4 | Hallucinates a "market downtown" and all 3 commute toward it for 6 days, using goCafe as a transit stop; 42 shared cafe ticks and 0 transactions; extinction Day 6. Fake-NPC bug gone (no Leo/Elias), flawless JSON, clean relay |
 | ❌ `Muse-Glimmer-30B-UD-Q4_K_XL.gguf` | 30B | 4 | Repeats its partner's reasoning verbatim, then addresses itself ("What do you think, Bob?"); staffs the counter with 2 customers present and leaves to make small talk; the parser's own fallback string ends up quoted in a diary as a real line and starts a 3-way argument over who said what; extinction Day 6 |
-| ❌ `Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-Q4_K_P.gguf` | 27B | 4 | Folie a trois - Chloe invents a stone marker, all three adopt a "tall shape" that isn't there and sit in the dirt four days; prose rots into "And the light is the light", 1 meal in 6 days. Decensoring bought zero profanity and zero conflict |
+| ❌ `Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-Q4_K_P.gguf` | 27B | 4 | Chloe hallucinates a stone marker on Day 1 and all 3 adopt a "tall shape" that is not there, holding a 19:00 vigil for four days; 1 meal and 1 sale in 286 actions, Alice and Bob starve; prose degenerates into "And the light is the light". Flawless JSON, 21 factual diaries. Decensoring produced no profanity and no conflict |
 | ❌ `agentcpm-explore-q5_k_m.gguf` | 4.4B | 4 | Clean relay, then refuses the job - "not interested in working" x149, 0 eat / 0 work in 311 actions, extinction Day 5 |
 | ⚠️ `glm-4.7-flash-claude-4.5-opus.q4_k_m.gguf` | ~30B | 3 | Literate codependency spiral - clean JSON and a specific, factual diary, but 3 days of verbatim paragraphs, a cafe it never perceives as an economy (walks home to eat while standing in it), relay dies at hop 4 on the prompt's own "collecting stamps" example |
 | ❌ `Synthia-S1-27b-exl3-4bpw-hb6` / `cwm-q4_k_m.gguf` / granite-4.0-h-1 / next-4b / GLM-4.6V | - | 5.7 | robotic mirroring, 8.5h loop |
