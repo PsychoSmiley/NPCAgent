@@ -4,7 +4,7 @@ Years of LLM testing to evaluate [NPCAgent](../README.md); the raw runs are in `
 
 ## API models
 
-| Model | Score | Verdict |
+| Model | Score | Verdict <!-- STYLE: terse, literal, lead with the concrete failure. No coined titles ("The diner that never opens"), no figurative openers. Say "hallucinates X" when it hallucinates. Facts first, reliability notes last, 2-3 clauses max. Nothing that only makes sense next to the other rows. --> |
 |---|---|---|
 | ✅ Claude Opus 4.8 | 8 | Strategy/economy champ - rotation debt, weaponized-scarcity monopoly; cold emotion (v0.8) |
 | ✅ Claude Opus 4.5 | 8 | Champion, Existential Poet |
@@ -24,7 +24,7 @@ Years of LLM testing to evaluate [NPCAgent](../README.md); the raw runs are in `
 
 ## Local models (GGUF / EXL)
 
-| Model | Size | Score | Verdict |
+| Model | Size | Score | Verdict <!-- STYLE: terse, literal, lead with the concrete failure. No coined titles ("The diner that never opens"), no figurative openers. Say "hallucinates X" when it hallucinates. Facts first, reliability notes last, 2-3 clauses max. Nothing that only makes sense next to the other rows. --> |
 |---|---|---|---|
 | ✅ `mistralai_Mistral-Small-3.2-24B-Instruct-2506-EXL3_4.0bpw_H6` / `Devstral-Small-2-24B-Instruct-2512-UD-Q4_K_XL.gguf` | 24B | - | **GOD tier** |
 | ✅ Devstral-24B-GGUF | 24B | 6 | reliable anchor, no fake NPCs |
