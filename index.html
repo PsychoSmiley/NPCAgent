@@ -297,6 +297,13 @@
   }
   const FREE_UP    = atob("aHR0cHM6Ly9vcGVuY29kZS5haS96ZW4vdjE="); // upstream hidden from source readers
   const FREE_MAXTOK = 4096;
+  // Last stop before the 2 GB local download: an OpenAI-compatible gateway that fans a request
+  // out across a dozen free providers and answers with whichever one is not rate-limited right
+  // now. Sending no `model` lets it choose - it prefers DeepSeek, then the largest model alive.
+  // It sends CORS headers, so this one is a plain fetch: no relay, nothing to hop.
+  const GW_UP  = "https://omni-gateway.omni-gw.workers.dev/v1/chat/completions";
+  const GW_KEY = "demo";
+  const AUTO_ID = "__auto__";   // the "best effort" row at the bottom of the model picker
 
   // opt-in run-log collection: a Cloudflare Worker (SQLite Durable Object) that only appends. The submit key is
   // low-value (append-only; list/export are gated by a server secret never shipped here), base64 to dodge scrapers.
@@ -1005,13 +1012,48 @@
   let lcFails = 0, localDead = false;
   // after 5 consecutive failures (HTTP error OR network reject), drop to local GGUF. Returns the wllama
   // completion to satisfy the in-flight turn, "" if the local load failed, or null if not yet at the threshold.
+  // Ask the multi-provider gateway to pick for us. Omitting `model` is deliberate: it ranks
+  // whatever is alive right now (DeepSeek first, then by parameter count) instead of us naming
+  // an id that may be rate-limited. Returns null if it could not answer, so callers keep going.
+  async function gatewayComplete(bodyJson, model){
+    try{
+      const b = JSON.parse(bodyJson);
+      if(model) b.model = model; else delete b.model;
+      delete b.reasoning;
+      b.max_tokens = Math.max(b.max_tokens||0, FREE_MAXTOK);
+      const r = await fetch(GW_UP, {
+        method:"POST",
+        headers:{ "Content-Type":"application/json", "Authorization":"Bearer "+GW_KEY },
+        body: JSON.stringify(b), signal: AbortSignal.timeout(120000)
+      });
+      if(!r.ok){
+        const detail = apiErrDetail(await r.text());
+        writeErr("\r\n[gateway] "+r.status+(detail ? ": "+detail : "")+"\r\n");
+        return null;
+      }
+      const j = await r.json();
+      const served = j.omni?.model || j.model || "";
+      if(served) noteAutoModel(served);          // show it on the picker's "best effort" row
+      const msg = j.choices?.[0]?.message ?? {};
+      return msg.content || msg.reasoning_content || msg.reasoning || "";
+    }catch(e){
+      writeErr("\r\n[gateway] "+(e?.message||e)+"\r\n");
+      return null;
+    }
+  }
+
   async function freeFallback(bodyJson){
     if(lcFails < 5) return null;
-    if(localDead) return "";   // already tried local and it failed - keep retrying the relay each turn, but never re-download the 2 GB model
     // a LIVE check, not a latch: it also catches a switch already in flight (the user parked on a device-code sign-in
     // still shows chatgpt here), and it re-arms by itself the moment they come back to free - with the model cached
     if($("engine").value !== "free") return "";
-    writeErr("\r\n[!] Free tier failed "+lcFails+" times - switching to local GGUF.\r\n");
+    // Every free id has now refused. Try the gateway before committing the user to a 2 GB
+    // download - it fronts a dozen other providers and is usually still holding something.
+    write("\r\n\x1b[2m[free] all models refused - asking the gateway for whatever is alive\x1b[0m\r\n");
+    const via = await gatewayComplete(bodyJson, null);
+    if(via !== null && via !== "") return via;
+    if(localDead) return "";   // already tried local and it failed - keep retrying the relay each turn, but never re-download the 2 GB model
+    writeErr("\r\n[!] Free tier and gateway both failed "+lcFails+" times - switching to local GGUF.\r\n");
     const ok = await fallbackToLocal();
     if(!ok){ localDead = true; return ""; }
     if(ok !== true) return "";   // superseded: the engine the user picked mid-download owns this run
@@ -1021,10 +1063,16 @@
   }
   // Free tier only. The endpoint and ChatGPT bridges own their own model and must never be rotated out from under
   // the user - this walks the FREE picker's own list, which already excludes contributor-gated ids.
-  const MODEL_SWAPS = 4;
+  // Every model gets a turn before the tier is declared dead: stopping at an arbitrary 4 left working
+  // ids further down the list untried, and a busy upstream tends to refuse several in a row.
+  const modelSwapBudget = () => {
+    const sel = $("modelSelect");
+    const n = sel ? [...sel.options].map(o => o.value).filter(v => v && v !== AUTO_ID).length : 0;
+    return Math.max(1, n - 1);   // every id except the one that already failed
+  };
   function nextFreeModel(){
     const sel = $("modelSelect");
-    const ids = sel ? [...sel.options].map(o => o.value).filter(Boolean) : [];
+    const ids = sel ? [...sel.options].map(o => o.value).filter(v => v && v !== AUTO_ID) : [];
     if(ids.length < 2) return null;
     const nx = ids[(ids.indexOf(sel.value) + 1) % ids.length];
     if(nx === sel.value) return null;
@@ -1038,6 +1086,14 @@
       try{
         const b = JSON.parse(bodyJson);
         const liveModel = $("modelSelect")?.value;
+        // "best effort" is not an upstream id: it means go straight to the gateway and let it choose.
+        if(liveModel === AUTO_ID){
+          const out = await gatewayComplete(bodyJson, null);
+          if(out !== null){ lcFails = 0; return out; }
+          lcFails++;
+          const fb = await freeFallback(bodyJson);
+          return fb !== null ? fb : "";
+        }
         if(liveModel) b.model = liveModel;
         delete b.reasoning;                       // free models don't take it; a stale MODE=="endpoint" after a mid-run switch would otherwise leak it in
         b.max_tokens = Math.max(b.max_tokens||0, FREE_MAXTOK);   // reasoning models eat small caps (diary's 1000) as <think> -> empty; floor it here, not in Python, so it survives a mid-run switch
@@ -1056,7 +1112,7 @@
             if(hops++ < RELAY_HOPS && hopRelay()) continue;   // dead relay: the next one may be alive
             throw e;
           }
-          if(r.status === 429 && swaps < MODEL_SWAPS){
+          if(r.status === 429 && swaps < modelSwapBudget()){
             const nm = nextFreeModel();
             if(nm){ swaps++; b.model = nm; bodyJson = JSON.stringify(b);
                     write("\r\n\x1b[2m[free] "+nm+" (previous model was busy)\x1b[0m\r\n"); continue; }
@@ -1439,11 +1495,27 @@
     try{ const a = JSON.parse(localStorage.getItem(FREE_CATKEY) || "[]");
          return Array.isArray(a) ? a.filter(x => typeof x === "string" && x).slice(0, 40) : []; }catch(_){ return []; }
   };
+  // The gateway row always sits last and never disappears, so there is a working choice even when
+  // the probe returns nothing. Its label carries whichever model actually answered last.
+  let autoModelLabel = "";
+  function autoOptionText(){ return "best effort" + (autoModelLabel ? ": " + autoModelLabel : ""); }
+  function noteAutoModel(id){
+    autoModelLabel = String(id || "").slice(0, 40);
+    const o = $("modelSelect")?.querySelector('option[value="' + AUTO_ID + '"]');
+    if(o) o.textContent = autoOptionText();
+  }
+  const appendAutoOption = sel => {
+    const o = document.createElement("option");
+    o.value = AUTO_ID; o.textContent = autoOptionText();
+    o.title = "Let the gateway choose across every free provider it can still reach";
+    sel.appendChild(o);
+  };
   const freeFill = (sel, ids) => {
     sel.innerHTML = "";
     ids.forEach(id => { const o = document.createElement("option"); o.value = id; o.textContent = id; sel.appendChild(o); });
-    const wish = sel.dataset.wish, kept = wish && ids.includes(wish);
-    sel.value = kept ? wish : ids[0]; delete sel.dataset.wish; sel.dataset.tier = "free";
+    appendAutoOption(sel);
+    const wish = sel.dataset.wish, kept = wish && (ids.includes(wish) || wish === AUTO_ID);
+    sel.value = kept ? wish : (ids[0] || AUTO_ID); delete sel.dataset.wish; sel.dataset.tier = "free";
     return kept;
   };
   let freeProbe = null, freeGen = 0;
@@ -1467,7 +1539,7 @@
           const kept = freeFill(sel, ids);   // a resumed session keeps its saved model, once
           if(!kept && running) noteModel(sel.value);   // the saved id rotated out of the catalog: a programmatic .value fires no `change`, so without this the bridge sends ids[0] while curModel, cfg and the archive all name a model that answered nothing
         }
-        else{ sel.innerHTML = "<option value=''>none found</option>"; freeProbe = null; }
+        else{ freeFill(sel, []); freeProbe = null; }   // no ids, but the gateway row still gives a usable choice
         return ids;
       }catch(e){
         // The relay can be perfectly healthy while ONE destination is refused, so reuse the last good list and keep the
@@ -1475,8 +1547,7 @@
         // terminal is what gets archived and shared.
         const kept = freeCached();
         if(mine()){
-          if(kept.length) freeFill(sel, kept);
-          else sel.innerHTML = "<option value=''>probe failed</option>";
+          freeFill(sel, kept);   // even with an empty cache this leaves the gateway row selectable
           const why = String(e?.message || e).replace(/https?:\/\/\S+/g, "upstream").slice(0, 90);
           writeErr("\r\n[free] model list unavailable (" + why + ") - "
                    + (kept.length ? "using the last list that worked" : "no cached list yet")
