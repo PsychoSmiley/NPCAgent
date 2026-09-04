@@ -305,6 +305,18 @@
   const GW_KEY = "demo";
   const AUTO_ID = "__auto__";   // the "best effort" row at the bottom of the model picker
 
+  // duck.ai: no key, no cookies, but every call carries a proof-of-work header the page has to
+  // mint from a challenge the server ships as obfuscated JS. The mint needs `navigator` and
+  // crypto.subtle, so it only works in a real tab - and the UA it hashes must be the same UA the
+  // request goes out with, or the server answers 418. Cross-origin, so libcurl carries it.
+  // Kept OUT of the zen rotation on purpose: it is a separate upstream with its own failure mode.
+  const DUCK_UP = "https://duck.ai";
+  const DUCK_PREFIX = "duck:";
+  // Verified against /duckchat/v1/models on 2026-09-04; ids there are exact, a wrong one 400s.
+  const DUCK_MODELS = ["gpt-5.6-luna", "claude-opus-4-8", "claude-sonnet-4-6", "claude-haiku-4-5",
+                       "gpt-5.4", "gpt-5.4-mini", "mistral-small-2603", "tinfoil/gpt-oss-120b"];
+  let duckHash = null;   // one mint serves several turns; each reply hands back the next one
+
   // opt-in run-log collection: a Cloudflare Worker (SQLite Durable Object) that only appends. The submit key is
   // low-value (append-only; list/export are gated by a server secret never shipped here), base64 to dodge scrapers.
   const SHARE_BASE  = atob("aHR0cHM6Ly9ucGNhZ2VudC1sb2dzLmVkZ2UtcmVsYXktOXgud29ya2Vycy5kZXY=");
@@ -1012,6 +1024,76 @@
   let lcFails = 0, localDead = false;
   // after 5 consecutive failures (HTTP error OR network reject), drop to local GGUF. Returns the wllama
   // completion to satisfy the in-flight turn, "" if the local load failed, or null if not yet at the threshold.
+  /* ------------------------------------------------------------------ duck.ai */
+
+  const b64sha = async s => btoa(String.fromCharCode(...new Uint8Array(
+    await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s)))));
+
+  // Fetch the challenge and answer it. The server sends base64'd JS whose return value names
+  // which strings to hash; client_hashes[0] is the UA, which is why the UA below and the one
+  // sent with the chat call must be byte-identical.
+  async function duckMint(){
+    const res = await libcurl.fetch(DUCK_UP + "/duckchat/v1/status", {
+      headers: { "x-vqd-accept": "1", "User-Agent": navigator.userAgent, "Referer": DUCK_UP + "/" },
+      signal: AbortSignal.timeout(30000)
+    });
+    const raw = res.headers.get("x-vqd-hash-1");
+    if(!raw) throw new Error("no challenge header (HTTP " + res.status + ")");
+    const o = await eval(atob(raw));                       // the server's own challenge, run in its own page's shape
+    return btoa(JSON.stringify({
+      server_hashes: o.server_hashes,
+      client_hashes: await Promise.all(o.client_hashes.map(b64sha)),
+      signals: {},
+      meta: { ...o.meta, origin: DUCK_UP, stack: "Error\nat E (" + DUCK_UP + "/x.js:1:1)", duration: "20" }
+    }));
+  }
+
+  // duck.ai takes a shape of its own: user turns carry content[], assistant turns carry an empty
+  // content plus parts[], there is no system role, and both flags are mandatory. Deltas come back
+  // as `.message`, not OpenAI's choices[].delta.
+  function duckPayload(messages, model){
+    const out = [];
+    let carry = "";
+    for(const m of messages || []){
+      const text = typeof m.content === "string" ? m.content : "";
+      if(m.role === "system"){ carry += (carry ? "\n\n" : "") + text; continue; }   // no system role upstream: fold it forward
+      if(m.role === "assistant") out.push({ role:"assistant", content:"", parts:[{ type:"text", text }] });
+      else out.push({ role:"user", content:[{ type:"text", text: (carry ? carry + "\n\n" : "") + text }] }), carry = "";
+    }
+    if(carry) out.push({ role:"user", content:[{ type:"text", text: carry }] });
+    return { model, messages: out, canUseTools: false, reasoningEffort: "none" };
+  }
+
+  async function duckComplete(bodyJson, model){
+    const b = JSON.parse(bodyJson);
+    for(let attempt = 0; attempt < 2; attempt++){
+      if(!duckHash) duckHash = await duckMint();
+      const r = await libcurl.fetch(DUCK_UP + "/duckchat/v1/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json", "Accept": "text/event-stream",
+          "Origin": DUCK_UP, "Referer": DUCK_UP + "/",
+          "User-Agent": navigator.userAgent, "x-vqd-hash-1": duckHash
+        },
+        body: JSON.stringify(duckPayload(b.messages, model)),
+        signal: AbortSignal.timeout(120000)
+      });
+      const next = r.headers.get("x-vqd-hash-1");
+      if(next) duckHash = next;                            // each reply hands back the token for the next turn
+      if(r.status === 418 || r.status === 429){ duckHash = null; continue; }   // stale or throttled: re-mint once
+      if(!r.ok) throw new Error("HTTP " + r.status);
+      let text = "";
+      for(const line of (await r.text()).split("\n")){
+        if(!line.startsWith("data: ")) continue;
+        const payload = line.slice(6).trim();
+        if(payload === "[DONE]" || payload.startsWith("[CHAT_TITLE")) continue;
+        try{ text += JSON.parse(payload).message || ""; }catch(_){ }
+      }
+      return text;
+    }
+    throw new Error("challenge rejected twice");
+  }
+
   // Ask the multi-provider gateway to pick for us. Omitting `model` is deliberate: it ranks
   // whatever is alive right now (DeepSeek first, then by parameter count) instead of us naming
   // an id that may be rate-limited. Returns null if it could not answer, so callers keep going.
@@ -1067,7 +1149,7 @@
   // ids further down the list untried, and a busy upstream tends to refuse several in a row.
   const modelSwapBudget = () => {
     const sel = $("modelSelect");
-    const n = sel ? [...sel.options].map(o => o.value).filter(v => v && v !== AUTO_ID).length : 0;
+    const n = sel ? [...sel.options].map(o => o.value).filter(v => v && v !== AUTO_ID && !v.startsWith(DUCK_PREFIX)).length : 0;
     return Math.max(1, n - 1);   // every id except the one that already failed
   };
   // A refusal that names the MODEL is not a rate limit. Measured on the free catalog:
@@ -1081,7 +1163,7 @@
   const freeDead = new Set();
   function nextFreeModel(){
     const sel = $("modelSelect");
-    const ids = sel ? [...sel.options].map(o => o.value).filter(v => v && v !== AUTO_ID) : [];
+    const ids = sel ? [...sel.options].map(o => o.value).filter(v => v && v !== AUTO_ID && !v.startsWith(DUCK_PREFIX)) : [];
     if(ids.length < 2) return null;
     if(freeDead.size >= ids.length) freeDead.clear();   // all burnt: give them another round
     const start = ids.indexOf(sel.value);
@@ -1100,6 +1182,20 @@
       try{
         const b = JSON.parse(bodyJson);
         const liveModel = $("modelSelect")?.value;
+        // A duck: row is its own upstream, not a zen id - no rotation, no relay hop into the zen list.
+        if(liveModel && liveModel.startsWith(DUCK_PREFIX)){
+          const dm = liveModel.slice(DUCK_PREFIX.length);
+          try{
+            const out = await duckComplete(bodyJson, dm);
+            if(out){ lcFails = 0; return out; }
+            throw new Error("empty reply");
+          }catch(e){
+            lcFails++;
+            writeErr("\r\n[duck] " + dm + ": " + (e?.message || e) + "\r\n");
+            const fb = await freeFallback(bodyJson);
+            return fb !== null ? fb : "";
+          }
+        }
         // "best effort" is not an upstream id: it means go straight to the gateway and let it choose.
         if(liveModel === AUTO_ID){
           const out = await gatewayComplete(bodyJson, null);
@@ -1526,9 +1622,20 @@
     o.title = "Let the gateway choose across every free provider it can still reach";
     sel.appendChild(o);
   };
+  // duck.ai rows sit between the zen ids and the gateway row. They are their own upstream, so a
+  // zen refusal never rotates into them and vice versa - picking one is a deliberate choice.
+  const appendDuckOptions = sel => {
+    DUCK_MODELS.forEach(m => {
+      const o = document.createElement("option");
+      o.value = DUCK_PREFIX + m; o.textContent = DUCK_PREFIX + " " + m;
+      o.title = "duck.ai - no key, per-visitor quota, separate from the free list above";
+      sel.appendChild(o);
+    });
+  };
   const freeFill = (sel, ids) => {
     sel.innerHTML = "";
     ids.forEach(id => { const o = document.createElement("option"); o.value = id; o.textContent = id; sel.appendChild(o); });
+    appendDuckOptions(sel);
     appendAutoOption(sel);
     const wish = sel.dataset.wish, kept = wish && (ids.includes(wish) || wish === AUTO_ID);
     sel.value = kept ? wish : (ids[0] || AUTO_ID); delete sel.dataset.wish; sel.dataset.tier = "free";
