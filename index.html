@@ -1155,6 +1155,15 @@
       }catch(e){
         lcFails++;
         writeErr("\r\n[API] "+(e?.message||e)+"\r\n");
+        // A throw here means the TRANSPORT died - every relay hop refused, or their TLS is broken
+        // ("SSL connect error", code 35). No zen model is reachable through a dead relay, so
+        // waiting out five failures before trying the gateway just wastes five turns. The gateway
+        // is a plain fetch straight from this tab: it does not touch the relay at all.
+        const direct = await gatewayComplete(bodyJson, null);
+        if(direct !== null && direct !== ""){
+          write("\r\n\x1b[2m[free] relay unreachable - answered by the gateway instead\x1b[0m\r\n");
+          return direct;
+        }
         const fb = await freeFallback(bodyJson);   // C1: network reject (dead relay) now also triggers the fallback
         return fb !== null ? fb : "";
       }
