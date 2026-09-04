@@ -309,7 +309,13 @@
   // can call it directly - no relay, no gateway, nothing shared. Its quota is enforced per IP,
   // which means every visitor spends their own instead of draining one pooled account. That makes
   // it strictly better than the gateway when it works, so it is tried first.
-  const OVH_UP = "https://gpt-oss-120b.endpoints.kepler.ai.cloud.ovh.net/api/openai_compat/v1";
+  // The aggregate host, not the per-model one: `<model>.endpoints...` serves exactly the model in
+  // its own hostname, while this one lists all 25 - Qwen3.5-397B, Llama-3.3-70B, gpt-oss-120b,
+  // coders, vision - from a single base URL.
+  const OVH_UP = "https://oai.endpoints.kepler.ai.cloud.ovh.net/v1";
+  // The same catalogue also carries speech, embedding and image models; sending chat messages to
+  // whisper or SDXL just burns a request, so they never enter the rotation.
+  const OVH_SKIP = /(whisper|tts|embedding|bge-|guard|stable-diffusion|-vl-)/i;
   let ovhIds = null;   // never hardcode an id: ask the endpoint what it serves, then cache it
 
   // opt-in run-log collection: a Cloudflare Worker (SQLite Durable Object) that only appends. The submit key is
@@ -1021,11 +1027,17 @@
   // completion to satisfy the in-flight turn, "" if the local load failed, or null if not yet at the threshold.
   // Whatever OVH is serving today, asked at run time. A hardcoded id rots the moment they retire
   // or rename a model, and the endpoint is the only thing that knows the truth.
+  // Biggest first: "Qwen3.5-397B-A17B" scores 397, not 17 - the trailing -A<n>B is active params,
+  // not size. Everything unparseable sorts last rather than being dropped.
+  const ovhSize = id => Math.max(0, ...(String(id).match(/(\d+(?:\.\d+)?)\s*b(?![a-z0-9])/gi) || [])
+                                      .map(s => parseFloat(s)));
   async function ovhCatalog(){
     if(ovhIds) return ovhIds;
     const r = await fetch(OVH_UP + "/models", { signal: AbortSignal.timeout(15000) });
     if(!r.ok) throw new Error("HTTP " + r.status);
-    ovhIds = ((await r.json()).data || []).map(m => m.id).filter(Boolean);
+    ovhIds = ((await r.json()).data || [])
+      .map(m => m.id).filter(id => id && !OVH_SKIP.test(id))
+      .sort((a, b) => ovhSize(b) - ovhSize(a));
     return ovhIds;
   }
 
