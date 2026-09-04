@@ -333,7 +333,10 @@
   const CGPT_TOKKEY = "npcagent.chatgpt";
   const CGPT_CATALOG = "https://chatgpt.com/backend-api/codex/models?client_version=0.145.0";
   const CGPT_USAGE   = "https://chatgpt.com/backend-api/wham/usage";   // same auth as the catalog; the responses endpoint carries no x-codex-* headers on this account, so this is the only source
-  const CGPT_MODELS  = ["gpt-5.6-sol", "gpt-5.5", "gpt-5.4-mini"];   // last-resort only: the real list is fetched per account (a plan sees exactly its own models)
+  // No hardcoded model list here on purpose. Every id this tier can use comes from CGPT_CATALOG,
+  // which returns exactly what THIS account is entitled to. A baked-in list goes stale the moment
+  // OpenAI renames or retires something, and then the tier fails with a confusing 404 instead of
+  // saying plainly that it could not read the catalogue.
   const CGPT_EFFORTS = ["none", "minimal", "low", "medium", "high", "xhigh", "max"];   // verbatim from the endpoint's own 400 ("Supported values are: ..."), which is narrower than the catalog's
 
   /* ------------------------------------------------------------------ terminal */
@@ -1406,7 +1409,13 @@
   function cgptModelList(models){
     const sel = $("modelSelect"), wish = sel.dataset.wish || sel.value;   // keep what the user picked: the rebuild at Run would otherwise silently drop them back to the first model
     delete sel.dataset.wish;   // one-shot. Left set, every later rebuild reverts a mid-run model change WITHOUT firing `change`, so the bridge sends one model while the archive label names another
-    const opts = models || CGPT_MODELS.map(id => ({ id, label: id, efforts: [], effort: "" }));
+    // No catalogue means no models we can name honestly - say so rather than offering guesses.
+    const opts = models || [];
+    if(!opts.length){
+      sel.innerHTML = "<option value=''>catalog unavailable - sign in again</option>";
+      cgptCat = {}; sel.dataset.tier = "chatgpt";
+      return;
+    }
     cgptCat = Object.fromEntries(opts.map(m => [m.id, m]));
     sel.innerHTML = "";
     opts.forEach(m => { const o = document.createElement("option"); o.value = m.id; o.textContent = m.label; sel.appendChild(o); });
@@ -1498,8 +1507,12 @@
         type:"message", role: m.role === "assistant" ? "assistant" : "user",
         content:[{ type: m.role === "assistant" ? "output_text" : "input_text", text: String(m.content ?? "") }]
       }));
-      for(let attempt = 0, walk = $("modelSelect").options.length || CGPT_MODELS.length; attempt < walk; attempt++){   // walk the ACCOUNT's models, not the 3-item fallback constant
-        const model = $("modelSelect")?.value || CGPT_MODELS[0];
+      for(let attempt = 0, walk = $("modelSelect").options.length || 1; attempt < walk; attempt++){   // walk the ACCOUNT's own models
+        const model = $("modelSelect")?.value;
+        if(!model){   // the catalogue never loaded; guessing an id here is how you get a stale 404
+          writeErr("\r\n[chatgpt] no model catalog for this account - sign in again\r\n");
+          return "";
+        }
         const tok = cgptTok();   // re-read per attempt so a refresh mid-walk takes effect
         if(!tok) return "";
         let r;
