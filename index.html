@@ -305,6 +305,13 @@
   const GW_KEY = "demo";
   const AUTO_ID = "__auto__";   // the "best effort" row at the bottom of the model picker
 
+  // OVHcloud publishes an OpenAI-compatible endpoint with no key AND permissive CORS, so this tab
+  // can call it directly - no relay, no gateway, nothing shared. Its quota is enforced per IP,
+  // which means every visitor spends their own instead of draining one pooled account. That makes
+  // it strictly better than the gateway when it works, so it is tried first.
+  const OVH_UP = "https://gpt-oss-120b.endpoints.kepler.ai.cloud.ovh.net/api/openai_compat/v1";
+  let ovhIds = null;   // never hardcode an id: ask the endpoint what it serves, then cache it
+
   // opt-in run-log collection: a Cloudflare Worker (SQLite Durable Object) that only appends. The submit key is
   // low-value (append-only; list/export are gated by a server secret never shipped here), base64 to dodge scrapers.
   const SHARE_BASE  = atob("aHR0cHM6Ly9ucGNhZ2VudC1sb2dzLmVkZ2UtcmVsYXktOXgud29ya2Vycy5kZXY=");
@@ -1012,6 +1019,43 @@
   let lcFails = 0, localDead = false;
   // after 5 consecutive failures (HTTP error OR network reject), drop to local GGUF. Returns the wllama
   // completion to satisfy the in-flight turn, "" if the local load failed, or null if not yet at the threshold.
+  // Whatever OVH is serving today, asked at run time. A hardcoded id rots the moment they retire
+  // or rename a model, and the endpoint is the only thing that knows the truth.
+  async function ovhCatalog(){
+    if(ovhIds) return ovhIds;
+    const r = await fetch(OVH_UP + "/models", { signal: AbortSignal.timeout(15000) });
+    if(!r.ok) throw new Error("HTTP " + r.status);
+    ovhIds = ((await r.json()).data || []).map(m => m.id).filter(Boolean);
+    return ovhIds;
+  }
+
+  // Direct, keyless, from this tab. Returns null on any failure so callers keep walking the chain.
+  async function ovhComplete(bodyJson){
+    try{
+      const ids = await ovhCatalog();
+      if(!ids.length) return null;
+      const b = JSON.parse(bodyJson);
+      delete b.reasoning;
+      b.max_tokens = Math.max(b.max_tokens || 0, FREE_MAXTOK);
+      for(const id of ids){
+        const r = await fetch(OVH_UP + "/chat/completions", {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...b, model: id }), signal: AbortSignal.timeout(90000)
+        });
+        if(r.status === 429){ writeErr("\r\n[ovh] " + id + ": your IP is rate-limited\r\n"); continue; }
+        if(!r.ok) continue;
+        const j = await r.json();
+        const m = j.choices?.[0]?.message ?? {};
+        const out = m.content || m.reasoning_content || m.reasoning || "";
+        if(out){ noteAutoModel("ovh/" + (j.model || id)); return out; }
+      }
+      return null;
+    }catch(e){
+      writeErr("\r\n[ovh] " + (e?.message || e) + "\r\n");
+      return null;
+    }
+  }
+
   // Ask the multi-provider gateway to pick for us. Omitting `model` is deliberate: it ranks
   // whatever is alive right now (DeepSeek first, then by parameter count) instead of us naming
   // an id that may be rate-limited. Returns null if it could not answer, so callers keep going.
@@ -1047,9 +1091,13 @@
     // a LIVE check, not a latch: it also catches a switch already in flight (the user parked on a device-code sign-in
     // still shows chatgpt here), and it re-arms by itself the moment they come back to free - with the model cached
     if($("engine").value !== "free") return "";
-    // Every free id has now refused. Try the gateway before committing the user to a 2 GB
-    // download - it fronts a dozen other providers and is usually still holding something.
-    write("\r\n\x1b[2m[free] all models refused - asking the gateway for whatever is alive\x1b[0m\r\n");
+    // Every free id has now refused. Two stops before committing the user to a 2 GB download.
+    // OVH first: keyless and per-IP, so this visitor spends their own allowance and nothing
+    // shared is touched. Only then the gateway, which burns pooled keys.
+    write("\r\n\x1b[2m[free] all models refused - trying the keyless endpoint\x1b[0m\r\n");
+    const own = await ovhComplete(bodyJson);
+    if(own) return own;
+    write("\r\n\x1b[2m[free] asking the gateway for whatever is alive\x1b[0m\r\n");
     const via = await gatewayComplete(bodyJson, null);
     if(via !== null && via !== "") return via;
     if(localDead) return "";   // already tried local and it failed - keep retrying the relay each turn, but never re-download the 2 GB model
@@ -1159,6 +1207,11 @@
         // ("SSL connect error", code 35). No zen model is reachable through a dead relay, so
         // waiting out five failures before trying the gateway just wastes five turns. The gateway
         // is a plain fetch straight from this tab: it does not touch the relay at all.
+        const own = await ovhComplete(bodyJson);
+        if(own){
+          write("\r\n\x1b[2m[free] relay unreachable - answered directly, no relay needed\x1b[0m\r\n");
+          return own;
+        }
         const direct = await gatewayComplete(bodyJson, null);
         if(direct !== null && direct !== ""){
           write("\r\n\x1b[2m[free] relay unreachable - answered by the gateway instead\x1b[0m\r\n");
