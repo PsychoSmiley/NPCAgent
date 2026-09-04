@@ -1070,15 +1070,29 @@
     const n = sel ? [...sel.options].map(o => o.value).filter(v => v && v !== AUTO_ID).length : 0;
     return Math.max(1, n - 1);   // every id except the one that already failed
   };
+  // A refusal that names the MODEL is not a rate limit. Measured on the free catalog:
+  // 400 "Upstream request failed: Model is unavailable", 401 "Model X is not supported",
+  // 503 from the provider console - all mean "this id, right now", while other ids in the
+  // same list answer 200. Rotating only on 429 left the tier stuck retrying one dead model
+  // until it gave up, which is exactly what the run logs showed.
+  const modelRefused = s => s === 400 || s === 401 || s === 403 || s === 404 || s === 429 || s === 503;
+  // Remembered for the session so a new turn does not start by re-trying a known-dead id.
+  // Cleared when everything is dead, because these recover on their own.
+  const freeDead = new Set();
   function nextFreeModel(){
     const sel = $("modelSelect");
     const ids = sel ? [...sel.options].map(o => o.value).filter(v => v && v !== AUTO_ID) : [];
     if(ids.length < 2) return null;
-    const nx = ids[(ids.indexOf(sel.value) + 1) % ids.length];
-    if(nx === sel.value) return null;
-    sel.value = nx;        // persist: the next turn starts from whichever id actually answered
-    try{ noteModel(nx); }catch(_){ }   // keep curModel/cfg/archive naming the model that really ran
-    return nx;
+    if(freeDead.size >= ids.length) freeDead.clear();   // all burnt: give them another round
+    const start = ids.indexOf(sel.value);
+    for(let i = 1; i <= ids.length; i++){
+      const nx = ids[(start + i) % ids.length];
+      if(nx === sel.value || freeDead.has(nx)) continue;
+      sel.value = nx;      // persist: the next turn starts from whichever id actually answered
+      try{ noteModel(nx); }catch(_){ }   // keep curModel/cfg/archive naming the model that really ran
+      return nx;
+    }
+    return null;
   }
   function makeFreeLibcurlBridge(){
     lcFails = 0; localDead = false;
@@ -1112,10 +1126,12 @@
             if(hops++ < RELAY_HOPS && hopRelay()) continue;   // dead relay: the next one may be alive
             throw e;
           }
-          if(r.status === 429 && swaps < modelSwapBudget()){
+          if(modelRefused(r.status) && swaps < modelSwapBudget()){
+            const wasModel = b.model;
+            if(r.status !== 429) freeDead.add(wasModel);   // 429 recovers in seconds; the rest do not
             const nm = nextFreeModel();
             if(nm){ swaps++; b.model = nm; bodyJson = JSON.stringify(b);
-                    write("\r\n\x1b[2m[free] "+nm+" (previous model was busy)\x1b[0m\r\n"); continue; }
+                    write("\r\n\x1b[2m[free] "+wasModel+" refused ("+r.status+") -> "+nm+"\x1b[0m\r\n"); continue; }
           }
           if((r.status === 502 || r.status === 503) && hops++ < RELAY_HOPS && hopRelay()) continue;
           break;
@@ -1938,7 +1954,7 @@ _j.dumps(_out, ensure_ascii=False, indent=1) if _out else ""`);
 import sys, json as _j
 _m = sys.modules.get("npc")
 _a = getattr(_m, "all_agents", None) if _m else None
-FB = "Let me think about this carefully first."
+FB = set(getattr(_m, "FALLBACK_RESPONSES", ["Let me think about this carefully first."])) if _m else {"Let me think about this carefully first."}
 def _conv(a):
     c = [{"from": ("system" if m["role"]=="system" else "human" if m["role"]=="user" else "gpt"), "value": m["content"]} for m in a["history"]]
     while c and c[-1]["from"] != "gpt": c.pop()
@@ -1956,7 +1972,7 @@ else:
             except Exception: r = ""
             r = (r or "").strip(); ch += len(r)
             if not r or r == "...": e += 1
-            elif r == FB: f += 1
+            elif r in FB: f += 1
     sg = [{"id":a["name"],"by":("human" if a.get("player") else "model"),"conversations":_conv(a)} for a in _a]   # provenance on the row: an analyst must not read a human transcript as model output
     sg = [o for o in sg if any(t["from"]=="gpt" for t in o["conversations"])]
     diaries = {a["name"]: a.get("diary",[]) for a in _a}

@@ -4,6 +4,7 @@ import json
 import re
 import time
 import sys
+import random
 
 # --- Configuration ---
 VERBOSE_LOGGING = False
@@ -146,7 +147,22 @@ def create_agent(name, age=18, location="Park", money=STARTING_MONEY, personalit
         "consecutive_action": {"name": None, "count": 0}  # Anti-loop tracking
     }
 
-FALLBACK_RESPONSE = "Let me think about this carefully first."   # send_message's JSON-failure sentinel; give_birth treats it as no-name
+# send_message's JSON-failure sentinels; give_birth treats any of them as no-name.
+# A pool rather than one line: when several models refuse in a row the same sentence
+# lands on every agent in the tick and the transcript reads like a stuck record.
+FALLBACK_RESPONSES = [
+    "Let me think about this carefully first.",
+    "Let me work through this step by step.",
+    "I need a moment to weigh this properly.",
+    "Give me a beat to think it over.",
+    "Thinking it through before I act.",
+    "Let me consider my options carefully.",
+    "I should reason about this before deciding.",
+    "Taking a moment to think this through.",
+]
+FALLBACK_RESPONSE = FALLBACK_RESPONSES[0]   # kept for anything comparing against the original
+def is_fallback(text):
+    return (text or "").strip() in FALLBACK_RESPONSES
 
 def llm_post(messages, max_tokens=MAX_RESPONSE_TOKENS, temperature=0.5, retries=50, timeout=120, label="LLM"):
     """One chat-completions POST with `retries` attempts + exponential backoff capped at 5m.
@@ -260,7 +276,7 @@ def send_message(prompt_text, source, target_agent, possible_actions, all_agents
         return parsed.get("response", ""), parsed.get("action", "none")
 
     print(f"[ERROR] {target_agent['name']}: Failed to extract valid JSON")
-    fb = {"response": FALLBACK_RESPONSE, "action": "none"}
+    fb = {"response": random.choice(FALLBACK_RESPONSES), "action": "none"}
     target_agent["history"].append({"role": "assistant", "content": json.dumps(fb, ensure_ascii=False)})
     return fb["response"], fb["action"]
 
@@ -501,7 +517,7 @@ def give_birth(agent, preg, all_agents, announce=""):  # due-day naming via the 
         response, action = (player_input(prompt, "Game System", agent, ["none"], all_agents) if agent.get("player")
                             else send_message(prompt, "Game System", agent, ["none"]))
         print(f"{agent['name']}: \"{response}\" (Action: {action})")
-        if (response or "").strip() == FALLBACK_RESPONSE: response = ""   # the JSON-failure sentinel is not a name
+        if is_fallback(response): response = ""   # a JSON-failure sentinel is not a name
         words = re.findall(r"[A-Za-z]+", response or "")
         cand = (words[0] if len(words) == 1 else words[-1] if (words and attempt == 2) else "").capitalize()  # retry tolerates "her name is Zoe" -> last word
         if cand and cand not in living:   # dead names honorable, living ones collide
